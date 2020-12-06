@@ -1,0 +1,67 @@
+package sinhee.kang.tutorial.domain.auth.service.auth
+
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
+import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
+import sinhee.kang.tutorial.domain.auth.domain.refreshToken.repository.RefreshTokenRepository
+import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
+import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.auth.exception.ExpiredTokenException
+import sinhee.kang.tutorial.domain.auth.exception.InvalidTokenException
+import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
+import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
+import sinhee.kang.tutorial.domain.user.domain.user.User
+import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
+import sinhee.kang.tutorial.global.config.security.auth.AuthenticationFacade
+import sinhee.kang.tutorial.global.config.security.jwt.JwtTokenProvider
+import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+
+@Service
+class AuthServiceImpl(
+        private var passwordEncoder: PasswordEncoder,
+        private var authenticationFacade: AuthenticationFacade,
+
+        private var userRepository: UserRepository,
+        private var refreshTokenRepository: RefreshTokenRepository,
+
+        private var refreshTokenService: RefreshTokenService,
+        private var tokenProvider: JwtTokenProvider
+) : AuthService {
+
+    private var refreshExp: Long = 178200L
+    private var tokenType: String = "Bearer"
+
+    override fun signIn(request: SignInRequest): TokenResponse {
+        return userRepository.findByEmail(request.email)
+                ?.takeIf { user -> passwordEncoder.matches(request.password, user.password) }
+                ?.let { user ->
+                    val accessToken: String = tokenProvider.generateAccessToken(user.nickname)
+                    val refreshToken: String = tokenProvider.generateRefreshToken(user.nickname)
+                    refreshTokenService.save(RefreshToken(user.nickname, refreshToken, refreshExp))
+                    TokenResponse(accessToken, refreshToken, tokenType)
+                }
+                ?: { throw UserNotFoundException() }()
+    }
+
+    override fun refreshToken(refreshToken: String): TokenResponse {
+        if (!tokenProvider.isRefreshToken(refreshToken)) {
+            throw InvalidTokenException()
+        }
+
+        return refreshTokenRepository.findByRefreshToken(refreshToken)
+                ?.let { receivedToken ->
+                    val generatedRefreshToken = tokenProvider.generateRefreshToken(receivedToken.nickname)
+                    val generatedAccessToken = tokenProvider.generateAccessToken(receivedToken.nickname)
+                    receivedToken.update(generatedRefreshToken, refreshExp)
+                    refreshTokenRepository.save(receivedToken)
+
+                    TokenResponse(generatedAccessToken, generatedRefreshToken, tokenType)
+                }
+                ?: { throw ExpiredTokenException() }()
+    }
+
+    override fun authValidate(): User {
+        return userRepository.findByNickname(authenticationFacade.getUserName())
+                ?: { throw UnAuthorizedException() }()
+    }
+}

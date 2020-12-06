@@ -1,0 +1,19 @@
+package sinhee.kang.tutorial.domain.post.dto.response
+
+import java.time.LocalDateTime
+
+class PostResponse(
+        var id: Int? = 0,
+
+        var title: String? = "",
+
+        var content: String? = "",
+
+        var author: String? = "",
+
+        var tags: String? = null,
+
+        var view: Int? = 0,
+
+        var createdAt: LocalDateTime? = null
+)
