@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.post.controller
 
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
@@ -35,22 +36,26 @@ class PostController(
     }
 
     @PostMapping
-    fun uploadPost(@Valid @RequestBody postRequest: PostRequest): Int? {
+    fun uploadPost(@Valid @RequestBody postRequest: PostRequest,
+                   imageFile: Array<MultipartFile>?): Int? {
         return postService.uploadPost(
                 postRequest.title,
                 postRequest.content,
-                postRequest.tags
+                postRequest.tags,
+                imageFile
         )
     }
 
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
-                 @Valid @RequestBody postRequest: PostRequest): Int? {
+                 @Valid @RequestBody postRequest: PostRequest,
+                 imageFile: Array<MultipartFile>?): Int? {
         return postService.changePost(
                 postId,
                 postRequest.title,
                 postRequest.content,
-                postRequest.tags
+                postRequest.tags,
+                imageFile
         )
     }
 

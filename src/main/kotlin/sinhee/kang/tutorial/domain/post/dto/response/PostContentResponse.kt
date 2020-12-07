@@ -27,5 +27,7 @@ class PostContentResponse(
 
         var prePostId: Int?,
 
+        var images: MutableList<String>,
+
         var comments: MutableList<PostCommentsResponse>
 )
