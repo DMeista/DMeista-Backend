@@ -8,6 +8,7 @@ enum class ErrorCode(var status: Int, var message: String) {
     BAD_REQUEST(400, "Bad Request(Invalid Parameter)"),
     USER_NOT_FOUND(404, "User Not Found."),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
+    IMAGE_NOT_FOUND(404, "Image Not Found"),
 
     //Auth
     INVALID_AUTH_EMAIL(400, "Invalid Auth Email"),
