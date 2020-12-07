@@ -1,6 +1,7 @@
 package sinhee.kang.tutorial.domain.post.domain.post
 
 import org.springframework.data.annotation.CreatedDate
+import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import java.time.LocalDateTime
@@ -33,6 +34,9 @@ class Post(
         @CreatedDate
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
+
+        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        var imageFileList: MutableList<ImageFile> = ArrayList(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var commentList: MutableList<Comment> = ArrayList()
