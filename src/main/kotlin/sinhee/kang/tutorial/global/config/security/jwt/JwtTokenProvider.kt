@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.global.config.security.jwt
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
@@ -12,13 +13,23 @@ import javax.servlet.http.HttpServletRequest
 
 @Component(value = "jwtTokenProvider")
 class JwtTokenProvider(
-        private var authDetailsService: AuthDetailsService
+        private var authDetailsService: AuthDetailsService,
+
+        @Value("\${auth.jwt.secret}")
+        private var secretKey: String,
+
+        @Value("\${auth.jwt.exp.access}")
+        private var accessTokenExpiration: Long,
+
+        @Value("\${auth.jwt.exp.refresh}")
+        private var refreshTokenExpiration: Long,
+
+        @Value("\${auth.jwt.header}")
+        private var header: String,
+
+        @Value("\${auth.jwt.prefix}")
+        private var prefix: String
 ) {
-    private var secretKey: String = "@ndE^erySing1eYe@r"
-    private var accessTokenExpiration: Long = 7200
-    private var refreshTokenExpiration: Long = 585200
-    private var header: String = "Authorization"
-    private var prefix: String = "Bearer"
 
     fun generateAccessToken(username: String): String {
         return Jwts.builder()

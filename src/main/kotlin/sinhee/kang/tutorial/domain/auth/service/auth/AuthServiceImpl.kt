@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
@@ -25,11 +26,14 @@ class AuthServiceImpl(
         private var refreshTokenRepository: RefreshTokenRepository,
 
         private var refreshTokenService: RefreshTokenService,
-        private var tokenProvider: JwtTokenProvider
-) : AuthService {
+        private var tokenProvider: JwtTokenProvider,
 
-    private var refreshExp: Long = 178200L
-    private var tokenType: String = "Bearer"
+        @Value("\${auth.jwt.exp.refresh}")
+        private var refreshExp: Long,
+
+        @Value("\${auth.jwt.prefix}")
+        private var tokenType: String
+) : AuthService {
 
     override fun signIn(request: SignInRequest): TokenResponse {
         return userRepository.findByEmail(request.email)
