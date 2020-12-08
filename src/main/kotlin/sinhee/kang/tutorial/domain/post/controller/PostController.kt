@@ -3,11 +3,9 @@ package sinhee.kang.tutorial.domain.post.controller
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.domain.post.service.post.PostService
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/posts")
@@ -36,27 +34,20 @@ class PostController(
     }
 
     @PostMapping
-    fun uploadPost(@Valid @RequestBody postRequest: PostRequest,
-                   imageFile: Array<MultipartFile>?): Int? {
-        return postService.uploadPost(
-                postRequest.title,
-                postRequest.content,
-                postRequest.tags,
-                imageFile
-        )
+    fun uploadPost(@RequestParam title: String,
+                   @RequestParam content: String,
+                   @RequestParam tags: String?,
+                   @RequestParam imageFile: Array<MultipartFile>?): Int? {
+        return postService.uploadPost(title, content, tags, imageFile)
     }
 
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
-                 @Valid @RequestBody postRequest: PostRequest,
-                 imageFile: Array<MultipartFile>?): Int? {
-        return postService.changePost(
-                postId,
-                postRequest.title,
-                postRequest.content,
-                postRequest.tags,
-                imageFile
-        )
+                 @RequestParam title: String,
+                 @RequestParam content: String,
+                 @RequestParam tags: String?,
+                 @RequestParam imageFile: Array<MultipartFile>?): Int? {
+        return postService.changePost(postId, title, content, tags, imageFile)
     }
 
     @DeleteMapping("/{postId}")

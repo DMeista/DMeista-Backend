@@ -162,7 +162,7 @@ class UserServiceImpl(
 
     private fun User?.emailTypeAction(sendType: String?) {
         when(sendType) {
-            "signup" -> this.let { throw UserAlreadyExistsException() }
+            "signup" -> this?.let { throw UserAlreadyExistsException() }
             "user" -> this ?: { throw UserNotFoundException() }()
         }
     }

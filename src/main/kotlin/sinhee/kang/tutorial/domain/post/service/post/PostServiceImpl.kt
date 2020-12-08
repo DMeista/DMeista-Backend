@@ -139,6 +139,7 @@ class PostServiceImpl(
         ))
 
         if (imageFile != null) {
+            println("receive ImageFile")
             for (file in imageFile) {
                 val fileName = UUID.randomUUID().toString()
                 imageFileRepository.save(ImageFile(
@@ -146,6 +147,7 @@ class PostServiceImpl(
                         fileName = fileName
                 ))
                 file.transferTo(File(imageDirPath, fileName))
+                println("upload Success")
             }
         }
         return post.postId

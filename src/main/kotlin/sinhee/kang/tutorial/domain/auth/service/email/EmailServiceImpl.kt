@@ -16,7 +16,7 @@ class EmailServiceImpl(
         msg.setTo(email)
         msg.setFrom("kangsinhee40@gmail.com")
         msg.setSubject("Spring boot Tutorial 메일")
-        msg.setText("${LocalDateTime.now()}\ncode: $code")
+        msg.setText("${LocalDateTime.now()}\n code: $code")
 
         javaMailSender.send(msg)
     }
