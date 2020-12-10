@@ -11,7 +11,6 @@ interface PostRepository : CrudRepository<Post, Int?> {
     fun findTop1ByPostIdAfterOrderByPostIdAsc(id: Int): Post?
     fun findTop1ByPostIdBeforeOrderByPostIdDesc(id: Int): Post?
 
-    fun findAllByAuthorOrderByCreatedAtDesc(pageable: Pageable, author: String): Page<Post>?
     fun findAllByTagsContainsOrderByCreatedAtDesc(pageable: Pageable, tags: String?): Page<Post>?
     fun findAllByOrderByViewDesc(pageable: Pageable): Page<Post>
 
