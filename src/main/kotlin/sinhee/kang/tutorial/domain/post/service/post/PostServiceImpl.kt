@@ -1,13 +1,12 @@
 package sinhee.kang.tutorial.domain.post.service.post
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
-import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
+import sinhee.kang.tutorial.domain.file.service.ImageService
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
@@ -19,21 +18,19 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
-import java.io.File
-import java.nio.file.Files
-import java.util.*
+import sinhee.kang.tutorial.infra.api.VisionApi
 import kotlin.collections.ArrayList
 
 @Service
 class PostServiceImpl(
         private var authService: AuthService,
+        private var imageService: ImageService,
+        private val visionApi: VisionApi,
+
         private var imageFileRepository: ImageFileRepository,
-
         private var userRepository: UserRepository,
-        private var postRepository: PostRepository,
+        private var postRepository: PostRepository
 
-        @Value("\${image.upload.dir}")
-        private var imageDirPath: String
 ) : PostService {
 
     override fun getAllPostList(pageable: Pageable): PostListResponse {
@@ -128,28 +125,29 @@ class PostServiceImpl(
     }
 
 
-    override fun uploadPost(title: String, content: String, tags: String?, imageFile: Array<MultipartFile>?): Int? {
+    override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
+        val request: MutableList<String> = ArrayList()
+
+        if (imageFile != null && autoTags) {
+            for (image in imageFile) {
+                val list = visionApi.visionImage(image)
+                for (tag in list) {
+                    request.add(tag)
+                }
+            }
+        }
+        tags?.let {
+            request.add(tags)
+        }
         val post = postRepository.save(Post(
                 user = user,
                 author = user.nickname,
                 title = title,
                 content = content,
-                tags = tags
+                tags = request.joinToString(", ")
         ))
-
-        if (imageFile != null) {
-            println("receive ImageFile")
-            for (file in imageFile) {
-                val fileName = UUID.randomUUID().toString()
-                imageFileRepository.save(ImageFile(
-                        post = post,
-                        fileName = fileName
-                ))
-                file.transferTo(File(imageDirPath, fileName))
-                println("upload Success")
-            }
-        }
+        imageService.saveImageFile(post, imageFile)
         return post.postId
     }
 
@@ -168,23 +166,8 @@ class PostServiceImpl(
 
         val imageFile = imageFileRepository.findByPostOrderByImageId(post)
 
-        if (imageFile != null) {
-            for (images in imageFile){
-                Files.delete(File(imageDirPath, images.fileName).toPath())
-            }
-            imageFileRepository.deleteByPost(post)
-
-            if (image != null) {
-                for (file in image) {
-                    val fileName = UUID.randomUUID().toString()
-                    imageFileRepository.save(ImageFile(
-                            post = post,
-                            fileName = fileName
-                    ))
-                    file.transferTo(File(imageDirPath, fileName))
-                }
-            }
-        }
+        imageService.deleteImageFile(post, imageFile)
+        imageService.saveImageFile(post, image)
         return post.postId
     }
 
@@ -198,9 +181,7 @@ class PostServiceImpl(
                 ?: { throw PermissionDeniedException() }()
         imageFileRepository.findByPostOrderByImageId(post)
                 ?.let { imageFile ->
-                    for (image in imageFile) {
-                        Files.delete(File(imageDirPath, image.fileName).toPath())
-                    }
+                    imageService.deleteImageFile(post, imageFile)
                     imageFileRepository.deleteByPost(post)
                 }
     }

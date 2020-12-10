@@ -37,8 +37,9 @@ class PostController(
     fun uploadPost(@RequestParam title: String,
                    @RequestParam content: String,
                    @RequestParam tags: String?,
+                   @RequestParam autoTag: Boolean,
                    @RequestParam imageFile: Array<MultipartFile>?): Int? {
-        return postService.uploadPost(title, content, tags, imageFile)
+        return postService.uploadPost(title, content, tags, autoTag, imageFile)
     }
 
     @PatchMapping("/{postId}")
