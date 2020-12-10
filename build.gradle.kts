@@ -55,6 +55,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
+    implementation("com.squareup.okhttp3:okhttp:3.10.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("mysql:mysql-connector-java")
