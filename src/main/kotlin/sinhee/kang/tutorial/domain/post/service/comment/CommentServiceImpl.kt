@@ -18,7 +18,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 class CommentServiceImpl(
         private var authService: AuthService,
 
-        private var userRepository: UserRepository,
         private var postRepository: PostRepository,
         private var commentRepository: CommentRepository,
         private var subCommentRepository: SubCommentRepository

@@ -52,9 +52,7 @@ class User(
     )
 
     fun addFriend(friend: Friend): User {
-        val friendList: MutableList<Friend> = ArrayList()
-        friendList.add(friend)
-        this.friendList = friendList
+        this.friendList.add(friend)
         return this
     }
 }
