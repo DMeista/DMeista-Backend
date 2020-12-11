@@ -8,5 +8,4 @@ import sinhee.kang.tutorial.domain.post.domain.post.Post
 @Repository
 interface ImageFileRepository: CrudRepository<ImageFile, Int> {
     fun deleteByPost(post: Post)
-    fun findByPostOrderByImageId(post: Post): List<ImageFile>?
 }

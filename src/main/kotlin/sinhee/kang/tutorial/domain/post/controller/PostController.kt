@@ -19,7 +19,7 @@ class PostController(
     }
 
     @GetMapping("/")
-    fun getAllHashTagList(page: Pageable, @RequestParam("tags", defaultValue = "") tags: String?): PostListResponse {
+    fun getAllHashTagList(page: Pageable, @RequestParam("tags") tags: String?): PostListResponse {
         return postService.getAllHashTagList(page, tags)
     }
 

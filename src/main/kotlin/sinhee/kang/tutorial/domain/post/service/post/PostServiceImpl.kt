@@ -39,7 +39,8 @@ class PostServiceImpl(
 
 
     override fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse {
-        return postRepository.findAllByTagsContainsOrderByCreatedAtDesc(pageable, tags)
+        tags?.let { throw ApplicationNotFoundException() }
+        return postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
                 ?.let { getPostList(it) }
                 ?: { throw ApplicationNotFoundException() }()
     }
@@ -68,11 +69,11 @@ class PostServiceImpl(
                 ?: { Post() }()
 
         val imageNames: MutableList<String> = ArrayList()
-        imageFileRepository.findByPostOrderByImageId(post)
-                ?.let { imageFile ->
-                    for (image in imageFile) {
-                        imageNames.add(image.fileName)
-                    }}
+        post.imageFileList.let { imageFile ->
+            for (image in imageFile) {
+                imageNames.add(image.fileName)
+                }
+            }
 
         for (comment in commentList) {
             val commentAuthor = userRepository.findByNickname(comment.author)
@@ -164,8 +165,7 @@ class PostServiceImpl(
                 postRepository.save(post)
         }
 
-        val imageFile = imageFileRepository.findByPostOrderByImageId(post)
-
+        val imageFile = post.imageFileList
         imageService.deleteImageFile(post, imageFile)
         imageService.saveImageFile(post, image)
         return post.postId
@@ -179,11 +179,9 @@ class PostServiceImpl(
                 .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
                 ?.also { postRepository.deleteById(it.postId!!) }
                 ?: { throw PermissionDeniedException() }()
-        imageFileRepository.findByPostOrderByImageId(post)
-                ?.let { imageFile ->
-                    imageService.deleteImageFile(post, imageFile)
-                    imageFileRepository.deleteByPost(post)
-                }
+        post.imageFileList.let { imageFile ->
+            imageService.deleteImageFile(post, imageFile) }
+        imageFileRepository.deleteByPost(post)
     }
 
     fun getPostList(postPage: Page<Post>): PostListResponse {
