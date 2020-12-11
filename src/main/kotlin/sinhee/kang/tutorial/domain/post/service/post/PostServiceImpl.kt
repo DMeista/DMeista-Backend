@@ -184,6 +184,14 @@ class PostServiceImpl(
         imageFileRepository.deleteByPost(post)
     }
 
+    override fun likePost(postId: Int): Boolean {
+        TODO()
+    }
+
+    override fun getLikeList(postId: Int): Any {
+        TODO()
+    }
+
     fun getPostList(postPage: Page<Post>): PostListResponse {
         val postResponse: MutableList<PostResponse> = ArrayList()
         for (post in postPage) {

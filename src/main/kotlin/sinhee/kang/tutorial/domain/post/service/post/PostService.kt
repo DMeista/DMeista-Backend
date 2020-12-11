@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
+import sinhee.kang.tutorial.domain.user.domain.user.User
 
 interface PostService {
     fun getAllPostList(pageable: Pageable): PostListResponse
@@ -15,4 +16,7 @@ interface PostService {
     fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int?
     fun changePost(postId: Int, title: String, content: String, tags: String?, image: Array<MultipartFile>?): Int?
     fun deletePost(postId: Int)
+
+    fun likePost(postId: Int): Boolean
+    fun getLikeList(postId: Int): Any
 }

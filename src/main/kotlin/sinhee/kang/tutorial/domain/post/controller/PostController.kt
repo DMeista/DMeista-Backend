@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.domain.post.service.post.PostService
+import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @RestController
 @RequestMapping("/posts")
@@ -26,6 +27,16 @@ class PostController(
     @GetMapping("/hit")
     fun getHitPosts(page: Pageable): PostListResponse {
         return postService.getHitPost(page)
+    }
+
+    @PostMapping("/{postId}/like")
+    fun likePost(@PathVariable postId: Int): Boolean {
+        return postService.likePost(postId)
+    }
+
+    @GetMapping("/{postId}/like")
+    fun getLikeUser(@PathVariable postId: Int): Any {
+        return postService.getLikeList(postId)
     }
 
     @GetMapping("/{postId}")
