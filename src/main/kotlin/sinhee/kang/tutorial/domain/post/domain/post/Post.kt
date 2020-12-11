@@ -38,9 +38,6 @@ class Post(
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var commentList: MutableList<Comment> = ArrayList(),
 
-        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-        var likeUserList: MutableList<User> = ArrayList(),
-
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var imageFileList: MutableList<ImageFile> = ArrayList()
 
@@ -54,16 +51,6 @@ class Post(
             tags = tags,
             createdAt = LocalDateTime.now()
     )
-
-    fun addLikeUser(user: User): Post {
-        likeUserList.add(user)
-        return this
-    }
-
-    fun deleteUser(user: User): Post {
-        likeUserList.remove(user)
-        return this
-    }
 
     fun view(): Post {
         view++
