@@ -38,7 +38,6 @@ class CommentServiceImpl(
                         authorType = user.roles
                 ))
         )
-        postRepository.save(post.addComment(commentList))
         return post.postId!!
     }
 

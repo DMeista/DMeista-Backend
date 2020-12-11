@@ -51,23 +51,6 @@ class User(
             createdAt = LocalDateTime.now()
     )
 
-    fun addPost(post: Post): User {
-        val postList: MutableList<Post> = ArrayList()
-        postList.add(post)
-        this.postList = postList
-        return this
-    }
-
-    fun addComment(comment: MutableList<Comment>): User {
-        commentList = comment
-        return this
-    }
-
-    fun addSubComment(subComment: MutableList<SubComment>): User {
-        subCommentList = subComment
-        return this
-    }
-
     fun addFriend(friend: Friend): User {
         val friendList: MutableList<Friend> = ArrayList()
         friendList.add(friend)

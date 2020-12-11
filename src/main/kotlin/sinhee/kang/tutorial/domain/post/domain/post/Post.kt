@@ -36,10 +36,14 @@ class Post(
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var imageFileList: MutableList<ImageFile> = ArrayList(),
+        var commentList: MutableList<Comment> = ArrayList(),
+
+        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        var likeUserList: MutableList<User> = ArrayList(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var commentList: MutableList<Comment> = ArrayList()
+        var imageFileList: MutableList<ImageFile> = ArrayList()
+
 
 ) {
     constructor(user: User, title: String, content: String, author: String, tags: String?): this(
@@ -51,8 +55,13 @@ class Post(
             createdAt = LocalDateTime.now()
     )
 
-    fun addComment(comment: MutableList<Comment>): Post {
-        commentList = comment
+    fun addLikeUser(user: User): Post {
+        likeUserList.add(user)
+        return this
+    }
+
+    fun deleteUser(user: User): Post {
+        likeUserList.remove(user)
         return this
     }
 
