@@ -3,15 +3,19 @@ package sinhee.kang.tutorial.domain.post.controller
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
+import sinhee.kang.tutorial.domain.post.service.emoji.EmojiService
 import sinhee.kang.tutorial.domain.post.service.post.PostService
 import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @RestController
 @RequestMapping("/posts")
 class PostController(
-        private var postService: PostService
+        private var postService: PostService,
+        private var emojiService: EmojiService
 ) {
 
     @GetMapping
@@ -29,14 +33,14 @@ class PostController(
         return postService.getHitPost(page)
     }
 
-    @PostMapping("/{postId}/like")
-    fun likePost(@PathVariable postId: Int): Boolean {
-        return postService.likePost(postId)
+    @PostMapping("/{postId}/emoji")
+    fun emojiPost(@PathVariable postId: Int, @RequestParam status: EmojiStatus): EmojiResponse? {
+        return emojiService.emojiService(postId, status)
     }
 
-    @GetMapping("/{postId}/like")
+    @GetMapping("/{postId}/emoji")
     fun getLikeUser(@PathVariable postId: Int): Any {
-        return postService.getLikeList(postId)
+        return emojiService.getPostEmojiUserList(postId)
     }
 
     @GetMapping("/{postId}")
