@@ -3,6 +3,7 @@ package sinhee.kang.tutorial.domain.post.domain.post
 import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
+import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -37,6 +38,9 @@ class Post(
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var commentList: MutableList<Comment> = ArrayList(),
+
+        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        var emojiList: MutableList<Emoji> = ArrayList(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var imageFileList: MutableList<ImageFile> = ArrayList()

@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.user.domain.user
 
 import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
+import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.user.domain.friend.Friend
@@ -39,6 +40,9 @@ class User(
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var subCommentList: MutableList<SubComment> = ArrayList(),
+
+        @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        var emojiList: MutableList<Emoji> = ArrayList(),
 
         @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
         var friendList: MutableList<Friend> = ArrayList()
