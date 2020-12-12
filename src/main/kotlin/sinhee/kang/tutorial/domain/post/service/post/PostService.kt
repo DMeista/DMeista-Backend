@@ -16,7 +16,4 @@ interface PostService {
     fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int?
     fun changePost(postId: Int, title: String, content: String, tags: String?, image: Array<MultipartFile>?): Int?
     fun deletePost(postId: Int)
-
-    fun likePost(postId: Int): Boolean
-    fun getLikeList(postId: Int): Any
 }
