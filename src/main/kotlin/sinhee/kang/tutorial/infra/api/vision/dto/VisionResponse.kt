@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.dto
+package sinhee.kang.tutorial.infra.api.vision.dto
 
 data class VisionResponse (
         var rid: String = "",

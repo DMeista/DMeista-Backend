@@ -1,13 +1,11 @@
-package sinhee.kang.tutorial.infra.api
+package sinhee.kang.tutorial.infra.api.vision
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
-import sinhee.kang.tutorial.infra.api.dto.VisionResponse
-import java.net.URI
-import java.net.URL
+import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
 
 @Service
 class VisionApi {
