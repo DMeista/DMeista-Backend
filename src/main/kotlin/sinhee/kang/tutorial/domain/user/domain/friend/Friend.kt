@@ -16,11 +16,11 @@ class Friend(
         var status: FriendStatus = FriendStatus.REQUEST,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "userId", nullable = false)
+        @JoinColumn(name = "userId")
         var userId: User,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "targetId", nullable = false)
+        @JoinColumn(name = "targetId")
         var targetId: User,
 
         @CreatedDate

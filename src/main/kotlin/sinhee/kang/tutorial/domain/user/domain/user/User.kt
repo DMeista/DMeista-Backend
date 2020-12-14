@@ -44,7 +44,7 @@ class User(
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var emojiList: MutableList<Emoji> = ArrayList(),
 
-        @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var friendList: MutableList<Friend> = ArrayList()
 ) {
     constructor() : this(

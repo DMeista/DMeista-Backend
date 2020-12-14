@@ -25,10 +25,4 @@ class GlobalExceptionHandler {
                 ErrorResponse(errorCode.status, e.message),
                 HttpStatus.valueOf(errorCode.status))
     }
-
-    @ExceptionHandler(RuntimeException::class)
-    protected fun handleRunTimeException(e: RuntimeException) {
-        val slackSenderManager = SlackSenderManager()
-        slackSenderManager.send(e)
-    }
 }

@@ -17,6 +17,7 @@ import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
+import sinhee.kang.tutorial.domain.user.service.friend.FriendService
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
 import java.time.LocalDateTime
 import java.util.*
@@ -24,6 +25,8 @@ import java.util.*
 @Service
 class UserServiceImpl(
         private var userRepository: UserRepository,
+
+        private var friendService: FriendService,
         private var authService: AuthService,
 
         private var emailVerificationRepository: EmailVerificationRepository,
@@ -39,9 +42,9 @@ class UserServiceImpl(
         val password = passwordEncoder.encode(signUpRequest.password)
         val nickname: String = signUpRequest.nickname
 
-        val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
-                .filter(EmailVerification::isVerify)
-                .orElseThrow { ExpiredAuthCodeException() }
+//        val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
+//                .filter(EmailVerification::isVerify)
+//                .orElseThrow { ExpiredAuthCodeException() }
 
         userRepository.findByEmail(email)
                 ?.let { throw UserAlreadyExistsException() }
@@ -54,22 +57,22 @@ class UserServiceImpl(
                 createdAt = LocalDateTime.now()
         ))
 
-        emailVerificationRepository.save(emailVerification.setUnVerify())
+//        emailVerificationRepository.save(emailVerification.setUnVerify())
     }
 
 
     override fun exitAccount(request: ChangePasswordRequest) {
         val user = authService.authValidate()
-        val email = request.email
-        val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
-                .filter(EmailVerification::isVerify)
-                .orElseThrow { ExpiredAuthCodeException() }
+//        val email = request.email
+//        val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
+//                .filter(EmailVerification::isVerify)
+//                .orElseThrow { ExpiredAuthCodeException() }
 
         if (!passwordEncoder.matches(request.password, user.password)) {
             throw UnAuthorizedException()
         }
         userRepository.delete(user)
-        emailVerificationRepository.save(emailVerification.setUnVerify())
+//        emailVerificationRepository.save(emailVerification.setUnVerify())
     }
 
 

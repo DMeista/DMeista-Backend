@@ -10,7 +10,6 @@ import javax.validation.Valid
 class AuthController(
         private var userService: UserService
 ) {
-
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@RequestBody @Valid emailRequest: EmailRequest,
                   @PathVariable sendType: String) {
@@ -18,27 +17,27 @@ class AuthController(
     }
 
     @PutMapping("/email/verify")
-    fun verifyEmail(@RequestBody @Valid verifyCodeRequest: VerifyCodeRequest) {
+    fun verifyEmail(@RequestBody verifyCodeRequest: VerifyCodeRequest) {
         userService.verifyEmail(verifyCodeRequest)
     }
 
     @PostMapping
-    fun signUp(@RequestBody @Valid signUpRequest: SignUpRequest) {
+    fun signUp(@RequestBody signUpRequest: SignUpRequest) {
         userService.signUp(signUpRequest)
     }
 
     @DeleteMapping
-    fun exitAccount(@RequestBody @Valid request: ChangePasswordRequest) {
+    fun exitAccount(@RequestBody request: ChangePasswordRequest) {
         userService.exitAccount(request)
     }
 
     @PutMapping("/password")
-    fun changePassword(@RequestBody @Valid changePasswordRequest: ChangePasswordRequest) {
+    fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest) {
         userService.changePassword(changePasswordRequest)
     }
 
     @PutMapping("/new-email")
-    fun changeEmail(@RequestBody @Valid changeEmailRequest: ChangeEmailRequest) {
+    fun changeEmail(@RequestBody changeEmailRequest: ChangeEmailRequest) {
         userService.changeEmail(changeEmailRequest)
     }
 }
