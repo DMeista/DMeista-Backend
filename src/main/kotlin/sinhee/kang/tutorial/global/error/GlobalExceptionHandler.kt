@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import sinhee.kang.tutorial.global.error.exception.BusinessException
 import sinhee.kang.tutorial.global.error.exception.ErrorCode
+import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -19,9 +20,15 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException::class)
     protected fun handleBusinessException(e: BusinessException): ResponseEntity<ErrorResponse> {
-        var errorCode: ErrorCode = e.errorCode
+        val errorCode: ErrorCode = e.errorCode
         return ResponseEntity(
                 ErrorResponse(errorCode.status, e.message),
                 HttpStatus.valueOf(errorCode.status))
+    }
+
+    @ExceptionHandler(RuntimeException::class)
+    protected fun handleRunTimeException(e: RuntimeException) {
+        val slackSenderManager = SlackSenderManager()
+        slackSenderManager.send(e)
     }
 }
