@@ -109,7 +109,10 @@ class UserApiTest(
     fun exitAccount() {
         signUpTest()
         val request = ChangePasswordRequest("rkdtlsgml40@naver.com", "1234")
-        requestMvc(delete(""), request)
+        requestMvc(delete("/users"), request)
+        val user: User? = userRepository.findByEmail("rkdtlsgml40@naver.com")
+                ?.let { throw Exception() }
+        assert(user == null)
     }
 
     @Throws(Exception::class)
