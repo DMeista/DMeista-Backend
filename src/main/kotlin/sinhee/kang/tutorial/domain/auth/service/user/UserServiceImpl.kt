@@ -21,7 +21,6 @@ import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundExcepti
 import java.time.LocalDateTime
 import java.util.*
 
-
 @Service
 class UserServiceImpl(
         private var userRepository: UserRepository,

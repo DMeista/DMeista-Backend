@@ -11,7 +11,6 @@ interface PostService {
     fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse
     fun getHitPost(pageable: Pageable): PostListResponse
 
-    //TODO. CRUD
     fun getPostContent(postId: Int): PostContentResponse
     fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int?
     fun changePost(postId: Int, title: String, content: String, tags: String?, image: Array<MultipartFile>?): Int?
