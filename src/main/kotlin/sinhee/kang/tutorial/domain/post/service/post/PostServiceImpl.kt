@@ -18,7 +18,7 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
-import sinhee.kang.tutorial.infra.api.VisionApi
+import sinhee.kang.tutorial.infra.api.vision.VisionApi
 import kotlin.collections.ArrayList
 
 @Service
