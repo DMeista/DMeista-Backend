@@ -63,11 +63,16 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    testImplementation("org.springframework.security:spring-security-test")
+    compile("junit:junit:4.12")
 }
 
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        includeTags("First")
+        includeTags("Second")
+    }
 }
 
 tasks.withType<KotlinCompile> {
