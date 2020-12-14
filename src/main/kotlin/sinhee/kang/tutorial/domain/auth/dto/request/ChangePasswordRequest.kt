@@ -4,14 +4,14 @@ import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Pattern
 
-class ChangePasswordRequest {
+class ChangePasswordRequest (
 
     @Email
     @NotEmpty
-    val email: String = ""
+    val email: String,
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
+//    @Pattern(regexp = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
     @NotEmpty
-    var password: String = ""
+    var password: String
 
-}
+)

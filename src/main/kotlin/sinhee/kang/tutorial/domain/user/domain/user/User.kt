@@ -26,11 +26,11 @@ class User(
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
-        var roles: AccountRole,
+        private var roles: AccountRole = AccountRole.USER,
 
         @CreatedDate
         @Column(nullable = false)
-        var createdAt: LocalDateTime,
+        var createdAt: LocalDateTime = LocalDateTime.now(),
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var postList: MutableList<Post> = ArrayList(),
@@ -50,9 +50,7 @@ class User(
     constructor() : this(
             email = "",
             nickname = "",
-            password = "",
-            roles = AccountRole.USER,
-            createdAt = LocalDateTime.now()
+            password = ""
     )
 
     fun addFriend(friend: Friend): User {
