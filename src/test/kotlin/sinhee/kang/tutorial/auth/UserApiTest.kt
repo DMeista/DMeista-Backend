@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import org.junit.jupiter.api.*
 import org.junit.runner.RunWith
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -35,8 +35,6 @@ import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 @ActiveProfiles("test", "local")
 class UserApiTest(
-        @LocalServerPort
-        private var port: Int,
         private var context: WebApplicationContext,
         private var mvc: MockMvc,
 
@@ -105,8 +103,9 @@ class UserApiTest(
 
     @Tag("Second")
     @Test
+    @WithMockUser(username = "sinhee", password = "1234")
     @Throws(Exception::class)
-    fun exitAccount() {
+    fun exitAccountTest() {
         signUpTest()
         val request = ChangePasswordRequest("rkdtlsgml40@naver.com", "1234")
         requestMvc(delete("/users"), request)
@@ -117,7 +116,6 @@ class UserApiTest(
 
     @Throws(Exception::class)
     private fun requestMvc(method: MockHttpServletRequestBuilder, any: Any) {
-        val baseUrl = "http://localhost:$port"
         mvc.perform(method
                 .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
