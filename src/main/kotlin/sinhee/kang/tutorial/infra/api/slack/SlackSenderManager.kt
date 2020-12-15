@@ -21,11 +21,6 @@ class SlackSenderManager {
     private var client = OkHttpClient()
     private var mapper = ObjectMapper()
 
-    fun send(exception: Exception) {
-        val request: HttpServletRequest = (RequestContextHolder.getRequestAttributes() as ServletRequestAttributes).request
-        this.send(request, exception)
-    }
-
     fun send(request: HttpServletRequest, exception: Exception) {
         val attachment: SlackMessageRequest = this.toAttachments(request, exception)
         val sendRequest: Request = Request.Builder()

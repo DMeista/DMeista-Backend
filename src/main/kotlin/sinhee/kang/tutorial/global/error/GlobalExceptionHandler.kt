@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import sinhee.kang.tutorial.global.error.exception.BusinessException
 import sinhee.kang.tutorial.global.error.exception.ErrorCode
-import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
 
 @ControllerAdvice
 class GlobalExceptionHandler {

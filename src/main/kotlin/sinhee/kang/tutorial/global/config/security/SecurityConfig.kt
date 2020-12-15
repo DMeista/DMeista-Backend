@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import sinhee.kang.tutorial.global.config.security.exception.ExceptionConfigurer
 import sinhee.kang.tutorial.global.config.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.config.security.jwt.JwtTokenProvider
+import sinhee.kang.tutorial.global.config.security.requestLog.RequestLogConfigurer
 import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
 
 @Configuration
@@ -44,7 +45,8 @@ class SecurityConfig(
                 .antMatchers("/users/email/password/verify").permitAll()
                 .antMatchers("/users/email/verify").permitAll().and()
                 .apply(JwtConfigurer(jwtTokenProvider)).and()
-                .apply(ExceptionConfigurer(slackSenderManager))
+                .apply(ExceptionConfigurer(slackSenderManager)).and()
+                .apply(RequestLogConfigurer())
 
     }
 
