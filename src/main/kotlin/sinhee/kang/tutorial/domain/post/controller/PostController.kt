@@ -17,14 +17,8 @@ class PostController(
         private var postService: PostService,
         private var emojiService: EmojiService
 ) {
-
     @GetMapping
-    fun getAllPostList(page: Pageable): PostListResponse {
-        return postService.getAllPostList(page)
-    }
-
-    @GetMapping("/")
-    fun getAllHashTagList(page: Pageable, @RequestParam("tags") tags: String?): PostListResponse {
+    fun getAllHashTagPostList(page: Pageable, @RequestParam(defaultValue = "") tags: String?): PostListResponse {
         return postService.getAllHashTagList(page, tags)
     }
 
@@ -42,9 +36,9 @@ class PostController(
     fun uploadPost(@RequestParam title: String,
                    @RequestParam content: String,
                    @RequestParam tags: String?,
-                   @RequestParam autoTag: Boolean,
+                   @RequestParam autoTag: Boolean?,
                    @RequestParam imageFile: Array<MultipartFile>?): Int? {
-        return postService.uploadPost(title, content, tags, autoTag, imageFile)
+        return postService.uploadPost(title, content, tags, autoTag?: false, imageFile)
     }
 
     @PatchMapping("/{postId}")
