@@ -24,7 +24,7 @@ class PostController(
 
     @GetMapping("/hit")
     fun getHitPosts(page: Pageable): PostListResponse {
-        return postService.getHitPost(page)
+        return postService.getHitPostList(page)
     }
 
     @GetMapping("/{postId}")

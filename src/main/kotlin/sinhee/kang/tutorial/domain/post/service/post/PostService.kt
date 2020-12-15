@@ -8,7 +8,7 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 
 interface PostService {
     fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse
-    fun getHitPost(pageable: Pageable): PostListResponse
+    fun getHitPostList(pageable: Pageable): PostListResponse
 
     fun getPostContent(postId: Int): PostContentResponse
     fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int?

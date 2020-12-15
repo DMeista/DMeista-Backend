@@ -41,7 +41,7 @@ class PostServiceImpl(
     }
 
 
-    override fun getHitPost(pageable: Pageable): PostListResponse {
+    override fun getHitPostList(pageable: Pageable): PostListResponse {
         return getPostList(postRepository.findAllByOrderByViewDesc(pageable))
     }
 
