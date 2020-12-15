@@ -17,7 +17,6 @@ import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.domain.user.service.friend.FriendService
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
 import java.time.LocalDateTime
 import java.util.*
@@ -26,7 +25,6 @@ import java.util.*
 class UserServiceImpl(
         private var userRepository: UserRepository,
 
-        private var friendService: FriendService,
         private var authService: AuthService,
 
         private var emailVerificationRepository: EmailVerificationRepository,

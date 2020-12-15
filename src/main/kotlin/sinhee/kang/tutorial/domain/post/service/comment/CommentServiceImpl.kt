@@ -2,7 +2,6 @@ package sinhee.kang.tutorial.domain.post.service.comment
 
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.comment.repository.CommentRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
@@ -33,8 +32,7 @@ class CommentServiceImpl(
                         user = user,
                         post = post,
                         author = user.nickname,
-                        content = commentRequest.content,
-                        authorType = user.roles
+                        content = commentRequest.content
                 ))
         )
         return post.postId!!
@@ -51,12 +49,11 @@ class CommentServiceImpl(
                         user = user,
                         comment = comment,
                         author = user.nickname,
-                        content = commentRequest.content,
-                        authorType = user.roles
+                        content = commentRequest.content
                 ))
         )
         commentRepository.save(comment.addSubComment(subCommentList))
-        return comment.commentId!!
+        return comment.commentId
     }
 
 
@@ -64,13 +61,13 @@ class CommentServiceImpl(
         val user = authService.authValidate()
         val comment = commentRepository.findById(commentId)
                 .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
+                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also {
                     it.content = commentRequest.content
                     commentRepository.save(it)
                 }
                 ?: { throw PermissionDeniedException() }()
-        return comment.commentId!!
+        return comment.commentId
     }
 
 
@@ -78,13 +75,13 @@ class CommentServiceImpl(
         val user = authService.authValidate()
         val subComment = subCommentRepository.findById(subCommentId)
                 .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
+                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also {
                     it.content = commentRequest.content
                     subCommentRepository.save(it)
                 }
                 ?: { throw PermissionDeniedException() }()
-        return subComment.subCommentId!!
+        return subComment.subCommentId
     }
 
 
@@ -92,8 +89,8 @@ class CommentServiceImpl(
         val user = authService.authValidate()
         commentRepository.findById(commentId)
                 .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
-                ?.also { commentRepository.deleteById(it.commentId!!) }
+                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
+                ?.also { commentRepository.deleteById(it.commentId) }
                 ?: { throw PermissionDeniedException() }()
     }
 
@@ -102,8 +99,8 @@ class CommentServiceImpl(
         val user = authService.authValidate()
         subCommentRepository.findById(subCommentId)
                 .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
-                ?.also { subCommentRepository.deleteById(it.subCommentId!!) }
+                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
+                ?.also { subCommentRepository.deleteById(it.subCommentId) }
                 ?: { throw PermissionDeniedException() }()
     }
 }

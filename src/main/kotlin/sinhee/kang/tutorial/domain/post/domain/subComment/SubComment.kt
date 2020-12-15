@@ -3,7 +3,6 @@ package sinhee.kang.tutorial.domain.post.domain.subComment
 import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.user.domain.user.User
-import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -11,7 +10,7 @@ import javax.persistence.*
 class SubComment(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        var subCommentId: Int? = null,
+        var subCommentId: Int = 0,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")
@@ -27,20 +26,15 @@ class SubComment(
         @Column(nullable = false)
         var author: String,
 
-        @Column(nullable = false)
-        @Enumerated(EnumType.STRING)
-        var authorType: AccountRole,
-
         @CreatedDate
         @Column(nullable = false)
         var createdAt: LocalDateTime
 ) {
-        constructor(user: User, comment: Comment, content: String, author: String, authorType: AccountRole): this(
+        constructor(user: User, comment: Comment, content: String, author: String): this(
                 user = user,
                 comment = comment,
                 content = content,
                 author = author,
-                authorType = authorType,
                 createdAt = LocalDateTime.now()
         )
 }

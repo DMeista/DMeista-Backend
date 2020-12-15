@@ -88,7 +88,6 @@ class PostServiceImpl(
                         content = subComment.content,
                         createdAt = subComment.createdAt,
                         author = subComment.author,
-                        type = subComment.authorType,
                         isMine = (commentAuthor.nickname == user.nickname)
                 ))
             }

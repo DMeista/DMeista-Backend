@@ -11,8 +11,6 @@ class PostSubCommentsResponse(
 
         var author: String,
 
-        var type: AccountRole,
-
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         var createdAt: LocalDateTime,
 
