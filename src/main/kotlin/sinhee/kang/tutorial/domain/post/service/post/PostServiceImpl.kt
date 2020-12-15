@@ -98,7 +98,6 @@ class PostServiceImpl(
                     content = comment.content,
                     createdAt = comment.createdAt,
                     author = commentAuthor.nickname,
-                    authorType = commentAuthor.roles,
                     isMine = (commentAuthor.nickname == user.nickname),
                     subComments = subCommentsResponses
             ))
@@ -146,7 +145,7 @@ class PostServiceImpl(
                 author = user.nickname,
                 title = title,
                 content = content,
-                tags = request.joinToString(", ")
+                tags = request.joinToString()
         ))
         imageService.saveImageFile(post, imageFile)
         return post.postId
@@ -157,7 +156,7 @@ class PostServiceImpl(
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
-        if ( post.author == user.nickname || user.roles == AccountRole.ADMIN ) {
+        if ( post.author == user.nickname || user.isRoles(AccountRole.ADMIN) ) {
                 post.title = title
                 post.content = content
                 post.tags = tags
@@ -166,8 +165,10 @@ class PostServiceImpl(
         }
 
         val imageFile = post.imageFileList
-        imageService.deleteImageFile(post, imageFile)
-        imageService.saveImageFile(post, image)
+        imageService.run {
+            deleteImageFile(post, imageFile)
+            saveImageFile(post, image)
+        }
         return post.postId
     }
 
@@ -176,7 +177,7 @@ class PostServiceImpl(
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
-                .takeIf { it.author == user.nickname || user.roles == AccountRole.ADMIN }
+                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also { postRepository.deleteById(it.postId!!) }
                 ?: { throw PermissionDeniedException() }()
         post.imageFileList.let { imageFile ->

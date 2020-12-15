@@ -57,4 +57,8 @@ class User(
         this.friendList.add(friend)
         return this
     }
+
+    fun isRoles(roles: AccountRole): Boolean{
+        return this.roles == roles
+    }
 }

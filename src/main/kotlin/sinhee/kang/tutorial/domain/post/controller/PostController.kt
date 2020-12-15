@@ -33,16 +33,6 @@ class PostController(
         return postService.getHitPost(page)
     }
 
-    @PostMapping("/{postId}/emoji")
-    fun emojiPost(@PathVariable postId: Int, @RequestParam status: EmojiStatus): EmojiResponse? {
-        return emojiService.emojiService(postId, status)
-    }
-
-    @GetMapping("/{postId}/emoji")
-    fun getLikeUser(@PathVariable postId: Int): Any {
-        return emojiService.getPostEmojiUserList(postId)
-    }
-
     @GetMapping("/{postId}")
     fun getPostContent(@PathVariable postId: Int): PostContentResponse {
         return postService.getPostContent(postId)
@@ -71,4 +61,13 @@ class PostController(
         postService.deletePost(postId)
     }
 
+    @PostMapping("/{postId}/emoji")
+    fun emojiPost(@PathVariable postId: Int, @RequestParam status: EmojiStatus): EmojiResponse? {
+        return emojiService.emojiService(postId, status)
+    }
+
+    @GetMapping("/{postId}/emoji")
+    fun getEmojiUser(@PathVariable postId: Int): Any {
+        return emojiService.getPostEmojiUserList(postId)
+    }
 }
