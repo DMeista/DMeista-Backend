@@ -45,6 +45,7 @@ dependencies {
     implementation("org.bouncycastle:bcprov-jdk16:1.46")
     implementation("it.ozimov:embedded-redis:0.7.3")
 
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -59,11 +60,11 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
     runtimeOnly("mysql:mysql-connector-java")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-    }
-    testImplementation("com.h2database:h2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter=test-autoconfigure")
     testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("com.h2database:h2")
 }
 
 
