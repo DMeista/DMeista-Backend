@@ -1,6 +1,7 @@
 package sinhee.kang.tutorial.domain.auth.service.email
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
@@ -8,7 +9,7 @@ import java.time.LocalDateTime
 
 @Service
 class EmailServiceImpl(
-        @Autowired
+        @Qualifier("javaMailService") @Autowired
         var javaMailSender: JavaMailSender
 ) : EmailService {
     override fun sendEmail(email: String, code: String) {
