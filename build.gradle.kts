@@ -41,34 +41,34 @@ dependencies {
     implementation("org.modelmapper:modelmapper:0.7.8")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-
     implementation("net.java.dev.jets3t:jets3t:0.9.4")
     implementation("org.bouncycastle:bcprov-jdk16:1.46")
     implementation("it.ozimov:embedded-redis:0.7.3")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-mail")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
 
     implementation("com.squareup.okhttp3:okhttp:3.10.0")
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("mysql:mysql-connector-java")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
     }
+    testImplementation("com.h2database:h2")
     testImplementation("org.springframework.security:spring-security-test")
 }
 
 
 tasks.withType<Test> {
-    useJUnitPlatform() {
+    useJUnitPlatform {
         includeTags("First")
         includeTags("Second")
     }
