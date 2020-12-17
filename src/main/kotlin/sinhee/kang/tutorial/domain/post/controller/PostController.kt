@@ -9,7 +9,6 @@ import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.domain.post.service.emoji.EmojiService
 import sinhee.kang.tutorial.domain.post.service.post.PostService
-import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @RestController
 @RequestMapping("/posts")
