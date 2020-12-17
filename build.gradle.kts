@@ -44,6 +44,8 @@ dependencies {
     implementation("net.java.dev.jets3t:jets3t:0.9.4")
     implementation("org.bouncycastle:bcprov-jdk16:1.46")
     implementation("it.ozimov:embedded-redis:0.7.3")
+    implementation("io.springfox:springfox-swagger2:2.9.2")
+    implementation("io.springfox:springfox-swagger-ui:2.9.2")
 
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
