@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.security.requestLog
+package sinhee.kang.tutorial.global.config.requestLog
 
 import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
