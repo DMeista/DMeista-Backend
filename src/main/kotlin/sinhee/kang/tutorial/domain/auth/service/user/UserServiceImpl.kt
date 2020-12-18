@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.service.user
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
@@ -30,7 +31,8 @@ class UserServiceImpl(
         private var emailVerificationRepository: EmailVerificationRepository,
         private var emailLimiterRepository: EmailLimiterRepository,
         private var emailService: EmailService,
-        private var passwordEncoder: PasswordEncoder
+        private var passwordEncoder: PasswordEncoder,
+        private var publisher: ApplicationEventPublisher
 ) : UserService {
 
     private var limit: Int = 6
@@ -47,7 +49,7 @@ class UserServiceImpl(
         userRepository.findByEmail(email)
                 ?.let { throw UserAlreadyExistsException() }
 
-        userRepository.save(User(
+        val user = userRepository.save(User(
                 email = email,
                 password = password,
                 nickname = nickname,
@@ -55,6 +57,7 @@ class UserServiceImpl(
                 createdAt = LocalDateTime.now()
         ))
 
+        publisher.publishEvent(emailService.sendCelebrateEmail(user))
         emailVerificationRepository.save(emailVerification.setUnVerify())
     }
 
@@ -71,6 +74,12 @@ class UserServiceImpl(
         }
         userRepository.delete(user)
         emailVerificationRepository.save(emailVerification.setUnVerify())
+    }
+
+    override fun isVerifyNickname(nickname: String): Boolean {
+        return userRepository.findByNickname(nickname)
+                ?.let { true }
+                ?:{ false }()
     }
 
 
@@ -133,7 +142,7 @@ class UserServiceImpl(
         if (!isUnderRequestLimit(email)) throw TooManyListenersException()
 
         val code = randomCode()
-        emailService.sendEmail(email, code)
+        emailService.sendVerifyEmail(email, code)
         emailVerificationRepository.save(EmailVerification(
                 email = email,
                 authCode = code

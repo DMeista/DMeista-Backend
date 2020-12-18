@@ -21,6 +21,11 @@ class UserController(
         userService.verifyEmail(verifyCodeRequest)
     }
 
+    @GetMapping("/nickname")
+    fun isVerifyNickname(@RequestParam nickname: String) {
+        userService.isVerifyNickname(nickname)
+    }
+
     @PostMapping
     fun signUp(@RequestBody signUpRequest: SignUpRequest) {
         userService.signUp(signUpRequest)

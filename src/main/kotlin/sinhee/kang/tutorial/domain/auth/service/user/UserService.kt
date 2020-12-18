@@ -6,6 +6,7 @@ interface UserService {
     fun signUp(signUpRequest: SignUpRequest)
     fun exitAccount(request: ChangePasswordRequest)
 
+    fun isVerifyNickname(nickname: String): Boolean
     fun verifyEmail(verifyCodeRequest: VerifyCodeRequest)
 
     fun changePassword(changePasswordRequest: ChangePasswordRequest)
