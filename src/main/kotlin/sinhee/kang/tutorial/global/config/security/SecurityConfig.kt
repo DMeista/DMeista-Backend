@@ -37,6 +37,7 @@ class SecurityConfig(
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/post").permitAll()
                 .antMatchers("/users").permitAll()
