@@ -15,5 +15,7 @@ class PostResponse(
 
         var view: Int? = 0,
 
+        var checked: Boolean = false,
+
         var createdAt: LocalDateTime? = null
 )

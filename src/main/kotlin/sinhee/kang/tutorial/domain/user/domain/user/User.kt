@@ -5,6 +5,7 @@ import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
+import sinhee.kang.tutorial.domain.post.domain.view.View
 import sinhee.kang.tutorial.domain.user.domain.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import java.time.LocalDateTime
@@ -44,13 +45,16 @@ class User(
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var emojiList: MutableList<Emoji> = ArrayList(),
 
+        @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        var viewList: MutableList<View> = ArrayList(),
+
         @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var friendList: MutableList<Friend> = ArrayList()
 ) {
     constructor() : this(
-            email = "",
-            nickname = "",
-            password = ""
+            email = "default",
+            nickname = "default",
+            password = "default"
     )
 
     fun addFriend(friend: Friend): User {
