@@ -9,5 +9,5 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @Repository
 interface EmojiRepository: CrudRepository<Emoji, Int> {
-    fun findByUserAndPostOrStatus(user: User, post: Post, status: EmojiStatus): Emoji? //-> find result none: store, find result is same: delete, " only different status: change
+    fun findByUserAndPostOrStatus(user: User, post: Post, status: EmojiStatus): Emoji?
 }
