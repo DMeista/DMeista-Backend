@@ -11,10 +11,6 @@ import javax.validation.Valid
 class UserController(
         private var userService: UserService
 ) {
-    @GetMapping
-    fun hello(): String {
-        return "hello"
-    }
 
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@RequestBody @Valid emailRequest: EmailRequest,
