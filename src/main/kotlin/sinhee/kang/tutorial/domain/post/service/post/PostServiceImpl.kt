@@ -11,6 +11,8 @@ import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
+import sinhee.kang.tutorial.domain.post.domain.view.View
+import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.*
 import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
 import sinhee.kang.tutorial.domain.post.exception.PermissionDeniedException
@@ -27,9 +29,10 @@ class PostServiceImpl(
         private var imageService: ImageService,
         private val visionApi: VisionApi,
 
-        private var imageFileRepository: ImageFileRepository,
         private var userRepository: UserRepository,
-        private var postRepository: PostRepository
+        private var postRepository: PostRepository,
+        private var viewRepository: ViewRepository,
+        private var imageFileRepository: ImageFileRepository
 
 ) : PostService {
 
@@ -42,26 +45,29 @@ class PostServiceImpl(
 
 
     override fun getHitPostList(pageable: Pageable): PostListResponse {
-        return getPostList(postRepository.findAllByOrderByViewDesc(pageable))
+
+        TODO()
     }
 
 
     override fun getPostContent(postId: Int): PostContentResponse {
-        val user = try {
-            authService.authValidate()
-        } catch (e: Exception) {
-            User()
-        }
+        lateinit var user: User
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
+        try {
+            user = authService.authValidate()
+            viewRepository.findByUserAndPost(user, post)
+                    ?: { viewRepository.save(View(user, post)) }()
+        }
+        catch (e: Exception) {
+            user = User()
+        }
 
         val commentList: MutableList<Comment> = post.commentList
         val commentsResponse: MutableList<PostCommentsResponse> = ArrayList()
 
-        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId)
-                ?: { Post() }()
-        val prePost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId)
-                ?: { Post() }()
+        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: { Post() }()
+        val prePost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: { Post() }()
 
         val imageNames: MutableList<String> = ArrayList()
         post.imageFileList.let { imageFile ->
@@ -96,14 +102,13 @@ class PostServiceImpl(
                     subComments = subCommentsResponses
             ))
         }
-        postRepository.save(post.view())
 
         return PostContentResponse(
                 title = post.title,
                 content = post.content,
                 author = post.author,
                 tags = post.tags,
-                view = post.view,
+                view = post.viewList.count(),
                 createdAt = post.createdAt,
                 isMine = (post.author == user.nickname),
 
@@ -180,15 +185,26 @@ class PostServiceImpl(
     }
 
     fun getPostList(postPage: Page<Post>): PostListResponse {
+        val user = try { authService.authValidate() }
+                catch (e: Exception) { null }
         val postResponse: MutableList<PostResponse> = ArrayList()
+
         for (post in postPage) {
+            val checkedUser = viewRepository.findByPost(post)
+            val checked: Boolean = user
+                    ?.let { viewRepository.findByUserAndPost(user, post)
+                            ?.let { true }
+                            ?: { false }()
+                    }
+                    ?:{ false }()
             postResponse.add(PostResponse(
                     id = post.postId,
                     title = post.title,
                     content = post.content,
                     author = post.author,
                     tags = post.tags,
-                    view = post.view,
+                    view = checkedUser.count(),
+                    checked = checked,
                     createdAt = post.createdAt
             ))
         }
