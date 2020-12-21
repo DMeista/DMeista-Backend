@@ -70,6 +70,10 @@ dependencies {
     testImplementation("com.h2database:h2")
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")

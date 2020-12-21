@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.controller
 
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.user.UserService
@@ -10,10 +11,16 @@ import javax.validation.Valid
 class UserController(
         private var userService: UserService
 ) {
+    @GetMapping
+    fun hello(): String {
+        return "hello"
+    }
+
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@RequestBody @Valid emailRequest: EmailRequest,
-                  @PathVariable sendType: String) {
+                  @PathVariable sendType: String): ResponseEntity<String> {
         userService.userAuthenticationSendEmail(sendType, emailRequest)
+        return ResponseEntity.ok("ok")
     }
 
     @PutMapping("/email/verify")
