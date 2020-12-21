@@ -4,6 +4,7 @@ import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
+import sinhee.kang.tutorial.domain.post.domain.view.View
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -29,9 +30,6 @@ class Post(
         @Column
         var tags: String? = "",
 
-        @Column(nullable = false)
-        var view: Int = 0,
-
         @CreatedDate
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
@@ -43,9 +41,10 @@ class Post(
         var emojiList: MutableList<Emoji> = ArrayList(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        var viewList: MutableList<View> = ArrayList(),
+
+        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var imageFileList: MutableList<ImageFile> = ArrayList()
-
-
 ) {
     constructor(user: User, title: String, content: String, author: String, tags: String?): this(
             user = user,
@@ -55,9 +54,4 @@ class Post(
             tags = tags,
             createdAt = LocalDateTime.now()
     )
-
-    fun view(): Post {
-        view++
-        return this
-    }
 }
