@@ -10,7 +10,6 @@ interface UserService {
     fun verifyEmail(verifyCodeRequest: VerifyCodeRequest)
 
     fun changePassword(changePasswordRequest: ChangePasswordRequest)
-    fun changeEmail(changeEmailRequest: ChangeEmailRequest)
 
     fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest)
 

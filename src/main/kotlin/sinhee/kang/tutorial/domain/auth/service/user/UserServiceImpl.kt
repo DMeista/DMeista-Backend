@@ -115,25 +115,6 @@ class UserServiceImpl(
     }
 
 
-    override fun changeEmail(changeEmailRequest: ChangeEmailRequest) {
-        val email: String = changeEmailRequest.beforeEmail
-        val newEmail: String = changeEmailRequest.afterEmail
-
-        val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
-                .filter(EmailVerification::isVerify)
-                .orElseThrow { ExpiredAuthCodeException() }
-
-        val user: User = userRepository.findByEmail(email)
-                ?: { throw UserNotFoundException() }()
-        userRepository.findByEmail(newEmail)
-                ?.let { throw UserAlreadyExistsException() }
-        user.email = newEmail
-        userRepository.save(user)
-
-        emailVerificationRepository.save(emailVerification.setUnVerify())
-    }
-
-
     override fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest) {
         val email: String = emailRequest.email
         userRepository.findByEmail(email)

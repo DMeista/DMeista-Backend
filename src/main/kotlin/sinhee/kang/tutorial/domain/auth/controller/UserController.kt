@@ -44,8 +44,4 @@ class UserController(
         userService.changePassword(changePasswordRequest)
     }
 
-    @PutMapping("/new-email")
-    fun changeEmail(@RequestBody changeEmailRequest: ChangeEmailRequest) {
-        userService.changeEmail(changeEmailRequest)
-    }
 }
