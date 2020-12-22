@@ -2,6 +2,8 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.*
 import org.junit.runner.RunWith
@@ -18,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
@@ -47,11 +49,27 @@ class UserApiTest {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+
+    @Before
+    fun setup() {
+        emailVerificationRepository.save(EmailVerification(
+                email = "rkdtlsgml50@naver.com",
+                authCode = "ASD123",
+                status = EmailVerificationStatus.UNVERIFID
+        ))
+    }
+
+
+    @After
+    fun clean() {
+        emailVerificationRepository.deleteAll()
+    }
+
+
     @Tag("First")
     @Test
     @Throws(Exception::class)
     fun emailVerifyTest() {
-        sendEmail()
         val request = VerifyCodeRequest("rkdtlsgml50@naver.com", "ASD123")
         requestMvc(put("/users/email/verify"), request)
     }
@@ -60,6 +78,7 @@ class UserApiTest {
     @Test
     @Throws(Exception::class)
     fun signUpTest() {
+        emailVerifyTest()
         val request = SignUpRequest("rkdtlsgml50@naver.com", "1234", "Nickname")
         requestMvc(post("/users"), request)
     }
@@ -68,16 +87,17 @@ class UserApiTest {
     @Test
     @Throws(Exception::class)
     fun exitAccount() {
-        val accessToken = authKey()
+        val accessToken = accessKey()
         val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "1234")
 
+        emailVerifyTest()
         mvc.perform(delete("/users")
                 .header("Authorization", "Bearer $accessToken")
                 .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk).andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk).andDo(print())
                 .andReturn()
     }
 
@@ -91,40 +111,25 @@ class UserApiTest {
 
 
     @Throws(Exception::class)
-    private fun sendEmail() {
-        emailVerificationRepository.save(EmailVerification(
-                email = "rkdtlsgml50@naver.com",
-                authCode = "ASD123",
-                status = EmailVerificationStatus.UNVERIFID
-        ))
-    }
-
-
-    @Throws(Exception::class)
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
-        mvc.perform(method
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any): MvcResult {
+        return mvc.perform(method
                 .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(obj))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk)
+                .andExpect(status().isOk).andDo(print())
+                .andReturn()
     }
 
 
     @Throws(Exception::class)
     private fun signIn(): MvcResult {
         val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "1234")
-        return mvc.perform(post("/auth")
-                .content(ObjectMapper()
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(signInRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk).andDo(MockMvcResultHandlers.print())
-                .andReturn()
+        return requestMvc(post("/auth"), signInRequest)
     }
 
 
-    fun authKey(): String {
+    private fun accessKey(): String {
         val content: String = signIn().response.contentAsString
         val response: TokenResponse = ObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
