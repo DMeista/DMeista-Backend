@@ -3,9 +3,10 @@ package sinhee.kang.tutorial.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import org.junit.Before
+import org.junit.FixMethodOrder
 import org.junit.Test
-import org.junit.jupiter.api.*
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -25,10 +26,7 @@ import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
-import sinhee.kang.tutorial.domain.auth.dto.request.ChangePasswordRequest
-import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
-import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
+import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
@@ -37,7 +35,7 @@ import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@TestMethodOrder(MethodOrderer.OrderAnnotation::class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class UserApiTest {
     @Autowired
     private lateinit var mvc: MockMvc
@@ -48,40 +46,52 @@ class UserApiTest {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+    var email: String = "rkdtlsgml50@naver.com"
+    var password: String = "1234"
 
     @Before
     fun setup() {
         emailVerificationRepository.save(EmailVerification(
-                email = "rkdtlsgml50@naver.com",
+                email = email,
                 authCode = "ASD123",
                 status = EmailVerificationStatus.UNVERIFID
         ))
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun emailVerifyTest() {
-        val request = VerifyCodeRequest("rkdtlsgml50@naver.com", "ASD123")
-        requestMvc(put("/users/email/verify"), request)
-    }
-
 
     @Test
-    @Throws(Exception::class)
-    fun signUpTest() {
-        emailVerifyTest()
-        val request = SignUpRequest("rkdtlsgml50@naver.com", "1234", "user")
+    @Throws
+    fun T1_signUpTest() {
+        emailVerifyTest(email)
+        val request = SignUpRequest(email, password, "user")
         requestMvc(post("/users"), request)
     }
 
 
     @Test
-    @Throws(Exception::class)
-    fun exitAccountTest() {
-        val accessToken = accessKey()
-        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "12345")
+    @Throws
+    fun T2_nicknameVerifyTest() {
+        mvc.perform(get("/users/nickname?nickname=user"))
+                .andExpect(status().isOk)
+    }
 
-        emailVerifyTest()
+
+    @Test
+    @Throws
+    fun T3_changePasswordTest() {
+        val request = ChangePasswordRequest(email, "12345")
+        emailVerifyTest(email)
+        requestMvc(put("/users/password"), request)
+    }
+
+
+    @Test
+    fun T4_exitAccountTest() {
+        password = "12345"
+        emailVerifyTest(email)
+        val accessToken = accessKey()
+        val request = ChangePasswordRequest(email, password)
+
         mvc.perform(delete("/users")
                 .header("Authorization", "Bearer $accessToken")
                 .content(ObjectMapper()
@@ -93,27 +103,9 @@ class UserApiTest {
     }
 
 
-    @Test
-    @Throws(Exception::class)
-    fun changePasswordTest() {
-        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "12345")
-
-        emailVerifyTest()
-        requestMvc(put("/users/password"), request)
-    }
-
-
-    @Test
-    @Throws(Exception::class)
-    fun nicknameVerifyTest() {
-        mvc.perform(get("/users/nickname?nickname=user"))
-                .andExpect(status().isOk)
-    }
-
-
-    @Throws(Exception::class)
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any): MvcResult {
-        return mvc.perform(method
+    @Throws
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
+        mvc.perform(method
                 .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(obj))
@@ -123,12 +115,23 @@ class UserApiTest {
     }
 
 
-    @Throws(Exception::class)
-    private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "12345")
-        return requestMvc(post("/auth"), signInRequest)
+    private fun emailVerifyTest(email: String) {
+        val request = VerifyCodeRequest(email, "ASD123")
+        requestMvc(put("/users/email/verify"), request)
     }
 
+
+    @Throws
+    private fun signIn(): MvcResult {
+        val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "12345")
+        return mvc.perform(post("/auth")
+                .content(ObjectMapper()
+                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                        .writeValueAsString(signInRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk)
+                .andReturn()
+    }
 
     private fun accessKey(): String {
         val content: String = signIn().response.contentAsString
