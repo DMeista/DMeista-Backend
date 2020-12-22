@@ -2,6 +2,8 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.TestMethodOrder
@@ -22,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
@@ -40,6 +43,23 @@ class AuthApiTest {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+
+    @Before
+    fun setup() {
+        userRepository.save(User(
+                email = "rkdtlsgml50@naver.com",
+                password = passwordEncoder.encode("1234"),
+                nickname = "user"
+        ))
+    }
+
+
+    @After
+    fun clean() {
+        userRepository.delete(userRepository.findByNickname("user")!!)
+    }
+
+
     @Test
     @Throws(Exception::class)
     fun signInTest() {
@@ -50,7 +70,7 @@ class AuthApiTest {
     @Test
     @Throws(Exception::class)
      fun refreshTokenTest() {
-        val refreshToken = authKey()
+        val refreshToken = refreshKey()
 
         mvc.perform(put("/auth")
                 .header("X-Refresh-Token", refreshToken))
@@ -72,7 +92,7 @@ class AuthApiTest {
     }
 
 
-    fun authKey(): String {
+    fun refreshKey(): String {
         val content: String = signIn().response.contentAsString
         val response: TokenResponse = ObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
