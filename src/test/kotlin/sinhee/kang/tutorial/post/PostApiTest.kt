@@ -96,16 +96,16 @@ class PostApiTest {
     @Throws
     fun uploadPostTest() {
         val accessToken = accessKey()
-        val upload = mvc.perform(post("/posts")
+        val upload = Integer.parseInt(mvc.perform(post("/posts")
                 .header("Authorization", "Bearer $accessToken")
                 .param("title", "junit4 test")
                 .param("content", "content")
                 .param("tags", "junit4, freak"))
                 .andDo(print())
                 .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-        println(upload)
-
+                .andReturn().response.contentAsString)
+        val post = postRepository.findById(upload).orElseThrow { Exception() }
+        assert(upload == post.postId)
     }
 
 
