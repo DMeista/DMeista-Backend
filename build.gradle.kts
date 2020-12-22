@@ -64,17 +64,14 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
     runtimeOnly("mysql:mysql-connector-java")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.5.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.h2database:h2")
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform() {
-        includeTags("First")
-        includeTags("Second")
-    }
+    useJUnitPlatform()
 }
 
 tasks.withType<KotlinCompile> {
