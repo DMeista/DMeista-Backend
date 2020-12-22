@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
@@ -17,11 +18,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.web.context.WebApplicationContext
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
+import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
-import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 
 @RunWith(SpringRunner::class)
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
@@ -32,7 +34,18 @@ class AuthApiTest {
     @Autowired
     private lateinit var mvc: MockMvc
     @Autowired
+    private lateinit var context: WebApplicationContext
+    @Autowired
     private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
+
+    @Test
+    @Throws(Exception::class)
+    fun signInTest() {
+        signIn()
+    }
+
 
     @Test
     @Throws(Exception::class)
@@ -48,13 +61,6 @@ class AuthApiTest {
                 .andExpect(status().isOk).andDo(print())
                 .andReturn()
      }
-
-
-    @Test
-    @Throws(Exception::class)
-    fun signInTest() {
-        signIn()
-    }
 
 
     fun signIn(): MvcResult {
