@@ -71,7 +71,10 @@ dependencies {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        includeTags("First")
+        includeTags("Second")
+    }
 }
 
 tasks.withType<KotlinCompile> {
