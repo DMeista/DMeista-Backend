@@ -2,7 +2,6 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.*
@@ -59,14 +58,6 @@ class UserApiTest {
         ))
     }
 
-
-    @After
-    fun clean() {
-        emailVerificationRepository.deleteAll()
-        userRepository.delete(userRepository.findByNickname("user")!!)
-    }
-
-
     @Test
     @Throws(Exception::class)
     fun emailVerifyTest() {
@@ -115,7 +106,7 @@ class UserApiTest {
     @Test
     @Throws(Exception::class)
     fun nicknameVerifyTest() {
-        mvc.perform(get("/users/nickname?nickname=Nickname"))
+        mvc.perform(get("/users/nickname?nickname=user"))
                 .andExpect(status().isOk)
     }
 
@@ -127,14 +118,14 @@ class UserApiTest {
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(obj))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk).andDo(print())
+                .andExpect(status().isOk)
                 .andReturn()
     }
 
 
     @Throws(Exception::class)
     private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "1234")
+        val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "12345")
         return requestMvc(post("/auth"), signInRequest)
     }
 
