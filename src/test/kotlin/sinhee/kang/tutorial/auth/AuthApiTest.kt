@@ -50,11 +50,7 @@ class AuthApiTest {
     @Test
     @Throws(Exception::class)
      fun refreshTokenTest() {
-        val content: String = signIn().response.contentAsString
-        val response: TokenResponse = ObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(content, TokenResponse::class.java)
-        val refreshToken: String = response.refreshToken
+        val refreshToken = authKey()
 
         mvc.perform(put("/auth")
                 .header("X-Refresh-Token", refreshToken))
@@ -63,7 +59,8 @@ class AuthApiTest {
      }
 
 
-    fun signIn(): MvcResult {
+    @Throws(Exception::class)
+    private fun signIn(): MvcResult {
         val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "1234")
         return mvc.perform(post("/auth")
                 .content(ObjectMapper()
@@ -72,5 +69,14 @@ class AuthApiTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk).andDo(print())
                 .andReturn()
+    }
+
+
+    fun authKey(): String {
+        val content: String = signIn().response.contentAsString
+        val response: TokenResponse = ObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(content, TokenResponse::class.java)
+        return response.refreshToken
     }
 }
