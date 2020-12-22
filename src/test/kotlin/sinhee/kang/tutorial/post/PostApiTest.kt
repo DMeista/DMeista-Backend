@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
+import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -33,14 +34,36 @@ class PostApiTest {
     private lateinit var mvc: MockMvc
     @Autowired
     private lateinit var postRepository: PostRepository
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
     @Test
     @Throws
     fun getAllPostListTest() {
-        mvc.perform(get("/posts"))
+        val post: String = mvc.perform(get("/posts"))
                 .andDo(print())
                 .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+        val response: PostListResponse = objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(post, PostListResponse::class.java)
+        assert(response.totalItems == 4)
     }
+
+
+    @Test
+    @Throws
+    fun getTagPostListTest() {
+        val post: String = mvc.perform(get("/posts?tags=안경"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+        val response: PostListResponse = objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(post, PostListResponse::class.java)
+        assert(response.totalItems == 2)
+    }
+
 
 
     @Throws
