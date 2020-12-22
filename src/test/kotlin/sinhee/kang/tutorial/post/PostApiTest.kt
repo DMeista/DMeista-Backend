@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
+import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
@@ -68,16 +69,23 @@ class PostApiTest {
 
     @Test
     @Throws
-    fun getHitPostListTest() {
-        val post: String = mvc.perform(get("/posts/hit"))
+    fun getPostContentTest() {
+        val post: String = mvc.perform(get("/posts/78"))
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
-        val response: PostListResponse = objectMapper
+        val response: PostContentResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(post, PostListResponse::class.java)
-        println(response.applicationResponses.first().title)
+                .readValue(post, PostContentResponse::class.java)
+        assert(response.title == "타이틀")
     }
+
+    @Test
+    @Throws
+    fun uploadPostTest() {
+        
+    }
+
 
     @Throws
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
