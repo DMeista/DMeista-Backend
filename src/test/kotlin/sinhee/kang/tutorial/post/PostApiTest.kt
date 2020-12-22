@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.post
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import org.assertj.core.api.ArraySortedAssert
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -65,6 +66,18 @@ class PostApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun getHitPostListTest() {
+        val post: String = mvc.perform(get("/posts/hit"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+        val response: PostListResponse = objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(post, PostListResponse::class.java)
+        println(response.applicationResponses.first().title)
+    }
 
     @Throws
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
