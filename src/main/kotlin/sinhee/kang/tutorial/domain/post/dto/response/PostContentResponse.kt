@@ -4,30 +4,30 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 class PostContentResponse(
-        var title: String,
+        var title: String = "",
 
-        var author: String,
+        var author: String = "",
 
-        var tags: String?,
+        var tags: String? = null,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-        var createdAt: LocalDateTime,
+        var createdAt: LocalDateTime? = null,
 
-        var view: Int,
+        var view: Int = 0,
 
-        var content: String,
+        var content: String = "",
 
-        var isMine: Boolean,
+        var isMine: Boolean = false,
 
-        var nextPostTitle: String,
+        var nextPostTitle: String = "",
 
-        var prePostTitle: String,
+        var prePostTitle: String = "",
 
-        var nextPostId: Int?,
+        var nextPostId: Int? = null,
 
-        var prePostId: Int?,
+        var prePostId: Int? = null,
 
-        var images: MutableList<String>,
+        var images: MutableList<String> = arrayListOf(),
 
-        var comments: MutableList<PostCommentsResponse>
+        var comments: MutableList<PostCommentsResponse> = arrayListOf()
 )
