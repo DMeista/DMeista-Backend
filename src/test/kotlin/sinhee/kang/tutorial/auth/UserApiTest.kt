@@ -63,10 +63,10 @@ class UserApiTest {
     @After
     fun clean() {
         emailVerificationRepository.deleteAll()
+        userRepository.delete(userRepository.findByNickname("user")!!)
     }
 
 
-    @Tag("First")
     @Test
     @Throws(Exception::class)
     fun emailVerifyTest() {
@@ -74,21 +74,21 @@ class UserApiTest {
         requestMvc(put("/users/email/verify"), request)
     }
 
-    @Tag("Second")
+
     @Test
     @Throws(Exception::class)
     fun signUpTest() {
         emailVerifyTest()
-        val request = SignUpRequest("rkdtlsgml50@naver.com", "1234", "Nickname")
+        val request = SignUpRequest("rkdtlsgml50@naver.com", "1234", "user")
         requestMvc(post("/users"), request)
     }
 
-    @Tag("Second")
+
     @Test
     @Throws(Exception::class)
-    fun exitAccount() {
+    fun exitAccountTest() {
         val accessToken = accessKey()
-        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "1234")
+        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "12345")
 
         emailVerifyTest()
         mvc.perform(delete("/users")
@@ -101,7 +101,17 @@ class UserApiTest {
                 .andReturn()
     }
 
-    @Tag("Second")
+
+    @Test
+    @Throws(Exception::class)
+    fun changePasswordTest() {
+        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "12345")
+
+        emailVerifyTest()
+        requestMvc(put("/users/password"), request)
+    }
+
+
     @Test
     @Throws(Exception::class)
     fun nicknameVerifyTest() {
