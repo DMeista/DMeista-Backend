@@ -21,10 +21,6 @@ class PostController(
         return postService.getAllHashTagList(page, tags)
     }
 
-    @GetMapping("/hit")
-    fun getHitPosts(page: Pageable): PostListResponse {
-        return postService.getHitPostList(page)
-    }
 
     @GetMapping("/{postId}")
     fun getPostContent(@PathVariable postId: Int): PostContentResponse {

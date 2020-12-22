@@ -44,12 +44,6 @@ class PostServiceImpl(
     }
 
 
-    override fun getHitPostList(pageable: Pageable): PostListResponse {
-
-        TODO()
-    }
-
-
     override fun getPostContent(postId: Int): PostContentResponse {
         lateinit var user: User
         val post = postRepository.findById(postId)
