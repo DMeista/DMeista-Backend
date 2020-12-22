@@ -13,16 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
@@ -42,6 +41,7 @@ class UserApiTest {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
+    @Tag("First")
     @Test
     @Throws(Exception::class)
     fun emailVerifyTest() {
@@ -50,13 +50,15 @@ class UserApiTest {
         requestMvc(put("/users/email/verify"), request)
     }
 
-
+    @Tag("Second")
     @Test
     @Throws(Exception::class)
-    fun signUp() {
+    fun signUpTest() {
+        val request = SignUpRequest("rkdtlsgml50@naver.com", "1234", "Nickname")
+        requestMvc(post("/users"), request)
     }
 
-
+    @Tag("Second")
     @Test
     @Throws(Exception::class)
     fun nicknameVerifyTest() {
