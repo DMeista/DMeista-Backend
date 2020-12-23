@@ -35,7 +35,6 @@ import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class UserApiTest {
     @Autowired
     private lateinit var mvc: MockMvc
