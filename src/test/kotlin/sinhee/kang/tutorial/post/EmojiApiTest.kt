@@ -62,6 +62,13 @@ class EmojiApiTest {
                 .readValue(emoji, EmojiResponse::class.java)
         assert(post == response.postId)
         emojiRepository.deleteAll()
+        postRepository.deleteById(post)
+    }
+
+
+    @Test
+    @Throws
+    fun removeEmojiTest() {
     }
 
 
