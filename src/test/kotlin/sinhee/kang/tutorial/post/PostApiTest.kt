@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -76,17 +77,19 @@ class PostApiTest {
     @Test
     @Throws
     fun getPostContentTest() {
-        val post: String = requestMvc(get("/posts/78"))
+        val postId = uploadOrEditPost(post("/posts"))
+        val post: String = requestMvc(get("/posts/$postId"))
         val response = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(post, PostContentResponse::class.java)
-        assert(response.title == "타이틀")
+        assert(response.title == "title")
+        postRepository.deleteById(postId)
     }
 
     @Test
     @Throws
     fun uploadPostTest() {
-        val post = uploadPost()
+        val post = uploadOrEditPost(post("/posts"))
         postRepository.findById(post)
                 .orElseThrow { Exception() }
                 .let { assert(post == it.postId) }
@@ -97,13 +100,19 @@ class PostApiTest {
     @Test
     @Throws
     fun editPostTest() {
+        val post = uploadOrEditPost(post("/posts"), "before_title", "before_content", "before, tag")
+        uploadOrEditPost(patch("/posts/$post"), "after_title", "after_content", "after, tag")
+        postRepository.findById(post)
+                .orElseThrow { (Exception()) }
+                .let { assert(it.title == "after_title") }
+        postRepository.deleteById(post)
     }
 
 
     @Test
     @Throws
     fun deletePostTest() {
-        val post = uploadPost()
+        val post = uploadOrEditPost(post("/posts"))
         deletePost(post)
     }
 
@@ -122,17 +131,21 @@ class PostApiTest {
 
 
     @Throws
-    fun uploadPost(): Int {
+    fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
+                         title: String = "title",
+                         content: String = "content",
+                         tags: String = "tag, test"): Int {
         val accessToken = accessKey()
-        return Integer.parseInt(mvc.perform(post("/posts")
+        return Integer.parseInt(mvc.perform(method
                 .header("Authorization", "Bearer $accessToken")
-                .param("title", "title")
-                .param("content", "content")
-                .param("tags", "test, junit4"))
+                .param("title", title)
+                .param("content", content)
+                .param("tags", tags))
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString)
     }
+
 
     @Throws
     fun deletePost(postId: Int) {
@@ -143,6 +156,7 @@ class PostApiTest {
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
     }
+
 
     @Throws
     private fun requestMvc(method: MockHttpServletRequestBuilder): String {
