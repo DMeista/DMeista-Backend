@@ -100,8 +100,8 @@ class PostApiTest {
     @Test
     @Throws
     fun editPostTest() {
-        val post = uploadOrEditPost(post("/posts"), "before_title", "before_content", "before, tag")
-        uploadOrEditPost(patch("/posts/$post"), "after_title", "after_content", "after, tag")
+        val post = uploadOrEditPost(post("/posts"), "before_title")
+        uploadOrEditPost(patch("/posts/$post"), "after_title")
         postRepository.findById(post)
                 .orElseThrow { (Exception()) }
                 .let { assert(it.title == "after_title") }
