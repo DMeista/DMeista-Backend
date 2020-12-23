@@ -2,8 +2,6 @@ package sinhee.kang.tutorial.post
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import org.assertj.core.api.ArraySortedAssert
-import org.junit.Before
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,7 +17,7 @@ import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -53,10 +51,7 @@ class PostApiTest {
     @Test
     @Throws
     fun getAllHashTagPostList_LoadTest() {
-        val post: String = mvc.perform(get("/posts"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
+        val post: String = requestMvc(get("/posts"))
         val response: PostListResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(post, PostListResponse::class.java)
@@ -72,7 +67,7 @@ class PostApiTest {
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
-        val response: PostListResponse = objectMapper
+        val response = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(post, PostListResponse::class.java)
         assert(response.totalItems == 2)
@@ -82,11 +77,8 @@ class PostApiTest {
     @Test
     @Throws
     fun getPostContentTest() {
-        val post: String = mvc.perform(get("/posts/78"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-        val response: PostContentResponse = objectMapper
+        val post: String = requestMvc(get("/posts/78"))
+        val response = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(post, PostContentResponse::class.java)
         assert(response.title == "타이틀")
@@ -95,30 +87,32 @@ class PostApiTest {
     @Test
     @Throws
     fun uploadPostTest() {
-        val accessToken = accessKey()
-        val upload = Integer.parseInt(mvc.perform(post("/posts")
-                .header("Authorization", "Bearer $accessToken")
-                .param("title", "junit4 test")
-                .param("content", "content")
-                .param("tags", "junit4, freak"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString)
+        val upload = uploadPost()
         val post = postRepository.findById(upload).orElseThrow { Exception() }
         assert(upload == post.postId)
+        postRepository.deleteById(upload)
     }
 
 
+    @Test
+    @Throws
+    fun deletePostTest() {
+        val post = uploadPost()
+        val accessToken = accessKey()
+        mvc.perform(delete("/posts/$post")
+                .header("Authorization", "Bearer $accessToken"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+    }
+
 
     @Throws
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
-        mvc.perform(method
-                .content(ObjectMapper()
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(obj))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
+    private fun requestMvc(method: MockHttpServletRequestBuilder): String {
+        return mvc.perform(method)
+                .andDo(print())
                 .andExpect(status().isOk)
-                .andReturn()
+                .andReturn().response.contentAsString
     }
 
 
@@ -134,6 +128,19 @@ class PostApiTest {
                 .andReturn()
     }
 
+
+    @Throws
+    fun uploadPost(): Int {
+        val accessToken = accessKey()
+        return Integer.parseInt(mvc.perform(post("/posts")
+                .header("Authorization", "Bearer $accessToken")
+                .param("title", "junit4 test")
+                .param("content", "content")
+                .param("tags", "junit4"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString)
+    }
 
     private fun accessKey(): String {
         val content: String = signIn().response.contentAsString
