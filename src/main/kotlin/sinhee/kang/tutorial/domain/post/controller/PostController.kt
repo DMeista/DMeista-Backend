@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
+import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.domain.post.service.emoji.EmojiService
 import sinhee.kang.tutorial.domain.post.service.post.PostService
@@ -56,7 +57,7 @@ class PostController(
     }
 
     @GetMapping("/{postId}/emoji")
-    fun getEmojiUser(@PathVariable postId: Int): Any {
+    fun getEmojiUser(@PathVariable postId: Int): PostEmojiListResponse {
         return emojiService.getPostEmojiUserList(postId)
     }
 }
