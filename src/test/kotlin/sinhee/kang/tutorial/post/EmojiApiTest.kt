@@ -68,6 +68,18 @@ class EmojiApiTest {
 
     @Test
     @Throws
+    fun changeEmojiTest() {
+        val post = uploadPost()
+        emojiPost(post, EmojiStatus.LIKE)
+        emojiPost(post, EmojiStatus.NICE)
+        
+        emojiRepository.deleteAll()
+        postRepository.deleteById(post)
+    }
+
+
+    @Test
+    @Throws
     fun removeEmojiTest() {
     }
 
