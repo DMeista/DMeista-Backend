@@ -24,7 +24,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
+import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
+import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
@@ -41,6 +45,8 @@ class EmojiApiTest {
     @Autowired
     private lateinit var postRepository: PostRepository
     @Autowired
+    private lateinit var emojiRepository: EmojiRepository
+    @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
     @Autowired
     private lateinit var objectMapper: ObjectMapper
@@ -48,9 +54,40 @@ class EmojiApiTest {
 
     @Test
     @Throws
-    fun emojiTest() {
+    fun addEmojiTest() {
+        val post = uploadPost()
+        val emoji = emojiPost(post, EmojiStatus.LIKE)
+        val response = objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(emoji, EmojiResponse::class.java)
+        assert(post == response.postId)
+        emojiRepository.deleteAll()
     }
 
+
+    @Throws
+    fun emojiPost(postId: Int, status: EmojiStatus): String {
+        val accessToken = accessKey()
+        return mvc.perform(post("/posts/$postId/emoji")
+                .header("Authorization", "Bearer $accessToken")
+                .param("status", "$status"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+    }
+
+    @Throws
+    fun uploadPost(): Int {
+        val accessToken = accessKey()
+        return Integer.parseInt(mvc.perform(post("/posts")
+                .header("Authorization", "Bearer $accessToken")
+                .param("title", "title")
+                .param("content", "content")
+                .param("tags", "tags"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString)
+    }
 
     @Throws
     private fun signIn(): MvcResult {
