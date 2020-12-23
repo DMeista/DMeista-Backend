@@ -83,6 +83,13 @@ class EmojiApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun getPostEmojiListTest() {
+        
+    }
+
+
     @Throws
     fun emojiPost(postId: Int, status: EmojiStatus): String {
         val accessToken = accessKey()
