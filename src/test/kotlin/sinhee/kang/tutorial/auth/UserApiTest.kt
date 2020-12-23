@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -68,13 +67,17 @@ class UserApiTest {
     }
 
 
-//    @Test
-//    @Throws
-//    fun T3_changePasswordTest() {
-//        val request = ChangePasswordRequest(email, "12345")
-//        emailVerifyTest(email)
-//        requestMvc(put("/users/password"), request)
-//    }
+    @Test
+    @Throws
+    fun changePasswordTest() {
+        signUp("rkdtlsgml50@naver.com", "1234", "user")
+        emailVerify("rkdtlsgml50@naver.com")
+        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "12345")
+        requestMvc(put("/users/password"), request)
+
+        val user = userRepository.findByNickname("user")?:{ throw Exception() }()
+        userRepository.delete(user)
+    }
 //
 //
 //    @Test
@@ -108,7 +111,7 @@ class UserApiTest {
     }
 
 
-    private fun emailVerifyTest(email: String) {
+    private fun emailVerify(email: String) {
         emailVerificationRepository.save(EmailVerification(
                 email = email,
                 authCode = "ASD123",
@@ -122,7 +125,7 @@ class UserApiTest {
 
     @Throws
     private fun signUp(email: String, password: String, nickname: String) {
-        emailVerifyTest(email)
+        emailVerify(email)
         val request = SignUpRequest(email, passwordEncoder.encode(password), nickname)
         requestMvc(post("/users"), request)
     }
