@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
@@ -29,7 +28,6 @@ import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -41,13 +39,9 @@ class EmojiApiTest {
     @Autowired
     private lateinit var mvc: MockMvc
     @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
     private lateinit var postRepository: PostRepository
     @Autowired
     private lateinit var emojiRepository: EmojiRepository
-    @Autowired
-    private lateinit var passwordEncoder: PasswordEncoder
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
@@ -72,7 +66,7 @@ class EmojiApiTest {
         val post = uploadPost()
         emojiPost(post, EmojiStatus.LIKE)
         emojiPost(post, EmojiStatus.NICE)
-        
+
         emojiRepository.deleteAll()
         postRepository.deleteById(post)
     }
@@ -81,6 +75,11 @@ class EmojiApiTest {
     @Test
     @Throws
     fun removeEmojiTest() {
+        val post = uploadPost()
+        emojiPost(post, EmojiStatus.LIKE)
+        emojiPost(post, EmojiStatus.LIKE)
+
+        postRepository.deleteById(post)
     }
 
 
