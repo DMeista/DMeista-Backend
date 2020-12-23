@@ -41,6 +41,8 @@ class UserApiTest {
     private lateinit var userRepository: UserRepository
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
 
 
 //    var email: String = "rkdtlsgml50@naver.com"
@@ -58,37 +60,39 @@ class UserApiTest {
 
     @Test
     @Throws
-    fun T2_nicknameVerifyTest() {
-        mvc.perform(get("/users/nickname?nickname=user"))
+    fun nicknameVerifyTest() {
+        mvc.perform(get("/users/nickname")
+                .param("nickname", "user"))
                 .andExpect(status().isOk)
+                .andDo(print())
     }
 
 
-    @Test
-    @Throws
-    fun T3_changePasswordTest() {
-        val request = ChangePasswordRequest(email, "12345")
-        emailVerifyTest(email)
-        requestMvc(put("/users/password"), request)
-    }
-
-
-    @Test
-    fun T4_exitAccountTest() {
-        password = "12345"
-        emailVerifyTest(email)
-        val accessToken = accessKey()
-        val request = ChangePasswordRequest(email, password)
-
-        mvc.perform(delete("/users")
-                .header("Authorization", "Bearer $accessToken")
-                .content(ObjectMapper()
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk).andDo(print())
-                .andReturn()
-    }
+//    @Test
+//    @Throws
+//    fun T3_changePasswordTest() {
+//        val request = ChangePasswordRequest(email, "12345")
+//        emailVerifyTest(email)
+//        requestMvc(put("/users/password"), request)
+//    }
+//
+//
+//    @Test
+//    fun T4_exitAccountTest() {
+//        password = "12345"
+//        emailVerifyTest(email)
+//        val accessToken = accessKey()
+//        val request = ChangePasswordRequest(email, password)
+//
+//        mvc.perform(delete("/users")
+//                .header("Authorization", "Bearer $accessToken")
+//                .content(ObjectMapper()
+//                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+//                        .writeValueAsString(request))
+//                .contentType(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk).andDo(print())
+//                .andReturn()
+//    }
 
 
     @Throws
@@ -99,6 +103,7 @@ class UserApiTest {
                         .writeValueAsString(obj))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
+                .andDo(print())
                 .andReturn().response.contentAsString
     }
 
