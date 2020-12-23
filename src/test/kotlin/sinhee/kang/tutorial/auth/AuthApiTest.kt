@@ -90,7 +90,7 @@ class AuthApiTest {
     }
 
 
-    fun refreshKey(): String {
+    private fun refreshKey(): String {
         val content: String = signIn().response.contentAsString
         val response: TokenResponse = ObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)

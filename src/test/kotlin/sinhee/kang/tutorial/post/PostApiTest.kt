@@ -118,7 +118,7 @@ class PostApiTest {
 
 
     @Throws
-    fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
+    private fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
                          title: String = "title",
                          content: String = "content",
                          tags: String = "tag, test"): Int {

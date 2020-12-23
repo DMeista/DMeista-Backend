@@ -13,11 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -27,7 +23,6 @@ import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
-import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -50,11 +45,12 @@ class EmojiApiTest {
     @Throws
     fun addEmojiTest() {
         val post = uploadPost()
-        val emoji = emojiPost(post, EmojiStatus.LIKE)
+        val emoji = requestEmoji(post, EmojiStatus.LIKE)
         val response = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(emoji, EmojiResponse::class.java)
         assert(post == response.postId)
+
         emojiRepository.deleteAll()
         postRepository.deleteById(post)
     }
@@ -64,8 +60,8 @@ class EmojiApiTest {
     @Throws
     fun changeEmojiTest() {
         val post = uploadPost()
-        emojiPost(post, EmojiStatus.LIKE)
-        emojiPost(post, EmojiStatus.NICE)
+        requestEmoji(post, EmojiStatus.LIKE)
+        requestEmoji(post, EmojiStatus.NICE)
 
         emojiRepository.deleteAll()
         postRepository.deleteById(post)
@@ -76,8 +72,8 @@ class EmojiApiTest {
     @Throws
     fun removeEmojiTest() {
         val post = uploadPost()
-        emojiPost(post, EmojiStatus.LIKE)
-        emojiPost(post, EmojiStatus.LIKE)
+        requestEmoji(post, EmojiStatus.LIKE)
+        requestEmoji(post, EmojiStatus.LIKE)
 
         postRepository.deleteById(post)
     }
@@ -86,12 +82,12 @@ class EmojiApiTest {
     @Test
     @Throws
     fun getPostEmojiListTest() {
-        
+
     }
 
 
     @Throws
-    fun emojiPost(postId: Int, status: EmojiStatus): String {
+    private fun requestEmoji(postId: Int, status: EmojiStatus): String {
         val accessToken = accessKey()
         return mvc.perform(post("/posts/$postId/emoji")
                 .header("Authorization", "Bearer $accessToken")
@@ -102,7 +98,7 @@ class EmojiApiTest {
     }
 
     @Throws
-    fun uploadPost(): Int {
+    private fun uploadPost(): Int {
         val accessToken = accessKey()
         return Integer.parseInt(mvc.perform(post("/posts")
                 .header("Authorization", "Bearer $accessToken")
