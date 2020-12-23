@@ -118,19 +118,6 @@ class PostApiTest {
 
 
     @Throws
-    private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "1234")
-        return mvc.perform(post("/auth")
-                .content(ObjectMapper()
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(signInRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk)
-                .andReturn()
-    }
-
-
-    @Throws
     fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
                          title: String = "title",
                          content: String = "content",
@@ -164,6 +151,19 @@ class PostApiTest {
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
+    }
+
+
+    @Throws
+    private fun signIn(): MvcResult {
+        val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "1234")
+        return mvc.perform(post("/auth")
+                .content(ObjectMapper()
+                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                        .writeValueAsString(signInRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk)
+                .andReturn()
     }
 
 
