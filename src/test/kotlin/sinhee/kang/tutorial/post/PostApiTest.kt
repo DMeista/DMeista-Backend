@@ -47,7 +47,6 @@ class PostApiTest {
     private lateinit var objectMapper: ObjectMapper
 
 
-
     @Test
     @Throws
     fun getAllHashTagPostList_LoadTest() {
@@ -88,7 +87,8 @@ class PostApiTest {
     @Throws
     fun uploadPostTest() {
         val upload = uploadPost()
-        val post = postRepository.findById(upload).orElseThrow { Exception() }
+        val post = postRepository.findById(upload)
+                .orElseThrow { Exception() }
         assert(upload == post.postId)
         postRepository.deleteById(upload)
     }
@@ -98,21 +98,7 @@ class PostApiTest {
     @Throws
     fun deletePostTest() {
         val post = uploadPost()
-        val accessToken = accessKey()
-        mvc.perform(delete("/posts/$post")
-                .header("Authorization", "Bearer $accessToken"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-    }
-
-
-    @Throws
-    private fun requestMvc(method: MockHttpServletRequestBuilder): String {
-        return mvc.perform(method)
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
+        deletePost(post)
     }
 
 
@@ -134,12 +120,30 @@ class PostApiTest {
         val accessToken = accessKey()
         return Integer.parseInt(mvc.perform(post("/posts")
                 .header("Authorization", "Bearer $accessToken")
-                .param("title", "junit4 test")
+                .param("title", "title")
                 .param("content", "content")
-                .param("tags", "junit4"))
+                .param("tags", "test, junit4"))
                 .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString)
+    }
+
+    @Throws
+    fun deletePost(postId: Int) {
+        val accessToken = accessKey()
+        mvc.perform(delete("/posts/$postId")
+                .header("Authorization", "Bearer $accessToken"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+    }
+
+    @Throws
+    private fun requestMvc(method: MockHttpServletRequestBuilder): String {
+        return mvc.perform(method)
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
     }
 
     private fun accessKey(): String {
