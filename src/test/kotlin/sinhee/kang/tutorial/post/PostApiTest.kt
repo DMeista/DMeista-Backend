@@ -86,11 +86,17 @@ class PostApiTest {
     @Test
     @Throws
     fun uploadPostTest() {
-        val upload = uploadPost()
-        val post = postRepository.findById(upload)
+        val post = uploadPost()
+        postRepository.findById(post)
                 .orElseThrow { Exception() }
-        assert(upload == post.postId)
-        postRepository.deleteById(upload)
+                .let { assert(post == it.postId) }
+        postRepository.deleteById(post)
+    }
+
+
+    @Test
+    @Throws
+    fun editPostTest() {
     }
 
 
@@ -145,6 +151,7 @@ class PostApiTest {
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
     }
+
 
     private fun accessKey(): String {
         val content: String = signIn().response.contentAsString
