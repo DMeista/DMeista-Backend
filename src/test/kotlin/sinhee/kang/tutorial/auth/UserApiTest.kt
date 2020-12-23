@@ -2,11 +2,8 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import org.junit.Before
-import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -45,25 +42,17 @@ class UserApiTest {
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
 
-    var email: String = "rkdtlsgml50@naver.com"
-    var password: String = "1234"
 
-    @Before
-    fun setup() {
-        emailVerificationRepository.save(EmailVerification(
-                email = email,
-                authCode = "ASD123",
-                status = EmailVerificationStatus.UNVERIFID
-        ))
-    }
-
+//    var email: String = "rkdtlsgml50@naver.com"
+//    var password: String = "1234"
+//    var nickname: String = "user"
 
     @Test
     @Throws
-    fun T1_signUpTest() {
-        emailVerifyTest(email)
-        val request = SignUpRequest(email, password, "user")
-        requestMvc(post("/users"), request)
+    fun signUpTest() {
+        signUp("rkdtlsgml50@naver.com", "1234", "user")
+        val user = userRepository.findByNickname("user")?:{ throw Exception() }()
+        userRepository.delete(user)
     }
 
 
@@ -103,20 +92,34 @@ class UserApiTest {
 
 
     @Throws
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any) {
-        mvc.perform(method
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any): String {
+        return mvc.perform(method
                 .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(obj))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
-                .andReturn()
+                .andReturn().response.contentAsString
     }
 
 
     private fun emailVerifyTest(email: String) {
+        emailVerificationRepository.save(EmailVerification(
+                email = email,
+                authCode = "ASD123",
+                status = EmailVerificationStatus.UNVERIFID
+        ))
+
         val request = VerifyCodeRequest(email, "ASD123")
         requestMvc(put("/users/email/verify"), request)
+    }
+
+
+    @Throws
+    private fun signUp(email: String, password: String, nickname: String) {
+        emailVerifyTest(email)
+        val request = SignUpRequest(email, passwordEncoder.encode(password), nickname)
+        requestMvc(post("/users"), request)
     }
 
 
