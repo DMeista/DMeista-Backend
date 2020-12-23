@@ -2,15 +2,12 @@ package sinhee.kang.tutorial.post
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.MethodSorters
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
@@ -27,7 +24,6 @@ import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -38,11 +34,7 @@ class PostApiTest {
     @Autowired
     private lateinit var mvc: MockMvc
     @Autowired
-    private lateinit var userRepository: UserRepository
-    @Autowired
     private lateinit var postRepository: PostRepository
-    @Autowired
-    private lateinit var passwordEncoder: PasswordEncoder
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
