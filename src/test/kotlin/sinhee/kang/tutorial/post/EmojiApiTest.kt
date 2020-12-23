@@ -13,6 +13,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -23,6 +24,7 @@ import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
+import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -82,7 +84,13 @@ class EmojiApiTest {
     @Test
     @Throws
     fun getPostEmojiListTest() {
+        val post = uploadPost()
+        requestEmoji(post, EmojiStatus.LIKE)
+        val emojiList = requestEmojiList(post)
+        assert(emojiList.applicationResponses[0].emojiStatus == EmojiStatus.LIKE)
 
+        emojiRepository.deleteAll()
+        postRepository.deleteById(post)
     }
 
 
@@ -97,6 +105,20 @@ class EmojiApiTest {
                 .andReturn().response.contentAsString
     }
 
+
+    @Throws
+    private fun requestEmojiList(postId: Int): PostEmojiListResponse {
+        return mvc.perform(get("/posts/$postId/emoji"))
+                .andDo(print())
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+                .let { objectMapper
+                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                        .readValue(it, PostEmojiListResponse::class.java)
+                }
+    }
+
+
     @Throws
     private fun uploadPost(): Int {
         val accessToken = accessKey()
@@ -109,6 +131,7 @@ class EmojiApiTest {
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString)
     }
+
 
     @Throws
     private fun signIn(): MvcResult {
