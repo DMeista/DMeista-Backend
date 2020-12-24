@@ -76,6 +76,25 @@ class UserApiTest {
     }
 
 
+    @Test
+    fun exitAccountTest() {
+        signUp("rkdtlsgml50@naver.com", "1234", "user")
+        emailVerify("rkdtlsgml50@naver.com")
+        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "1234")
+        val accessToken = accessKey("rkdtlsgml50@naver.com", "1234")
+
+        mvc.perform(delete("/users")
+                .header("Authorization", "Bearer $accessToken")
+                .content(objectMapper
+                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                        .writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk)
+                .andDo(print())
+    }
+
+
+
     @Throws
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any): String {
         return mvc.perform(method
