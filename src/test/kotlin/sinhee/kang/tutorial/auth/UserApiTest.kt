@@ -25,6 +25,7 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificat
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
@@ -51,6 +52,7 @@ class UserApiTest {
 
     @After
     fun clean() {
+        emailVerificationRepository.deleteAll()
         userRepository.findByNickname(username)
                 ?.let { userRepository.delete(it) }
     }
@@ -59,7 +61,9 @@ class UserApiTest {
     @Test
     @Throws
     fun signUpTest() {
-        signUp()
+        emailVerify()
+        val request = SignUpRequest(testMail, passwordEncoder.encode(passwd), username)
+        requestMvc(post("/users"), request)
     }
 
 
@@ -76,7 +80,11 @@ class UserApiTest {
     @Test
     @Throws
     fun changePasswordTest() {
-        signUp()
+        userRepository.save(User(
+                email = testMail,
+                password = passwordEncoder.encode(passwd),
+                nickname = username
+        ))
 
         emailVerify()
         val request = ChangePasswordRequest(testMail, "4321")
@@ -87,8 +95,11 @@ class UserApiTest {
     @Test
     @Throws
     fun exitAccountTest() {
-        signUp()
-
+        userRepository.save(User(
+                email = testMail,
+                password = passwordEncoder.encode(passwd),
+                nickname = username
+        ))
         emailVerify()
         val request = ChangePasswordRequest(testMail, passwd)
         requestMvc(delete("/users"), request, "Bearer ${accessToken()}")
@@ -103,13 +114,6 @@ class UserApiTest {
         ))
 
         requestMvc(put("/users/email/verify"), VerifyCodeRequest(testMail, "CODE"))
-    }
-
-
-    private fun signUp() {
-        emailVerify()
-        val request = SignUpRequest(testMail, passwordEncoder.encode(passwd), username)
-        requestMvc(post("/users"), request)
     }
 
 
