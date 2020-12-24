@@ -71,15 +71,16 @@ class EmojiApiTest {
                 ?.let { user -> userRepository.delete(user) }
     }
 
+
     @Test
     @Throws
     fun addEmojiTest() {
         val post = uploadPost()
-        val emoji = requestEmoji(post, EmojiStatus.LIKE)
-        val response = objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(emoji, EmojiResponse::class.java)
-        assert(post == response.postId)
+        requestEmoji(post, EmojiStatus.LIKE)
+                .let { emoji ->
+                    val response = mappingResponse(emoji, EmojiResponse::class.java) as EmojiResponse
+                    assert(post == response.postId)
+                }
 
         emojiRepository.deleteAll()
         postRepository.deleteById(post)
@@ -122,29 +123,6 @@ class EmojiApiTest {
     }
 
 
-    private fun requestEmoji(postId: Int, status: EmojiStatus): String {
-        val accessToken = accessToken()
-        return mvc.perform(post("/posts/$postId/emoji")
-                .header("Authorization", "Bearer $accessToken")
-                .param("status", "$status"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-    }
-
-
-    private fun requestEmojiList(postId: Int): PostEmojiListResponse {
-        return mvc.perform(get("/posts/$postId/emoji"))
-                .andDo(print())
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-                .let { objectMapper
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .readValue(it, PostEmojiListResponse::class.java)
-                }
-    }
-
-
     private fun uploadPost(): Int {
         val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(post("/posts")
@@ -152,9 +130,24 @@ class EmojiApiTest {
                 .param("title", "title")
                 .param("content", "content")
                 .param("tags", "tags"))
-                .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString)
+    }
+
+
+    private fun requestEmoji(postId: Int, status: EmojiStatus): String {
+        val accessToken = accessToken()
+        return mvc.perform(post("/posts/$postId/emoji")
+                .header("Authorization", "Bearer $accessToken")
+                .param("status", "$status"))
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+    }
+
+
+    private fun requestEmojiList(postId: Int): PostEmojiListResponse {
+        return requestMvc(get("/posts/$postId/emoji"))
+                .let { mappingResponse(it, PostEmojiListResponse::class.java) as PostEmojiListResponse }
     }
 
 
