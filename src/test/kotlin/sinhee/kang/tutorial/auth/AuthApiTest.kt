@@ -66,14 +66,14 @@ class AuthApiTest {
 
     @Test
     @Throws(Exception::class)
-     fun refreshTokenTest() {
+    fun refreshTokenTest() {
         val refreshToken = refreshKey()
 
         mvc.perform(put("/auth")
                 .header("X-Refresh-Token", refreshToken))
                 .andExpect(status().isOk).andDo(print())
                 .andReturn()
-     }
+    }
 
 
     @Throws(Exception::class)

@@ -110,9 +110,9 @@ class PostApiTest {
 
     @Throws
     private fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
-                         title: String = "title",
-                         content: String = "content",
-                         tags: String = "tag, test"): Int {
+                                 title: String = "title",
+                                 content: String = "content",
+                                 tags: String = "tag, test"): Int {
         val accessToken = accessKey()
         return Integer.parseInt(mvc.perform(method
                 .header("Authorization", "Bearer $accessToken")
