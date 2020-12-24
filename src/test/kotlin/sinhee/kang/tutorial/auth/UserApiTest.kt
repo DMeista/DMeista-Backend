@@ -11,11 +11,11 @@ import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -43,10 +43,6 @@ class UserApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-
-//    var email: String = "rkdtlsgml50@naver.com"
-//    var password: String = "1234"
-//    var nickname: String = "user"
 
     @Test
     @Throws
@@ -78,24 +74,6 @@ class UserApiTest {
         val user = userRepository.findByNickname("user")?:{ throw Exception() }()
         userRepository.delete(user)
     }
-//
-//
-//    @Test
-//    fun T4_exitAccountTest() {
-//        password = "12345"
-//        emailVerifyTest(email)
-//        val accessToken = accessKey()
-//        val request = ChangePasswordRequest(email, password)
-//
-//        mvc.perform(delete("/users")
-//                .header("Authorization", "Bearer $accessToken")
-//                .content(ObjectMapper()
-//                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-//                        .writeValueAsString(request))
-//                .contentType(MediaType.APPLICATION_JSON_VALUE))
-//                .andExpect(status().isOk).andDo(print())
-//                .andReturn()
-//    }
 
 
     @Throws
@@ -132,20 +110,20 @@ class UserApiTest {
 
 
     @Throws
-    private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "12345")
+    private fun signIn(email: String, password: String): String {
+        val signInRequest = SignInRequest(email, password)
         return mvc.perform(post("/auth")
-                .content(ObjectMapper()
+                .content(objectMapper
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(signInRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
-                .andReturn()
+                .andReturn().response.contentAsString
     }
 
-    private fun accessKey(): String {
-        val content: String = signIn().response.contentAsString
-        val response: TokenResponse = ObjectMapper()
+    private fun accessKey(email: String, password: String): String {
+        val content = signIn(email, password)
+        val response: TokenResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(content, TokenResponse::class.java)
         return response.accessToke
