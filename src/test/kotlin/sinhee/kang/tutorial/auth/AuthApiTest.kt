@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -39,61 +40,72 @@ class AuthApiTest {
     private lateinit var userRepository: UserRepository
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+    @Autowired
+    private lateinit var objectMapper: ObjectMapper
+
+    val testMail = "rkdtlsgml50@naver.com"
+    val passwd = "1234"
+    val username = "user"
 
 
     @Before
     fun setup() {
         userRepository.save(User(
-                email = "rkdtlsgml50@naver.com",
-                password = passwordEncoder.encode("1234"),
-                nickname = "user"
+                email = testMail,
+                password = passwordEncoder.encode(passwd),
+                nickname = username
         ))
     }
 
-
     @After
     fun clean() {
-        userRepository.delete(userRepository.findByNickname("user")!!)
+        userRepository.findByNickname(username)
+                ?.let { user -> userRepository.delete(user) }
     }
 
 
     @Test
-    @Throws(Exception::class)
+    @Throws
     fun signInTest() {
         signIn()
     }
 
 
     @Test
-    @Throws(Exception::class)
+    @Throws
     fun refreshTokenTest() {
-        val refreshToken = refreshKey()
-
-        mvc.perform(put("/auth")
-                .header("X-Refresh-Token", refreshToken))
-                .andExpect(status().isOk).andDo(print())
-                .andReturn()
+        requestMvc(put("/auth"), token = refreshKey())
     }
 
 
-    @Throws(Exception::class)
-    private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest(email = "rkdtlsgml50@naver.com", password = "1234")
-        return mvc.perform(post("/auth")
-                .content(ObjectMapper()
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(signInRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk).andDo(print())
-                .andReturn()
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
+        return mvc.perform(
+                method
+                        .header("X-Refresh-Token", token)
+                        .content(objectMapper
+                                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                                .writeValueAsString(obj))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk)
+                .andReturn().response.contentAsString
+    }
+
+
+    private fun signIn(): String {
+        return requestMvc(post("/auth"), SignInRequest(testMail, passwd))
     }
 
 
     private fun refreshKey(): String {
-        val content: String = signIn().response.contentAsString
-        val response: TokenResponse = ObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(content, TokenResponse::class.java)
+        val content = signIn()
+        val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
         return response.refreshToken
+    }
+
+
+    private fun mappingResponse(obj: String, cls: Class<*>): Any {
+        return objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(obj, cls)
     }
 }
