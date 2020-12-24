@@ -120,7 +120,7 @@ class PostApiTest {
 
         uploadOrEditPost(patch("/posts/$post"), "after_title")
         postRepository.findById(post)
-                .orElseThrow { (Exception()) }
+                .orElseThrow { Exception() }
                 .let { assert(it.title == "after_title") }
         postRepository.deleteById(post)
     }
