@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import org.junit.After
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -60,10 +61,43 @@ class CommentApiTest {
     }
 
     // TODO: Upload Comment, subComment
+    @Test
+    @Throws
+    fun uploadCommentTest() {
+    }
+
+
+    @Test
+    @Throws
+    fun uploadSubCommentTest() {
+    }
+
 
     // TODO: Change Comment, subComment
+    @Test
+    @Throws
+    fun changeCommentTest() {
+    }
+
+
+    @Test
+    @Throws
+    fun changeSubCommentTest() {
+    }
+
 
     // TODO: Delete Comment, subComment
+    @Test
+    @Throws
+    fun deleteCommentTest() {
+    }
+
+
+    @Test
+    @Throws
+    fun deleteSubCommentTest() {
+    }
+
 
     private fun uploadPost(): Int {
         val accessToken = accessToken()
