@@ -66,10 +66,7 @@ class PostApiTest {
     @Throws
     fun getAllHashTagPostList_LoadTest() {
         val post: String = requestMvc(get("/posts"))
-
-        val response: PostListResponse = objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(post, PostListResponse::class.java)
+        val response = mappingResponse(post, PostListResponse::class.java) as PostListResponse
         assert(response.totalItems == postRepository.findAll().count())
     }
 
@@ -81,9 +78,7 @@ class PostApiTest {
                 .param("tags", "안경"))
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
-        val response = objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(post, PostListResponse::class.java)
+        val response = mappingResponse(post, PostListResponse::class.java) as PostListResponse
         assert(response.totalItems == 2)
     }
 
@@ -92,13 +87,15 @@ class PostApiTest {
     @Throws
     fun getPostContentTest() {
         val postId = uploadOrEditPost(post("/posts"))
-        val post: String = requestMvc(get("/posts/$postId"))
-        val response = objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(post, PostContentResponse::class.java)
-        assert(response.title == "title")
+        requestMvc(get("/posts/$postId"))
+                .let { post ->
+                    val response = mappingResponse(post, PostContentResponse::class.java) as PostContentResponse
+                    assert(response.title == "title")
+                }
+
         postRepository.deleteById(postId)
     }
+
 
     @Test
     @Throws
@@ -169,11 +166,17 @@ class PostApiTest {
                 .andReturn().response.contentAsString
     }
 
+
     private fun accessToken(): String {
         val content = requestMvc(post("/auth"), SignInRequest("rkdtlsgml50@naver.com", "1234"))
-        val response: TokenResponse = objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(content, TokenResponse::class.java)
+        val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
         return response.accessToken
+    }
+
+
+    private fun mappingResponse(obj: String, cls: Class<*>): Any {
+        return objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(obj, cls)
     }
 }
