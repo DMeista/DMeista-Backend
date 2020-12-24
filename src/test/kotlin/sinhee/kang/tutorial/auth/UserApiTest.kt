@@ -78,7 +78,7 @@ class UserApiTest {
         signUp()
 
         emailVerify()
-        val request = ChangePasswordRequest(testMail, passwd)
+        val request = ChangePasswordRequest(testMail, "4321")
         requestMvc(put("/users/password"), request)
     }
 
