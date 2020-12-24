@@ -2,12 +2,15 @@ package sinhee.kang.tutorial.post
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.MvcResult
@@ -24,6 +27,8 @@ import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
+import sinhee.kang.tutorial.domain.user.domain.user.User
+import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -36,13 +41,32 @@ class PostApiTest {
     @Autowired
     private lateinit var postRepository: PostRepository
     @Autowired
+    private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var passwordEncoder: PasswordEncoder
+    @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    @Before
+    fun setup() {
+        userRepository.save(User(
+                email = "rkdtlsgml50@naver.com",
+                password = passwordEncoder.encode("1234"),
+                nickname = "user"
+        ))
+    }
+
+    @After
+    fun clean() {
+        userRepository.findByNickname("user")
+                ?.let { user -> userRepository.delete(user) }
+    }
 
     @Test
     @Throws
     fun getAllHashTagPostList_LoadTest() {
         val post: String = requestMvc(get("/posts"))
+
         val response: PostListResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(post, PostListResponse::class.java)
@@ -55,7 +79,6 @@ class PostApiTest {
     fun getHashTagGroupPostList_LoadTest() {
         val post: String = mvc.perform(get("/posts")
                 .param("tags", "안경"))
-                .andDo(print())
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
         val response = objectMapper
@@ -92,6 +115,7 @@ class PostApiTest {
     @Throws
     fun editPostTest() {
         val post = uploadOrEditPost(post("/posts"), "before_title")
+
         uploadOrEditPost(patch("/posts/$post"), "after_title")
         postRepository.findById(post)
                 .orElseThrow { (Exception()) }
@@ -112,7 +136,8 @@ class PostApiTest {
     private fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
                                  title: String = "title",
                                  content: String = "content",
-                                 tags: String = "tag, test"): Int {
+                                 tags: String = "tag, test"
+    ): Int {
         val accessToken = accessKey()
         return Integer.parseInt(mvc.perform(method
                 .header("Authorization", "Bearer $accessToken")
@@ -149,7 +174,7 @@ class PostApiTest {
     private fun signIn(): MvcResult {
         val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "1234")
         return mvc.perform(post("/auth")
-                .content(ObjectMapper()
+                .content(objectMapper
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(signInRequest))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -160,9 +185,9 @@ class PostApiTest {
 
     private fun accessKey(): String {
         val content: String = signIn().response.contentAsString
-        val response: TokenResponse = ObjectMapper()
+        val response: TokenResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(content, TokenResponse::class.java)
-        return response.accessToke
+        return response.accessToken
     }
 }
