@@ -42,6 +42,10 @@ class UserApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    val testMail = "rkdtlsgml50@naver.com"
+    val passwd = "1234"
+    val username = "user"
+
 
     @Test
     @Throws
@@ -106,5 +110,19 @@ class UserApiTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
+    }
+
+
+    private fun accessToken(): String {
+        val content = requestMvc(post("/auth"), SignInRequest(testMail, passwd))
+        val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
+        return response.accessToken
+    }
+
+
+    private fun mappingResponse(obj: String, cls: Class<*>): Any {
+        return objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .readValue(obj, cls)
     }
 }
