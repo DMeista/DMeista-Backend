@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import org.junit.After
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -47,13 +48,17 @@ class UserApiTest {
     val username = "user"
 
 
+    @After
+    fun clean() {
+        userRepository.findByNickname(username)
+                ?.let { userRepository.delete(it) }
+    }
+
+
     @Test
     @Throws
     fun signUpTest() {
         signUp()
-        val user = userRepository.findByNickname("user")
-                ?:{ throw Exception() }()
-        userRepository.delete(user)
     }
 
 
@@ -61,7 +66,7 @@ class UserApiTest {
     @Throws
     fun nicknameVerifyTest() {
         mvc.perform(get("/users/nickname")
-                .param("nickname", "user"))
+                .param("nickname", username))
                 .andExpect(status().isOk)
                 .andDo(print())
     }
@@ -71,32 +76,28 @@ class UserApiTest {
     @Throws
     fun changePasswordTest() {
         signUp()
-        emailVerify("rkdtlsgml50@naver.com")
 
-        val request = ChangePasswordRequest("rkdtlsgml50@naver.com", "1234")
+        emailVerify()
+        val request = ChangePasswordRequest(testMail, passwd)
         requestMvc(put("/users/password"), request)
-
-        userRepository.findByNickname("user")
-                ?.let { userRepository.delete(it) }
-                ?:{ throw Exception() }()
     }
 
 
-    private fun emailVerify(email: String) {
+    private fun emailVerify() {
         emailVerificationRepository.save(EmailVerification(
-                email = email,
+                email = testMail,
                 authCode = "CODE",
                 status = EmailVerificationStatus.UNVERIFID
         ))
 
-        val request = VerifyCodeRequest(email, "CODE")
+        val request = VerifyCodeRequest(testMail, "CODE")
         requestMvc(put("/users/email/verify"), request)
     }
 
 
     private fun signUp() {
-        emailVerify("rkdtlsgml50@naver.com")
-        val request = SignUpRequest("rkdtlsgml50@naver.com", passwordEncoder.encode("1234"), "user")
+        emailVerify()
+        val request = SignUpRequest(testMail, passwordEncoder.encode(passwd), username)
         requestMvc(post("/users"), request)
     }
 
