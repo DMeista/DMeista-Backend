@@ -132,13 +132,12 @@ class PostApiTest {
     }
 
 
-    @Throws
     private fun uploadOrEditPost(method: MockHttpServletRequestBuilder,
                                  title: String = "title",
                                  content: String = "content",
                                  tags: String = "tag, test"
     ): Int {
-        val accessToken = accessKey()
+        val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(method
                 .header("Authorization", "Bearer $accessToken")
                 .param("title", title)
@@ -150,9 +149,8 @@ class PostApiTest {
     }
 
 
-    @Throws
     fun deletePost(postId: Int) {
-        val accessToken = accessKey()
+        val accessToken = accessToken()
         mvc.perform(delete("/posts/$postId")
                 .header("Authorization", "Bearer $accessToken"))
                 .andDo(print())
@@ -161,30 +159,18 @@ class PostApiTest {
     }
 
 
-    @Throws
-    private fun requestMvc(method: MockHttpServletRequestBuilder): String {
-        return mvc.perform(method)
-                .andDo(print())
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null): String {
+        return mvc.perform(method
+                .content(ObjectMapper()
+                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                        .writeValueAsString(obj))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString
     }
 
-
-    @Throws
-    private fun signIn(): MvcResult {
-        val signInRequest = SignInRequest("rkdtlsgml50@naver.com", "1234")
-        return mvc.perform(post("/auth")
-                .content(objectMapper
-                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                        .writeValueAsString(signInRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk)
-                .andReturn()
-    }
-
-
-    private fun accessKey(): String {
-        val content: String = signIn().response.contentAsString
+    private fun accessToken(): String {
+        val content = requestMvc(post("/auth"), SignInRequest("rkdtlsgml50@naver.com", "1234"))
         val response: TokenResponse = objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .readValue(content, TokenResponse::class.java)
