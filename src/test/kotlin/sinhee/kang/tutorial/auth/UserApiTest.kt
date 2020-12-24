@@ -63,6 +63,7 @@ class UserApiTest {
     }
 
 
+<<<<<<< HEAD
     @Test
     @Throws
     fun changePasswordTest() {
@@ -93,6 +94,33 @@ class UserApiTest {
                 .andDo(print())
     }
 
+=======
+//    @Test
+//    @Throws
+//    fun T3_changePasswordTest() {
+//        val request = ChangePasswordRequest(email, "12345")
+//        emailVerifyTest(email)
+//        requestMvc(put("/users/password"), request)
+//    }
+//
+//
+//    @Test
+//    fun T4_exitAccountTest() {
+//        password = "12345"
+//        emailVerifyTest(email)
+//        val accessToken = accessKey()
+//        val request = ChangePasswordRequest(email, password)
+//
+//        mvc.perform(delete("/users")
+//                .header("Authorization", "Bearer $accessToken")
+//                .content(ObjectMapper()
+//                        .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+//                        .writeValueAsString(request))
+//                .contentType(MediaType.APPLICATION_JSON_VALUE))
+//                .andExpect(status().isOk).andDo(print())
+//                .andReturn()
+//    }
+>>>>>>> parent of cf81679... [REFACTOR] ChangePasswordTest
 
 
     @Throws
@@ -108,7 +136,7 @@ class UserApiTest {
     }
 
 
-    private fun emailVerify(email: String) {
+    private fun emailVerifyTest(email: String) {
         emailVerificationRepository.save(EmailVerification(
                 email = email,
                 authCode = "ASD123",
@@ -122,7 +150,7 @@ class UserApiTest {
 
     @Throws
     private fun signUp(email: String, password: String, nickname: String) {
-        emailVerify(email)
+        emailVerifyTest(email)
         val request = SignUpRequest(email, passwordEncoder.encode(password), nickname)
         requestMvc(post("/users"), request)
     }
