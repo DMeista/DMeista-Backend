@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -83,6 +84,17 @@ class UserApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun exitAccountTest() {
+        signUp()
+
+        emailVerify()
+        val request = ChangePasswordRequest(testMail, passwd)
+        requestMvc(delete("/users"), request, "Bearer ${accessToken()}")
+    }
+
+
     private fun emailVerify() {
         emailVerificationRepository.save(EmailVerification(
                 email = testMail,
@@ -90,8 +102,7 @@ class UserApiTest {
                 status = EmailVerificationStatus.UNVERIFID
         ))
 
-        val request = VerifyCodeRequest(testMail, "CODE")
-        requestMvc(put("/users/email/verify"), request)
+        requestMvc(put("/users/email/verify"), VerifyCodeRequest(testMail, "CODE"))
     }
 
 
@@ -102,10 +113,11 @@ class UserApiTest {
     }
 
 
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null): String {
+    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
         return mvc.perform(
                 method
-                        .content(ObjectMapper()
+                        .header("Authorization", token)
+                        .content(objectMapper
                                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                                 .writeValueAsString(obj))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
