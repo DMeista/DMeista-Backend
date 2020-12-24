@@ -13,7 +13,6 @@ import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
@@ -47,20 +46,26 @@ class PostApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
+    val testMail = "rkdtlsgml50@naver.com"
+    val passwd = "1234"
+    val username = "user"
+
+
     @Before
     fun setup() {
         userRepository.save(User(
-                email = "rkdtlsgml50@naver.com",
-                password = passwordEncoder.encode("1234"),
-                nickname = "user"
+                email = testMail,
+                password = passwordEncoder.encode(passwd),
+                nickname = username
         ))
     }
 
     @After
     fun clean() {
-        userRepository.findByNickname("user")
+        userRepository.findByNickname(username)
                 ?.let { user -> userRepository.delete(user) }
     }
+
 
     @Test
     @Throws
@@ -135,12 +140,12 @@ class PostApiTest {
                                  tags: String = "tag, test"
     ): Int {
         val accessToken = accessToken()
-        return Integer.parseInt(mvc.perform(method
-                .header("Authorization", "Bearer $accessToken")
-                .param("title", title)
-                .param("content", content)
-                .param("tags", tags))
-                .andDo(print())
+        return Integer.parseInt(mvc.perform(
+                method
+                        .header("Authorization", "Bearer $accessToken")
+                        .param("title", title)
+                        .param("content", content)
+                        .param("tags", tags))
                 .andExpect(status().isOk)
                 .andReturn().response.contentAsString)
     }
@@ -157,8 +162,9 @@ class PostApiTest {
 
 
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null): String {
-        return mvc.perform(method
-                .content(ObjectMapper()
+        return mvc.perform(
+                method
+                        .content(ObjectMapper()
                         .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                         .writeValueAsString(obj))
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -168,7 +174,7 @@ class PostApiTest {
 
 
     private fun accessToken(): String {
-        val content = requestMvc(post("/auth"), SignInRequest("rkdtlsgml50@naver.com", "1234"))
+        val content = requestMvc(post("/auth"), SignInRequest(testMail, passwd))
         val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
         return response.accessToken
     }
