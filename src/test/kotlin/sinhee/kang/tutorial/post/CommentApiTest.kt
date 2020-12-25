@@ -72,7 +72,7 @@ class CommentApiTest {
     @Throws
     fun uploadCommentTest() {
         val postId = uploadPost()
-        val comment: Comment = uploadComment(postId)
+        val comment: Comment = uploadComment(postId, "댓글")
 
         assert(comment.content == "댓글")
 
@@ -85,8 +85,8 @@ class CommentApiTest {
     @Throws
     fun uploadSubCommentTest() {
         val postId = uploadPost()
-        val comment: Comment = uploadComment(postId)
-        val subComment: SubComment = uploadSubComment(comment.commentId)
+        val comment: Comment = uploadComment(postId, "댓글")
+        val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
 
         assert(subComment.content == "대댓글")
 
@@ -102,7 +102,7 @@ class CommentApiTest {
     }
 
 
-//    @Test
+    @Test
     @Throws
     fun changeSubCommentTest() {
     }
@@ -133,16 +133,16 @@ class CommentApiTest {
     }
 
 
-    private fun uploadComment(postId: Int): Comment {
-        requestMvc(post("/comments/$postId"), CommentRequest("댓글"), "Bearer ${accessToken()}")
+    private fun uploadComment(postId: Int, content: String): Comment {
+        requestMvc(post("/comments/$postId"), CommentRequest(content), "Bearer ${accessToken()}")
         val post = postRepository.findById(postId)
                 .orElseThrow { Exception() }
         return post.commentList[0]
     }
 
 
-    private fun uploadSubComment(commentId: Int): SubComment {
-        requestMvc(post("/comments/sub/$commentId"), CommentRequest("대댓글"), "Bearer ${accessToken()}")
+    private fun uploadSubComment(commentId: Int, content: String): SubComment {
+        requestMvc(post("/comments/sub/$commentId"), CommentRequest(content), "Bearer ${accessToken()}")
         val comment = commentRepository.findById(commentId)
                 .orElseThrow { Exception() }
         return comment.subCommentList[0]
