@@ -18,8 +18,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.comment.repository.CommentRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
+import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.domain.subComment.repository.SubCommentRepository
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.user.domain.user.User
@@ -70,14 +72,12 @@ class CommentApiTest {
     @Throws
     fun uploadCommentTest() {
         val postId = uploadPost()
-        uploadComment(postId)
+        val comment: Comment = uploadComment(postId)
 
-        val post = postRepository.findById(postId)
-                .orElseThrow { Exception() }
-        assert(post.commentList[0].content == "댓글")
+        assert(comment.content == "댓글")
 
-        commentRepository.deleteById(post.commentList[0].commentId)
-        postRepository.delete(post)
+        commentRepository.delete(comment)
+        postRepository.deleteById(postId)
     }
 
 
@@ -85,22 +85,18 @@ class CommentApiTest {
     @Throws
     fun uploadSubCommentTest() {
         val postId = uploadPost()
-        uploadComment(postId)
-        val post = postRepository.findById(postId)
-                .orElseThrow { Exception() }
-        uploadSubComment(post.commentList[0].commentId)
+        val comment: Comment = uploadComment(postId)
+        val subComment: SubComment = uploadSubComment(comment.commentId)
 
-        val comment = commentRepository.findById(post.commentList[0].commentId)
-                .orElseThrow { Exception() }
-        assert(comment.subCommentList[0].content == "대댓글")
+        assert(subComment.content == "대댓글")
 
-        subCommentRepository.deleteById(comment.subCommentList[0].subCommentId)
+        subCommentRepository.delete(subComment)
         commentRepository.delete(comment)
-        postRepository.delete(post)
+        postRepository.deleteById(postId)
     }
 
 
-//    @Test
+    @Test
     @Throws
     fun changeCommentTest() {
     }
@@ -137,13 +133,19 @@ class CommentApiTest {
     }
 
 
-    private fun uploadComment(postId: Int) {
+    private fun uploadComment(postId: Int): Comment {
         requestMvc(post("/comments/$postId"), CommentRequest("댓글"), "Bearer ${accessToken()}")
+        val post = postRepository.findById(postId)
+                .orElseThrow { Exception() }
+        return post.commentList[0]
     }
 
 
-    private fun uploadSubComment(commentId: Int): Int {
-        return Integer.parseInt(requestMvc(post("/comments/sub/$commentId"), CommentRequest("대댓글"), "Bearer ${accessToken()}"))
+    private fun uploadSubComment(commentId: Int): SubComment {
+        requestMvc(post("/comments/sub/$commentId"), CommentRequest("대댓글"), "Bearer ${accessToken()}")
+        val comment = commentRepository.findById(commentId)
+                .orElseThrow { Exception() }
+        return comment.subCommentList[0]
     }
 
 
