@@ -114,6 +114,16 @@ class CommentApiTest {
     @Test
     @Throws
     fun changeSubCommentTest() {
+        val postId = uploadPost()
+        val comment: Comment = uploadComment(postId, "댓글")
+        var subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
+        subComment = editSubComment(subComment.subCommentId, "수정된 대댓글")
+
+        assert(subComment.content == "수정된 대댓글")
+
+        subCommentRepository.delete(subComment)
+        commentRepository.delete(comment)
+        postRepository.deleteById(postId)
     }
 
 
@@ -161,6 +171,13 @@ class CommentApiTest {
     private fun editComment(commentId: Int, content: String): Comment {
         requestMvc(patch("/comments/$commentId"), CommentRequest(content), "Bearer ${accessToken()}")
         return commentRepository.findById(commentId)
+                .orElseThrow { Exception() }
+    }
+
+
+    private fun editSubComment(subCommentId: Int, content: String): SubComment {
+        requestMvc(patch("/comments/sub/$subCommentId"), CommentRequest(content), "Bearer ${accessToken()}")
+        return subCommentRepository.findById(subCommentId)
                 .orElseThrow { Exception() }
     }
 
