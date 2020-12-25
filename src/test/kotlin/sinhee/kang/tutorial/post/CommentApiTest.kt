@@ -74,19 +74,29 @@ class CommentApiTest {
 
         val post = postRepository.findById(postId)
                 .orElseThrow { Exception() }
-        val comment = commentRepository.findById(post.commentList[0].commentId)
-                .orElseThrow { Exception() }
-        assert(comment.content == "댓글")
+        assert(post.commentList[0].content == "댓글")
 
-
-        commentRepository.delete(comment)
-        postRepository.deleteById(postId)
+        commentRepository.deleteById(post.commentList[0].commentId)
+        postRepository.delete(post)
     }
 
 
     @Test
     @Throws
     fun uploadSubCommentTest() {
+        val postId = uploadPost()
+        uploadComment(postId)
+        val post = postRepository.findById(postId)
+                .orElseThrow { Exception() }
+        uploadSubComment(post.commentList[0].commentId)
+
+        val comment = commentRepository.findById(post.commentList[0].commentId)
+                .orElseThrow { Exception() }
+        assert(comment.subCommentList[0].content == "대댓글")
+
+        subCommentRepository.deleteById(comment.subCommentList[0].subCommentId)
+        commentRepository.delete(comment)
+        postRepository.delete(post)
     }
 
 
