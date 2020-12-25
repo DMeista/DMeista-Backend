@@ -154,6 +154,20 @@ class CommentApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun deleteCommentWithSubCommentTest() {
+        val postId = uploadPost()
+        val comment: Comment = uploadComment(postId, "댓글")
+        uploadSubComment(comment.commentId, "대댓글")
+        requestMvc(delete("/comments/${comment.commentId}"), token = "Bearer ${accessToken()}")
+
+        subCommentRepository.deleteAll()
+        commentRepository.deleteAll()
+        postRepository.deleteById(postId)
+    }
+
+
     private fun uploadPost(): Int {
         val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(post("/posts")
