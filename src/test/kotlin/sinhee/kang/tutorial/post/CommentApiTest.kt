@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -127,14 +128,19 @@ class CommentApiTest {
     }
 
 
-    // TODO: Delete Comment, subComment
-//    @Test
+    @Test
     @Throws
     fun deleteCommentTest() {
+        val postId = uploadPost()
+        val comment: Comment = uploadComment(postId, "댓글")
+        requestMvc(delete("/comments/${comment.commentId}"), token = "Bearer ${accessToken()}")
+
+        commentRepository.deleteAll()
+        postRepository.deleteById(postId)
     }
 
 
-//    @Test
+    @Test
     @Throws
     fun deleteSubCommentTest() {
     }
