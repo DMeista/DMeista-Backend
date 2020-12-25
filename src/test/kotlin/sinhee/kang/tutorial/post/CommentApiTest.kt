@@ -13,12 +13,8 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
@@ -73,11 +69,18 @@ class CommentApiTest {
     @Test
     @Throws
     fun uploadCommentTest() {
-        val post = uploadPost()
-        uploadComment(post)
+        val postId = uploadPost()
+        uploadComment(postId)
 
-        commentRepository.deleteAll()
-        postRepository.deleteById(post)
+        val post = postRepository.findById(postId)
+                .orElseThrow { Exception() }
+        val comment = commentRepository.findById(post.commentList[0].commentId)
+                .orElseThrow { Exception() }
+        assert(comment.content == "댓글")
+
+
+        commentRepository.delete(comment)
+        postRepository.deleteById(postId)
     }
 
 
@@ -112,7 +115,6 @@ class CommentApiTest {
     }
 
 
-    @Ignore
     private fun uploadPost(): Int {
         val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(post("/posts")
@@ -120,7 +122,7 @@ class CommentApiTest {
                 .param("title", "title")
                 .param("content", "content")
                 .param("tags", "tags"))
-                .andExpect(status().isOk)
+                .andExpect(status().isOk).andDo(print())
                 .andReturn().response.contentAsString)
     }
 
@@ -130,7 +132,11 @@ class CommentApiTest {
     }
 
 
-    @Ignore
+    private fun uploadSubComment(commentId: Int): Int {
+        return Integer.parseInt(requestMvc(post("/comments/sub/$commentId"), CommentRequest("대댓글"), "Bearer ${accessToken()}"))
+    }
+
+
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
         return mvc.perform(
                 method
