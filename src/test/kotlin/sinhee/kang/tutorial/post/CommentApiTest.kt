@@ -63,11 +63,11 @@ class CommentApiTest {
         ))
     }
 
-//    @After
-//    fun clean() {
-//        userRepository.findByNickname(username)
-//                ?.let { user -> userRepository.delete(user) }
-//    }
+    @After
+    fun clean() {
+        userRepository.findByNickname(username)
+                ?.let { user -> userRepository.delete(user) }
+    }
 
 
     @Test
@@ -78,26 +78,22 @@ class CommentApiTest {
 
         commentRepository.deleteAll()
         postRepository.deleteById(post)
-
-        userRepository.findByNickname(username)
-                ?.let { user -> userRepository.delete(user) }
     }
 
 
-    //    @Test
+    @Test
     @Throws
     fun uploadSubCommentTest() {
     }
 
 
-    // TODO: Change Comment, subComment
 //    @Test
     @Throws
     fun changeCommentTest() {
     }
 
 
-    //    @Test
+//    @Test
     @Throws
     fun changeSubCommentTest() {
     }
@@ -110,12 +106,13 @@ class CommentApiTest {
     }
 
 
-    //    @Test
+//    @Test
     @Throws
     fun deleteSubCommentTest() {
     }
 
 
+    @Ignore
     private fun uploadPost(): Int {
         val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(post("/posts")
@@ -133,6 +130,7 @@ class CommentApiTest {
     }
 
 
+    @Ignore
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
         return mvc.perform(
                 method
