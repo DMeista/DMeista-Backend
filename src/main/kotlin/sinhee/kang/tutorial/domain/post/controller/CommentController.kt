@@ -13,7 +13,7 @@ class CommentController(
 
     @PostMapping("/{postId}")
     fun uploadComment(@PathVariable postId: Int,
-                      @Valid @RequestBody commentRequest: CommentRequest): Int? {
+                      @Valid @RequestBody commentRequest: CommentRequest): Int {
         return commentService.postComment(postId, commentRequest)
     }
 
