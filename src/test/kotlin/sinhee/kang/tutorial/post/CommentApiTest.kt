@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.TutorialApplication
@@ -99,6 +100,14 @@ class CommentApiTest {
     @Test
     @Throws
     fun changeCommentTest() {
+        val postId = uploadPost()
+        var comment: Comment = uploadComment(postId, "댓글")
+        comment = editComment(comment.commentId, "수정된 댓글")
+
+        assert(comment.content == "수정된 댓글")
+
+        commentRepository.delete(comment)
+        postRepository.deleteById(postId)
     }
 
 
@@ -146,6 +155,13 @@ class CommentApiTest {
         val comment = commentRepository.findById(commentId)
                 .orElseThrow { Exception() }
         return comment.subCommentList[0]
+    }
+
+
+    private fun editComment(commentId: Int, content: String): Comment {
+        requestMvc(patch("/comments/$commentId"), CommentRequest(content), "Bearer ${accessToken()}")
+        return commentRepository.findById(commentId)
+                .orElseThrow { Exception() }
     }
 
 
