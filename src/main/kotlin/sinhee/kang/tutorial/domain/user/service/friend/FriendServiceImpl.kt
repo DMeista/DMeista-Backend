@@ -84,9 +84,9 @@ class FriendServiceImpl(
         val targetUser = userRepository.findById(userId)
                 .orElseThrow{ BadRequestException() }
 
-        if (isCheckUserAndTargetUserExist(user, targetUser) || isCheckUserAndTargetUserExist(user = targetUser, targetUser = user)){
-            throw BadRequestException()
-        }
+        if (isCheckUserAndTargetUserExist(user, targetUser)
+                || isCheckUserAndTargetUserExist(user = targetUser, targetUser = user)
+                && user != targetUser){ throw BadRequestException() }
         friendRepository.save(Friend(
                 userId = user,
                 targetId = targetUser,
