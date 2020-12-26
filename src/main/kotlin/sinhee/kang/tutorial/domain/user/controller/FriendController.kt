@@ -11,7 +11,7 @@ class FriendController(
         private var friendService: FriendService
 ) {
 
-    @GetMapping("/{nickname}/friends")
+    @GetMapping("/users/{nickname}/friends")
     fun getAcceptFriendList(@PathVariable nickname: String): UserListResponse {
         return friendService.getFriendList(nickname)
     }
