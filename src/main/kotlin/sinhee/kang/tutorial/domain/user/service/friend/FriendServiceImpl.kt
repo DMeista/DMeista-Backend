@@ -86,7 +86,7 @@ class FriendServiceImpl(
 
         if (isCheckUserAndTargetUserExist(user, targetUser)
                 || isCheckUserAndTargetUserExist(user = targetUser, targetUser = user)
-                && user != targetUser){ throw BadRequestException() }
+                && user == targetUser){ throw BadRequestException() }
         friendRepository.save(Friend(
                 userId = user,
                 targetId = targetUser,
