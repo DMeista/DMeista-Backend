@@ -33,7 +33,7 @@ class FriendController(
     }
 
     @DeleteMapping("/friends/{targetId}")
-    fun deniedAcceptFriendRequest(@PathVariable targetId: Int) {
+    fun deniedFriendRequest(@PathVariable targetId: Int) {
         friendService.deleteFriend(targetId)
     }
 
