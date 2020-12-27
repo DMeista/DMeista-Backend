@@ -7,11 +7,12 @@ import sinhee.kang.tutorial.domain.user.service.friend.FriendService
 
 
 @RestController
+@RequestMapping("/users")
 class FriendController(
         private var friendService: FriendService
 ) {
 
-    @GetMapping("/users/{nickname}/friends")
+    @GetMapping("/{nickname}/friends")
     fun getAcceptFriendList(@PathVariable nickname: String): UserListResponse {
         return friendService.getFriendList(nickname)
     }
