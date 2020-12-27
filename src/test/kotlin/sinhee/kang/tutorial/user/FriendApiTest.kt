@@ -153,6 +153,27 @@ class FriendApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun deniedFriendRequestTest() {
+        val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
+        val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
+
+        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
+        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
+
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(delete("/users/friends/${user.id}"), token = user2Token)
+
+        assert(friendRepository.findByUserIdAndTargetId(user, targetUser)
+                ?.let { throw Exception() }
+                ?:{ true }()
+        )
+    }
+
+
     private fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
         return friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { true }
