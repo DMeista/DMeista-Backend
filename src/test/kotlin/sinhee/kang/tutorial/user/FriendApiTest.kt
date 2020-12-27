@@ -167,6 +167,35 @@ class FriendApiTest {
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(delete("/users/friends/${user.id}"), token = user2Token)
 
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(delete("/users/friends/${targetUser.id}"), token = user1Token)
+
+        assert(friendRepository.findByUserIdAndTargetId(user, targetUser)
+                ?.let { throw Exception() }
+                ?:{ true }()
+        )
+    }
+
+
+    @Test
+    @Throws
+    fun deleteFriendTest() {
+        val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
+        val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
+
+        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
+        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
+
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(put("/users/friends/${user.id}"), token = user2Token)
+        requestMvc(delete("/users/friends/${user.id}"), token = user2Token)
+
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(put("/users/friends/${user.id}"), token = user2Token)
+        requestMvc(delete("/users/friends/${targetUser.id}"), token = user1Token)
+
         assert(friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { throw Exception() }
                 ?:{ true }()
