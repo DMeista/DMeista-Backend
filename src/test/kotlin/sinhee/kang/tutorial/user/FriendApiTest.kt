@@ -26,6 +26,7 @@ import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.user.domain.friend.Friend
+import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepository
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
@@ -128,6 +129,27 @@ class FriendApiTest {
 
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         assert(isCheckUserAndTargetUserExist(user, targetUser))
+    }
+
+
+    @Test
+    @Throws
+    fun acceptFriendRequestTest() {
+        val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
+        val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
+
+        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
+        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
+
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(put("/users/friends/${user.id}"), token = user2Token)
+
+        assert(friendRepository.findByUserIdAndTargetIdAndStatus(user, targetUser, FriendStatus.ACCEPT)
+                ?.let { true }
+                ?:{ false }()
+        )
     }
 
 
