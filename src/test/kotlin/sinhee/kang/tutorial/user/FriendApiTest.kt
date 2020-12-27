@@ -18,14 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TutorialApplication
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.domain.user.domain.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepository
 import sinhee.kang.tutorial.domain.user.domain.user.User
@@ -50,13 +46,20 @@ class FriendApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    val testMail = "rkdtlsgml50@naver.com"
-    val username = "user1"
+    private val testMail = "rkdtlsgml50@naver.com"
+    private val username = "user1"
 
-    val testMail2 = "rkdtlsgml40@naver.com"
-    val username2 = "user2"
+    private val testMail2 = "rkdtlsgml40@naver.com"
+    private val username2 = "user2"
 
-    val passwd = "1234"
+    private val passwd = "1234"
+
+    private lateinit var user1Token: String
+    private lateinit var user2Token: String
+
+    private lateinit var user: User
+    private lateinit var targetUser: User
+
 
     @Before
     fun setup() {
@@ -70,6 +73,13 @@ class FriendApiTest {
                 password = passwordEncoder.encode(passwd),
                 nickname = username2
         ))
+        user1Token = "Bearer ${accessToken(testMail, passwd)}"
+        user2Token = "Bearer ${accessToken(testMail2, passwd)}"
+
+        user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
+        targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
     }
 
     @After
@@ -85,17 +95,10 @@ class FriendApiTest {
     @Test
     @Throws
     fun getAcceptFriendListTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(put("/users/friends/${user.id}"), token = user2Token)
         val request = mappingResponse(requestMvc(get("/users/user1/friends"), token = user1Token), UserListResponse::class.java) as UserListResponse
+
         assert(request.applicationResponses[0].nickname == targetUser.nickname)
     }
 
@@ -103,16 +106,9 @@ class FriendApiTest {
     @Test
     @Throws
     fun getReceiveFriendRequestTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         val request = mappingResponse(requestMvc(get("/users/friends"), token = user2Token), UserListResponse::class.java) as UserListResponse
+
         assert(request.applicationResponses[0].nickname == user.nickname)
     }
 
@@ -120,13 +116,6 @@ class FriendApiTest {
     @Test
     @Throws
     fun sendFriendRequestTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         assert(isCheckUserAndTargetUserExist(user, targetUser))
     }
@@ -135,14 +124,6 @@ class FriendApiTest {
     @Test
     @Throws
     fun acceptFriendRequestTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(put("/users/friends/${user.id}"), token = user2Token)
 
@@ -156,14 +137,6 @@ class FriendApiTest {
     @Test
     @Throws
     fun deniedFriendRequestTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(delete("/users/friends/${user.id}"), token = user2Token)
 
@@ -180,14 +153,6 @@ class FriendApiTest {
     @Test
     @Throws
     fun deleteFriendTest() {
-        val user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
-        val targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
-
-        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
-        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
-
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(put("/users/friends/${user.id}"), token = user2Token)
         requestMvc(delete("/users/friends/${user.id}"), token = user2Token)
