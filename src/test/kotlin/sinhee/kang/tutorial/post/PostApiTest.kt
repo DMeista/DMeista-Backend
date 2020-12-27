@@ -46,9 +46,9 @@ class PostApiTest {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    val testMail = "rkdtlsgml50@naver.com"
-    val passwd = "1234"
-    val username = "user"
+    private val testMail = "rkdtlsgml50@naver.com"
+    private val passwd = "1234"
+    private val username = "user"
 
 
     @Before
