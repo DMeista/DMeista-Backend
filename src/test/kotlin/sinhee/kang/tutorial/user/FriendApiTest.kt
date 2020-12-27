@@ -96,6 +96,21 @@ class FriendApiTest {
     }
 
 
+    @Test
+    @Throws
+    fun getReceiveFriendRequest() {
+        val user = userRepository.findByNickname(username)
+        val targetUser = userRepository.findByNickname(username2)
+
+        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
+        val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
+
+        requestMvc(post("/users/friends/${targetUser?.id}"), token = user1Token)
+        val request = mappingResponse(requestMvc(get("/users/friends"), token = user2Token), UserListResponse::class.java) as UserListResponse
+        assert(request.applicationResponses[0].nickname == user?.nickname)
+    }
+
+
     private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
         return mvc.perform(
                 method
