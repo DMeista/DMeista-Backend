@@ -30,6 +30,7 @@ import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepositor
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
+import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 @RunWith(SpringRunner::class)
@@ -84,30 +85,56 @@ class FriendApiTest {
     @Throws
     fun getAcceptFriendListTest() {
         val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
         val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
 
         val user1Token = "Bearer ${accessToken(testMail, passwd)}"
         val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
 
-        requestMvc(post("/users/friends/${targetUser?.id}"), token = user1Token)
-        requestMvc(put("/users/friends/${user?.id}"), token = user2Token)
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        requestMvc(put("/users/friends/${user.id}"), token = user2Token)
         val request = mappingResponse(requestMvc(get("/users/user1/friends"), token = user1Token), UserListResponse::class.java) as UserListResponse
-        assert(request.applicationResponses[0].nickname == targetUser?.nickname)
+        assert(request.applicationResponses[0].nickname == targetUser.nickname)
     }
 
 
     @Test
     @Throws
-    fun getReceiveFriendRequest() {
+    fun getReceiveFriendRequestTest() {
         val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
         val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
 
         val user1Token = "Bearer ${accessToken(testMail, passwd)}"
         val user2Token = "Bearer ${accessToken(testMail2, passwd)}"
 
-        requestMvc(post("/users/friends/${targetUser?.id}"), token = user1Token)
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         val request = mappingResponse(requestMvc(get("/users/friends"), token = user2Token), UserListResponse::class.java) as UserListResponse
-        assert(request.applicationResponses[0].nickname == user?.nickname)
+        assert(request.applicationResponses[0].nickname == user.nickname)
+    }
+
+
+    @Test
+    @Throws
+    fun sendFriendRequestTest() {
+        val user = userRepository.findByNickname(username)
+                ?:{ throw UserNotFoundException() }()
+        val targetUser = userRepository.findByNickname(username2)
+                ?:{ throw UserNotFoundException() }()
+
+        val user1Token = "Bearer ${accessToken(testMail, passwd)}"
+
+        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
+        assert(isCheckUserAndTargetUserExist(user, targetUser))
+    }
+
+
+    private fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
+        return friendRepository.findByUserIdAndTargetId(user, targetUser)
+                ?.let { true }
+                ?:{ false }()
     }
 
 
