@@ -20,18 +20,22 @@ class EmailServiceImpl(
     }
 
     override fun sendVerifyEmail(email: String, code: String) {
-        msg.setTo(email)
-        msg.setSubject("DMeista 인증메일입니다.")
-        msg.setText("DMeista 서비스 인증 메일입니다. \n\n[ $code ]")
+        msg.run {
+            setTo(email)
+            setSubject("DMeista 인증메일입니다.")
+            setText("DMeista 서비스 인증 메일입니다. \n\n[ $code ]")
+        }
 
         javaMailSender.send(msg)
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
     override fun sendCelebrateEmail(user: User) {
-        msg.setTo(user.email)
-        msg.setSubject("DMeista 가입을 축하합니다!")
-        msg.setText("${user.nickname}님,\nDMeista 서비스 회원가입을 축하합니다.")
+        msg.run {
+            setTo(user.email)
+            setSubject("DMeista 가입을 축하합니다!")
+            setText("${user.nickname}님,\nDMeista 서비스 회원가입을 축하합니다.")
+        }
 
         javaMailSender.send(msg)
     }
