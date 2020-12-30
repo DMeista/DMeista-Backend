@@ -16,7 +16,7 @@ class AsyncConfig : AsyncConfigurerSupport() {
         executor.corePoolSize = 2
         executor.maxPoolSize = 10
         executor.setQueueCapacity(500)
-        executor.setThreadNamePrefix("-async-")
+        executor.setThreadNamePrefix("async")
         executor.initialize()
         return executor
     }
