@@ -124,21 +124,21 @@ class PostServiceImpl(
 
         if (imageFile != null && autoTags) {
             for (image in imageFile) {
-                val list = visionApi.visionImage(image)
+                val list = visionApi.getVisionApi(image)
                 for (tag in list) {
                     request.add(tag)
                 }
             }
         }
-        tags?.let {
-            request.add(tags)
-        }
+
+        tags?.run { request.add(this) }
+
         val post = postRepository.save(Post(
                 user = user,
                 author = user.nickname,
                 title = title,
                 content = content,
-                tags = request.joinToString()
+                tags =  request.joinToString()
         ))
         imageService.saveImageFile(post, imageFile)
         return post.postId
@@ -171,7 +171,7 @@ class PostServiceImpl(
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
                 .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
-                ?.also { postRepository.deleteById(it.postId!!) }
+                ?.also { postRepository.deleteById(it.postId) }
                 ?: { throw PermissionDeniedException() }()
         post.imageFileList.let { imageFile ->
             imageService.deleteImageFile(post, imageFile) }
