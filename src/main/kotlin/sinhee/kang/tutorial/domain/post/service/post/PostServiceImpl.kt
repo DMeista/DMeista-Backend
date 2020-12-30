@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.post.service.post
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
@@ -120,15 +121,10 @@ class PostServiceImpl(
 
     override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
-        val request: MutableList<String> = ArrayList()
+        var request: MutableList<String> = ArrayList()
 
         if (imageFile != null && autoTags) {
-            for (image in imageFile) {
-                val list = visionApi.getVisionApi(image)
-                for (tag in list) {
-                    request.add(tag)
-                }
-            }
+            request = getTagsFromImage(imageFile)
         }
 
         tags?.run { request.add(this) }
@@ -177,6 +173,22 @@ class PostServiceImpl(
             imageService.deleteImageFile(post, imageFile) }
         imageFileRepository.deleteByPost(post)
     }
+
+
+    fun getTagsFromImage(imageFile: Array<MultipartFile>): MutableList<String> {
+        val request: MutableList<String> = ArrayList()
+        for (image in imageFile) {
+            try {
+                val list = visionApi.getVisionApi(image)
+                for (tag in list) { request.add(tag) }
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        return request
+    }
+
 
     fun getPostList(postPage: Page<Post>): PostListResponse {
         val user = try { authService.authValidate() }

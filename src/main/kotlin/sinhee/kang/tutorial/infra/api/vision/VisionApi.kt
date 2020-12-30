@@ -3,6 +3,7 @@ package sinhee.kang.tutorial.infra.api.vision
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import okhttp3.*
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
@@ -13,6 +14,8 @@ class VisionApi {
     private var prefix: String = System.getenv("KAKAO_PREFIX")
     private var key: String = System.getenv("KAKAO_REST_API_KEY")
 
+
+    @Async
     fun getVisionApi(imageFile: MultipartFile): List<String> {
         val client = OkHttpClient()
         val mapper = ObjectMapper()

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import okhttp3.*
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
@@ -21,6 +22,7 @@ class SlackSenderManager {
     private var client = OkHttpClient()
     private var mapper = ObjectMapper()
 
+    @Async
     fun send(request: HttpServletRequest, exception: Exception) {
         val attachment: SlackMessageRequest = this.toAttachments(request, exception)
         val sendRequest: Request = Request.Builder()
