@@ -13,7 +13,7 @@ class VisionApi {
     private var prefix: String = System.getenv("KAKAO_PREFIX")
     private var key: String = System.getenv("KAKAO_REST_API_KEY")
 
-    fun visionImage(imageFile: MultipartFile): List<String> {
+    fun getVisionApi(imageFile: MultipartFile): List<String> {
         val client = OkHttpClient()
         val mapper = ObjectMapper()
 
