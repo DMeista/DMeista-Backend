@@ -34,7 +34,7 @@ class EmoJiServiceImpl(
                         emojiRepository.save(emoji)
                         resp = EmojiResponse(
                                 username = user.nickname,
-                                postId = post.postId!!,
+                                postId = post.postId,
                                 emojiStatus = emoji.status
                         )
                     }
@@ -43,7 +43,7 @@ class EmoJiServiceImpl(
                     val emoji = emojiRepository.save(Emoji(user, post, status))
                     resp = EmojiResponse(
                             username = user.nickname,
-                            postId = post.postId!!,
+                            postId = post.postId,
                             emojiStatus = emoji.status
                     )
                 }()
@@ -57,7 +57,7 @@ class EmoJiServiceImpl(
         for (emoji in post.emojiList) {
             emojiResponse.add(EmojiResponse(
                     username = emoji.user.nickname,
-                    postId = emoji.post.postId!!,
+                    postId = emoji.post.postId,
                     emojiStatus = emoji.status)
             )
         }

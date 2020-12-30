@@ -35,7 +35,7 @@ class CommentServiceImpl(
                         content = commentRequest.content
                 ))
         )
-        return post.postId!!
+        return post.postId
     }
 
 

@@ -12,7 +12,7 @@ import javax.persistence.*
 @Entity(name = "tbl_post")
 class Post(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var postId: Int? = null,
+        var postId: Int = 0,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")

@@ -14,7 +14,7 @@ import javax.persistence.*
 @Entity(name = "tbl_user")
 class User(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Int? = null,
+        var id: Int = 0,
 
         @Column(length = 100, unique = true, nullable = false)
         var email: String,
