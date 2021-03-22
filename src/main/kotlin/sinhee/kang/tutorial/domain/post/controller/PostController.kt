@@ -14,8 +14,8 @@ import sinhee.kang.tutorial.domain.post.service.post.PostService
 @RestController
 @RequestMapping("/posts")
 class PostController(
-        private var postService: PostService,
-        private var emojiService: EmojiService
+        private val postService: PostService,
+        private val emojiService: EmojiService
 ) {
     @GetMapping
     fun getAllHashTagPostList(page: Pageable, @RequestParam(defaultValue = "") tags: String?): PostListResponse {

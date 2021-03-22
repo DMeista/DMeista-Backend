@@ -12,10 +12,10 @@ import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
 
 @Service
 class EmoJiServiceImpl(
-        private var authService: AuthService,
+        private val authService: AuthService,
 
-        private var postRepository: PostRepository,
-        private var emojiRepository: EmojiRepository
+        private val postRepository: PostRepository,
+        private val emojiRepository: EmojiRepository
 ): EmojiService {
     override fun emojiService(postId: Int, status: EmojiStatus): EmojiResponse? {
         val user = authService.authValidate()
@@ -39,14 +39,14 @@ class EmoJiServiceImpl(
                         )
                     }
                 }
-                ?:{
+                ?: run {
                     val emoji = emojiRepository.save(Emoji(user, post, status))
                     resp = EmojiResponse(
-                            username = user.nickname,
-                            postId = post.postId,
-                            emojiStatus = emoji.status
+                        username = user.nickname,
+                        postId = post.postId,
+                        emojiStatus = emoji.status
                     )
-                }()
+                }
         return resp
     }
 
@@ -58,8 +58,8 @@ class EmoJiServiceImpl(
             emojiResponse.add(EmojiResponse(
                     username = emoji.user.nickname,
                     postId = emoji.post.postId,
-                    emojiStatus = emoji.status)
-            )
+                    emojiStatus = emoji.status
+            ))
         }
         return PostEmojiListResponse(
                 totalEmoji = post.emojiList.count(),

@@ -19,20 +19,20 @@ import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundExcepti
 
 @Service
 class AuthServiceImpl(
-        private var passwordEncoder: PasswordEncoder,
-        private var authenticationFacade: AuthenticationFacade,
+        private val passwordEncoder: PasswordEncoder,
+        private val authenticationFacade: AuthenticationFacade,
 
-        private var userRepository: UserRepository,
-        private var refreshTokenRepository: RefreshTokenRepository,
+        private val userRepository: UserRepository,
+        private val refreshTokenRepository: RefreshTokenRepository,
 
-        private var refreshTokenService: RefreshTokenService,
-        private var tokenProvider: JwtTokenProvider,
+        private val refreshTokenService: RefreshTokenService,
+        private val tokenProvider: JwtTokenProvider,
 
         @Value("\${auth.jwt.exp.refresh}")
-        private var refreshExp: Long,
+        private val refreshExp: Long,
 
         @Value("\${auth.jwt.prefix}")
-        private var tokenType: String
+        private val tokenType: String
 ) : AuthService {
 
     override fun signIn(request: SignInRequest): TokenResponse {
@@ -44,7 +44,7 @@ class AuthServiceImpl(
                     refreshTokenService.save(RefreshToken(user.nickname, refreshToken, refreshExp))
                     TokenResponse(accessToken, refreshToken, tokenType)
                 }
-                ?: { throw UserNotFoundException() }()
+                ?: run { throw UserNotFoundException() }
     }
 
     override fun refreshToken(refreshToken: String): TokenResponse {
