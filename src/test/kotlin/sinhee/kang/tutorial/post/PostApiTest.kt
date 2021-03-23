@@ -78,18 +78,6 @@ class PostApiTest {
 
     @Test
     @Throws
-    fun getHashTagGroupPostList_LoadTest() {
-        val post: String = mvc.perform(get("/posts")
-                .param("tags", "안경"))
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-        val response = mappingResponse(post, PostListResponse::class.java) as PostListResponse
-        assert(response.totalItems == 2)
-    }
-
-
-    @Test
-    @Throws
     fun getPostContentTest() {
         val postId = uploadOrEditPost(post("/posts"))
         requestMvc(get("/posts/$postId"))
