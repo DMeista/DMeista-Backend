@@ -19,11 +19,11 @@ class EmbeddedRedisConfig {
 
     @PostConstruct
     fun runRedis() {
-        redisServer!!.start()
+        redisServer?.start()
     }
 
     @PreDestroy
     fun stopRedis() {
-        redisServer!!.stop()
+        redisServer?.stop()
     }
 }
