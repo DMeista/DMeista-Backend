@@ -16,6 +16,8 @@ jobs:
       MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
       KAKAO_REST_API_KEY: ${{secrets.KAKAO_REST_API_KEY}}
       KAKAO_REST_API_URI: ${{secrets.KAKAO_REST_API_URI}}
+      REDIS_HOST: ${{secrets.REDIS_HOST}}
+      REDIS_PORT: ${{secrets.REDIS_PORT}}
 
     steps:
       - name: Checkout
