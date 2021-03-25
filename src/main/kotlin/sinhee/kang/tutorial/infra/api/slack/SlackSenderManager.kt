@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import okhttp3.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
@@ -15,10 +16,11 @@ import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class SlackSenderManager {
+class SlackSenderManager(
+    @Value("\${web.hook.url}")
+    private var webHookUrl: String
+) {
     private var errorHandler = ErrorHandler()
-
-    private var webHookUrl: String = System.getenv("WEB_HOOK_URL")
     private var client = OkHttpClient()
     private var mapper = ObjectMapper()
 
