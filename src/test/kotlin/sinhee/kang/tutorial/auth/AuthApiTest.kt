@@ -2,33 +2,25 @@ package sinhee.kang.tutorial.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import sinhee.kang.tutorial.TutorialApplication
+
+import sinhee.kang.tutorial.ApiTest
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
-@RunWith(SpringRunner::class)
-@SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
-class AuthApiTest {
+class AuthApiTest: ApiTest() {
     @Autowired
     private lateinit var mvc: MockMvc
     @Autowired
@@ -43,7 +35,7 @@ class AuthApiTest {
     private val username = "user"
 
 
-    @Before
+    @BeforeEach
     fun setup() {
         userRepository.save(User(
                 email = testMail,
@@ -52,7 +44,7 @@ class AuthApiTest {
         ))
     }
 
-    @After
+    @AfterEach
     fun clean() {
         userRepository.findByNickname(username)
                 ?.let { user -> userRepository.delete(user) }
