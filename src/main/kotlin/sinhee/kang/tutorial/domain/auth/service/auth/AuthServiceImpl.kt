@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class AuthServiceImpl(
         private val authenticationFacade: AuthenticationFacade,
 
         private val userRepository: UserRepository,
+        @Autowired
         private val refreshTokenRepository: RefreshTokenRepository,
 
         private val refreshTokenService: RefreshTokenService,

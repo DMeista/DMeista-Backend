@@ -18,11 +18,11 @@ import javax.servlet.http.HttpServletRequest
 @Component
 class SlackSenderManager(
     @Value("\${web.hook.url}")
-    private var webHookUrl: String
+    private val webHookUrl: String
 ) {
-    private var errorHandler = ErrorHandler()
-    private var client = OkHttpClient()
-    private var mapper = ObjectMapper()
+    private val errorHandler = ErrorHandler()
+    private val client = OkHttpClient()
+    private val mapper = ObjectMapper()
 
     @Async
     fun send(request: HttpServletRequest, exception: Exception) {

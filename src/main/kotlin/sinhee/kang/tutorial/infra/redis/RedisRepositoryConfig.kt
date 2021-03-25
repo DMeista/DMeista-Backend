@@ -12,17 +12,17 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import java.time.Duration
 
 @Configuration
-@EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-class RedisRepository(
+@EnableRedisRepositories
+class RedisRepositoryConfig {
     @Value("\${spring.redis.host}")
-    private val host: String,
+    private lateinit var host: String
 
-    @Value("\${{spring.redis.port}}")
-    private val port: Int
-) {
-    val password: String = ""
+    @Value("\${spring.redis.port}")
+    private var port: Int = 6379
 
-    @Bean()
+    private val password: String = ""
+
+    @Bean
     fun redisConnectionFactory(): LettuceConnectionFactory {
         val redisConfig = RedisStandaloneConfiguration(host, port)
         if (!password.isBlank())

@@ -12,11 +12,11 @@ import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
 @Service
 class VisionApi(
     @Value("\${kakao.prefix}")
-    private var url: String,
+    private val url: String,
     @Value("\${kakao.rest.api.key}")
-    private var prefix: String,
+    private val prefix: String,
     @Value("\${kakao.rest.api.url}")
-    private var key: String
+    private val key: String
 ) {
     @Async
     fun getVisionApi(imageFile: MultipartFile): List<String> {

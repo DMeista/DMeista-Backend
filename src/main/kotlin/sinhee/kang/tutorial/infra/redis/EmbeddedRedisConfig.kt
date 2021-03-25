@@ -8,14 +8,13 @@ import redis.embedded.RedisServer
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
-
 @Configuration
 @Profile("local")
 class EmbeddedRedisConfig(
     @Value("\${spring.redis.port}")
     private val redisPort: Int
 ) {
-    val redisServer: RedisServer = RedisServer(redisPort)
+    private val redisServer: RedisServer = RedisServer(redisPort)
 
     @PostConstruct
     fun runRedis() {
