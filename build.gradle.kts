@@ -34,7 +34,6 @@ repositories {
 }
 
 dependencies {
-//    implementation("com.google.firebase:firebase-admin:6.11.0")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -64,8 +63,11 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
     runtimeOnly("mysql:mysql-connector-java")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.6.2")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    implementation("junit:junit:4.12")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.h2database:h2")
 }
