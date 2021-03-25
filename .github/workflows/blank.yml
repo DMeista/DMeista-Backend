@@ -31,5 +31,5 @@ jobs:
         shell: bash
       
       - name: Grant executepermission for gradlew
-        run: ./gradlew build
+        run: ./gradlew build --info
         shell: bash
