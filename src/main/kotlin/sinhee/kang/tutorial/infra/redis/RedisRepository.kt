@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.infra.redis
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
@@ -12,14 +13,18 @@ import java.time.Duration
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-class RedisRepository {
-    var redisHost: String = "localhost"
-    var redisPort: Int = 6379
-    var password: String = ""
+class RedisRepository(
+    @Value("\${spring.redis.host}")
+    private val host: String,
+
+    @Value("\${{spring.redis.port}}")
+    private val port: Int
+) {
+    val password: String = ""
 
     @Bean()
     fun redisConnectionFactory(): LettuceConnectionFactory {
-        val redisConfig: RedisStandaloneConfiguration = RedisStandaloneConfiguration(redisHost, redisPort)
+        val redisConfig = RedisStandaloneConfiguration(host, port)
         if (!password.isBlank())
             redisConfig.setPassword(password)
         val clientConfig: LettuceClientConfiguration = LettuceClientConfiguration.builder()
