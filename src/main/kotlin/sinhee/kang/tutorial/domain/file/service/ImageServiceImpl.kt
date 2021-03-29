@@ -14,14 +14,13 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Files
 import java.util.*
+import javax.servlet.http.HttpSession
 
 @Service
 class ImageServiceImpl(
-        @Value("\${image.upload.dir}")
-        private var imageDirPath: String,
-
         private var imageFileRepository: ImageFileRepository
 ): ImageService {
+    val imageDirPath: String = "/resource/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageDirPath, imageName)
