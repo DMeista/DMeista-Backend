@@ -32,6 +32,16 @@ jobs:
         run: chmod +x gradlew
         shell: bash
       
-      - name: Grant executepermission for gradlew
+      - name: Build Gradle
         run: ./gradlew build
         shell: bash
+        
+      - name: Build Docker Image
+        run: docker build -t rkdtlsgml40/dmeista:latest .
+
+      - name: Publish To Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: rkdtlsgml40/dmeista:latest
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
