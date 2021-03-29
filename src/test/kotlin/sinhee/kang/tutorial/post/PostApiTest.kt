@@ -60,30 +60,6 @@ class PostApiTest: ApiTest() {
                 ?.let { user -> userRepository.delete(user) }
     }
 
-
-    @Test
-    @Throws
-    fun getAllHashTagPostList_LoadTest() {
-        val post: String = requestMvc(get("/posts"))
-        val response = mappingResponse(post, PostListResponse::class.java) as PostListResponse
-        assert(response.totalItems == postRepository.findAll().count())
-    }
-
-
-    @Test
-    @Throws
-    fun getPostContentTest() {
-        val postId = uploadOrEditPost(post("/posts"))
-        requestMvc(get("/posts/$postId"))
-                .let { post ->
-                    val response = mappingResponse(post, PostContentResponse::class.java) as PostContentResponse
-                    assert(response.title == "title")
-                }
-
-        postRepository.deleteById(postId)
-    }
-
-
     @Test
     @Throws
     fun uploadPostTest() {

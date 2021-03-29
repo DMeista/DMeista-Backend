@@ -58,16 +58,6 @@ class UserApiTest: ApiTest() {
 
     @Test
     @Throws
-    fun nicknameVerifyTest() {
-        mvc.perform(get("/users/nickname")
-                .param("nickname", username))
-                .andExpect(status().isOk)
-                .andDo(print())
-    }
-
-
-    @Test
-    @Throws
     fun changePasswordTest() {
         userRepository.save(User(
                 email = testMail,

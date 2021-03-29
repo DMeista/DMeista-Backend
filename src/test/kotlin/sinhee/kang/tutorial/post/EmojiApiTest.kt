@@ -98,19 +98,6 @@ class EmojiApiTest: ApiTest() {
     }
 
 
-    @Test
-    @Throws
-    fun getPostEmojiListTest() {
-        val post = uploadPost()
-        requestEmoji(post, EmojiStatus.LIKE)
-        val emojiList = requestEmojiList(post)
-        assert(emojiList.applicationResponses[0].emojiStatus == EmojiStatus.LIKE)
-
-        emojiRepository.deleteAll()
-        postRepository.deleteById(post)
-    }
-
-
     private fun uploadPost(): Int {
         val accessToken = accessToken()
         return Integer.parseInt(mvc.perform(post("/posts")
