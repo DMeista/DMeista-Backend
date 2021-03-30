@@ -11,13 +11,11 @@ import java.util.concurrent.Executor
 @Configuration
 @EnableAsync
 class AsyncConfig : AsyncConfigurerSupport() {
-    override fun getAsyncExecutor(): Executor {
-        val executor = ThreadPoolTaskExecutor()
-        executor.corePoolSize = 2
-        executor.maxPoolSize = 10
-        executor.setQueueCapacity(500)
-        executor.setThreadNamePrefix("async")
-        executor.initialize()
-        return executor
-    }
+    override fun getAsyncExecutor(): Executor = ThreadPoolTaskExecutor()
+        .apply {
+            corePoolSize = 2
+            maxPoolSize = 10
+            setQueueCapacity(500)
+            setThreadNamePrefix("async")
+            initialize() }
 }
