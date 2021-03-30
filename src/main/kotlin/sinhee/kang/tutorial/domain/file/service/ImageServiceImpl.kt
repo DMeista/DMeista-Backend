@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession
 class ImageServiceImpl(
         private var imageFileRepository: ImageFileRepository
 ): ImageService {
-    val imageDirPath: String = "/resource/"
+    val imageDirPath: String = "/home/ubuntu/resource/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageDirPath, imageName)
