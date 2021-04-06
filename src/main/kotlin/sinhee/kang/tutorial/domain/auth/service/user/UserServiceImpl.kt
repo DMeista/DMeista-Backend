@@ -1,6 +1,8 @@
 package sinhee.kang.tutorial.domain.auth.service.user
 
 import org.springframework.context.ApplicationEventPublisher
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
@@ -19,25 +21,26 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+import java.lang.Exception
 import java.time.LocalDateTime
 import java.util.*
 
 @Service
 class UserServiceImpl(
-        private var userRepository: UserRepository,
+        private val userRepository: UserRepository,
 
-        private var authService: AuthService,
+        private val authService: AuthService,
 
-        private var emailVerificationRepository: EmailVerificationRepository,
-        private var emailLimiterRepository: EmailLimiterRepository,
-        private var emailService: EmailService,
-        private var passwordEncoder: PasswordEncoder,
-        private var publisher: ApplicationEventPublisher
+        private val emailVerificationRepository: EmailVerificationRepository,
+        private val emailLimiterRepository: EmailLimiterRepository,
+        private val emailService: EmailService,
+        private val passwordEncoder: PasswordEncoder,
+        private val publisher: ApplicationEventPublisher
 ) : UserService {
 
     private var limit: Int = 6
 
-    override fun signUp(signUpRequest: SignUpRequest) {
+    override fun signUp(signUpRequest: SignUpRequest): HttpStatus {
         val email: String = signUpRequest.email
         val password = passwordEncoder.encode(signUpRequest.password)
         val nickname: String = signUpRequest.nickname
@@ -59,10 +62,11 @@ class UserServiceImpl(
 
         publisher.publishEvent(emailService.sendCelebrateEmail(user))
         emailVerificationRepository.save(emailVerification.setUnVerify())
+        return HttpStatus.OK
     }
 
 
-    override fun exitAccount(request: ChangePasswordRequest) {
+    override fun exitAccount(request: ChangePasswordRequest): HttpStatus {
         val user = authService.authValidate()
         val email = request.email
         val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
@@ -74,16 +78,18 @@ class UserServiceImpl(
         }
         userRepository.delete(user)
         emailVerificationRepository.save(emailVerification.setUnVerify())
+
+        return HttpStatus.OK
     }
 
-    override fun isVerifyNickname(nickname: String): Boolean {
+    override fun isVerifyNickname(nickname: String): HttpStatus {
         return userRepository.findByNickname(nickname)
-                ?.let { true }
-                ?:{ false }()
+            ?.let { HttpStatus.OK }
+            ?: throw UserAlreadyExistsException()
     }
 
 
-    override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest) {
+    override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest): HttpStatus {
         val email: String = verifyCodeRequest.email
         val code: String = verifyCodeRequest.authCode
         val emailVerification: EmailVerification = emailVerificationRepository.findById(email)
@@ -95,10 +101,11 @@ class UserServiceImpl(
 
         emailVerification.verify()
         emailVerificationRepository.save(emailVerification)
+        return HttpStatus.OK
     }
 
 
-    override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
+    override fun changePassword(changePasswordRequest: ChangePasswordRequest): HttpStatus {
         val email: String = changePasswordRequest.email
         val password: String = passwordEncoder.encode(changePasswordRequest.password)
 
@@ -112,22 +119,31 @@ class UserServiceImpl(
         userRepository.save(user)
 
         emailVerificationRepository.save(emailVerification.setUnVerify())
+
+        return HttpStatus.OK
     }
 
 
-    override fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest) {
+    override fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest): HttpStatus {
         val email: String = emailRequest.email
+
         userRepository.findByEmail(email)
                 .emailTypeAction(sendType)
 
         if (!isUnderRequestLimit(email)) throw TooManyListenersException()
 
         val code = randomCode()
-        emailService.sendVerifyEmail(email, code)
+        try {
+            emailService.sendVerifyEmail(email, code)
+        }
+        catch (e: Exception) {
+            throw e
+        }
         emailVerificationRepository.save(EmailVerification(
                 email = email,
                 authCode = code
         ))
+        return HttpStatus.OK
     }
 
 
@@ -153,7 +169,7 @@ class UserServiceImpl(
     private fun User?.emailTypeAction(sendType: String?) {
         when(sendType) {
             "signup" -> this?.let { throw UserAlreadyExistsException() }
-            "user" -> this ?: { throw UserNotFoundException() }()
+            "user" -> this ?: throw UserNotFoundException()
         }
     }
 }

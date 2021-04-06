@@ -1,16 +1,17 @@
 package sinhee.kang.tutorial.domain.auth.service.user
 
+import org.springframework.http.HttpStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 
 interface UserService {
-    fun signUp(signUpRequest: SignUpRequest)
-    fun exitAccount(request: ChangePasswordRequest)
+    fun signUp(signUpRequest: SignUpRequest): HttpStatus
+    fun exitAccount(request: ChangePasswordRequest): HttpStatus
 
-    fun isVerifyNickname(nickname: String): Boolean
-    fun verifyEmail(verifyCodeRequest: VerifyCodeRequest)
+    fun isVerifyNickname(nickname: String): HttpStatus
+    fun verifyEmail(verifyCodeRequest: VerifyCodeRequest): HttpStatus
 
-    fun changePassword(changePasswordRequest: ChangePasswordRequest)
+    fun changePassword(changePasswordRequest: ChangePasswordRequest): HttpStatus
 
-    fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest)
+    fun userAuthenticationSendEmail(sendType: String, emailRequest: EmailRequest): HttpStatus
 
 }

@@ -63,11 +63,11 @@ class AuthServiceImpl(
 
                     TokenResponse(generatedAccessToken, generatedRefreshToken, tokenType)
                 }
-                ?: { throw ExpiredTokenException() }()
+                ?: throw ExpiredTokenException()
     }
 
     override fun authValidate(): User {
         return userRepository.findByNickname(authenticationFacade.getUserName())
-                ?: { throw UnAuthorizedException() }()
+                ?: throw UnAuthorizedException()
     }
 }
