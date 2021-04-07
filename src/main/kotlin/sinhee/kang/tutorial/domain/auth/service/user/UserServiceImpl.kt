@@ -1,7 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.service.user
 
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -84,8 +83,8 @@ class UserServiceImpl(
 
     override fun isVerifyNickname(nickname: String): HttpStatus {
         return userRepository.findByNickname(nickname)
-            ?.let { HttpStatus.OK }
-            ?: throw UserAlreadyExistsException()
+            ?.let { throw UserAlreadyExistsException() }
+            ?: HttpStatus.OK
     }
 
 
@@ -114,7 +113,7 @@ class UserServiceImpl(
                 .orElseThrow { ExpiredAuthCodeException() }
 
         val user: User = userRepository.findByEmail(email)
-                ?: { throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         user.password = password
         userRepository.save(user)
 
