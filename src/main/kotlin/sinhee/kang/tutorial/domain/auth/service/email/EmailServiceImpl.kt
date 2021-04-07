@@ -1,35 +1,39 @@
 package sinhee.kang.tutorial.domain.auth.service.email
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.event.EventListener
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
+import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Service
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 import sinhee.kang.tutorial.domain.user.domain.user.User
 
-@Service
+@Component
 class EmailServiceImpl(
-        @Autowired
-        var javaMailSender: JavaMailSender
+        private val javaMailSender: JavaMailSender
 ) : EmailService {
-    private val msg = SimpleMailMessage()
+    private val msg: SimpleMailMessage = SimpleMailMessage()
 
     init {
         msg.setFrom("kangsinhee40@gmail.com")
     }
 
+
+    @Async
     override fun sendVerifyEmail(email: String, code: String) {
         msg.run {
             setTo(email)
             setSubject("DMeista 인증메일입니다.")
-            setText("DMeista 서비스 인증 메일입니다. \n\n[ $code ]")
+            setText("<h2>DMeista 서비스 인증 메일입니다.</h2> \n\n[ $code ]")
         }
 
         javaMailSender.send(msg)
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT, fallbackExecution = true)
+    @Async
     override fun sendCelebrateEmail(user: User) {
         msg.run {
             setTo(user.email)
