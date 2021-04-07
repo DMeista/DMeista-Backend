@@ -47,9 +47,10 @@ class SecurityConfig(
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-                .requestMatchers(RequestMatcher {
-                        request: HttpServletRequest -> CorsUtils.isPreFlightRequest(request)
-                }).permitAll()
+            .requestMatchers(RequestMatcher {
+                request: HttpServletRequest -> CorsUtils.isPreFlightRequest(request)
+            })
+            .permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/post").permitAll()

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession
 
 @Service
 class ImageServiceImpl(
-        private var imageFileRepository: ImageFileRepository
+        private val imageFileRepository: ImageFileRepository
 ): ImageService {
     val imageDirPath: String = "/home/ubuntu/resource/"
 
@@ -31,15 +31,16 @@ class ImageServiceImpl(
         return IOUtils.toByteArray(inputStream)
     }
 
-    override fun saveImageFile(post: Post, imageFile: Array<MultipartFile>?) {
-        imageFile?.let {
+    override fun saveImageFile(post: Post, imageFile: Array<MultipartFile>) {
+        imageFile.let {
             for (file in imageFile) {
                 val fileName = UUID.randomUUID().toString()
+                file.transferTo(File(imageDirPath + fileName))
+
                 imageFileRepository.save(ImageFile(
-                        post = post,
-                        fileName = fileName
+                    post = post,
+                    fileName = fileName
                 ))
-                file.transferTo(File(imageDirPath, fileName))
             }
         }
     }
