@@ -158,7 +158,7 @@ class PostServiceImpl(
         val imageFile = post.imageFileList
         imageService.run {
             deleteImageFile(post, imageFile)
-            image?.let { saveImageFile(post, image) }
+            saveImageFile(post, image)
         }
         return post.postId
     }
