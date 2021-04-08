@@ -28,7 +28,7 @@ import kotlin.collections.ArrayList
 class PostServiceImpl(
         private val authService: AuthService,
         private val imageService: ImageService,
-        private val visionApi: VisionApi,
+        private var visionApi: VisionApi,
 
         private val userRepository: UserRepository,
         private val postRepository: PostRepository,
@@ -136,7 +136,8 @@ class PostServiceImpl(
             author = user.nickname,
             tags =  request.joinToString()
         ))
-        imageFile?.let { imageService.saveImageFile(post, imageFile) }
+
+        imageService.saveImageFile(post, imageFile)
 
         return post.postId
     }

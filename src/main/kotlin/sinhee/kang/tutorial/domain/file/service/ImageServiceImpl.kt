@@ -29,8 +29,8 @@ class ImageServiceImpl(
         return IOUtils.toByteArray(inputStream)
     }
 
-    override fun saveImageFile(post: Post, imageFiles: Array<MultipartFile>) {
-        imageFiles.let {
+    override fun saveImageFile(post: Post, imageFiles: Array<MultipartFile>?) {
+        imageFiles?.let {
             for (img in imageFiles) {
                 val fileName = UUID.randomUUID().toString()
                 img.transferTo(File(imageDirPath + fileName))

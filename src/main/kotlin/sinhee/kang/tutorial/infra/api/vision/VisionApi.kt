@@ -10,17 +10,16 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
 
-@Component
+@Service
 class VisionApi(
-    @Value("\${kakao.prefix}")
-    private val url: String,
-    @Value("\${kakao.rest.api.key}")
-    private val prefix: String,
     @Value("\${kakao.rest.api.url}")
+    private val url: String,
+    @Value("\${kakao.prefix}")
+    private val prefix: String,
+    @Value("\${kakao.rest.api.key}")
     private val key: String
 ) {
 
-    @Async
     fun getVisionApi(imageFile: MultipartFile): List<String> {
         val client = OkHttpClient()
         val mapper = ObjectMapper()

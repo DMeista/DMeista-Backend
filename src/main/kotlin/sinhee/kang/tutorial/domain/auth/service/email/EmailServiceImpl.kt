@@ -1,14 +1,9 @@
 package sinhee.kang.tutorial.domain.auth.service.email
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.event.EventListener
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @Component
