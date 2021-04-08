@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.post.service.post
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
@@ -25,22 +26,22 @@ import kotlin.collections.ArrayList
 
 @Service
 class PostServiceImpl(
-        private var authService: AuthService,
-        private var imageService: ImageService,
+        private val authService: AuthService,
+        private val imageService: ImageService,
         private val visionApi: VisionApi,
 
-        private var userRepository: UserRepository,
-        private var postRepository: PostRepository,
-        private var viewRepository: ViewRepository,
-        private var imageFileRepository: ImageFileRepository
+        private val userRepository: UserRepository,
+        private val postRepository: PostRepository,
+        private val viewRepository: ViewRepository,
+        private val imageFileRepository: ImageFileRepository
 
 ) : PostService {
 
     override fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse {
-        tags?: { throw ApplicationNotFoundException() }()
+        tags?: throw ApplicationNotFoundException()
         return postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
                 ?.let { getPostList(it) }
-                ?: { throw ApplicationNotFoundException() }()
+                ?: throw ApplicationNotFoundException()
     }
 
 
@@ -51,7 +52,7 @@ class PostServiceImpl(
         try {
             user = authService.authValidate()
             viewRepository.findByUserAndPost(user, post)
-                    ?: { viewRepository.save(View(user, post)) }()
+                    ?: viewRepository.save(View(user, post))
         }
         catch (e: Exception) {
             user = User()
@@ -60,8 +61,8 @@ class PostServiceImpl(
         val commentList: MutableList<Comment> = post.commentList
         val commentsResponse: MutableList<PostCommentsResponse> = ArrayList()
 
-        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: { Post() }()
-        val prePost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: { Post() }()
+        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: Post()
+        val prePost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
 
         val imageNames: MutableList<String> = ArrayList()
         post.imageFileList.let { imageFile ->
@@ -72,7 +73,7 @@ class PostServiceImpl(
 
         for (comment in commentList) {
             val commentAuthor = userRepository.findByNickname(comment.author)
-                    ?:{ throw UserNotFoundException() }()
+                    ?: throw UserNotFoundException()
 
             val subCommentList: MutableList<SubComment> = comment.subCommentList
             val subCommentsResponses: MutableList<PostSubCommentsResponse> = ArrayList()
@@ -122,20 +123,21 @@ class PostServiceImpl(
         val user = authService.authValidate()
         var request: MutableList<String> = ArrayList()
 
+        tags?.run { request.add(this) }
+
         if (imageFile != null && autoTags) {
             request = getTagsFromImage(imageFile)
         }
 
-        tags?.run { request.add(this) }
-
         val post = postRepository.save(Post(
-                user = user,
-                author = user.nickname,
-                title = title,
-                content = content,
-                tags =  request.joinToString()
+            user = user,
+            title = title,
+            content = content,
+            author = user.nickname,
+            tags =  request.joinToString()
         ))
-        imageService.saveImageFile(post, imageFile)
+        imageFile?.let { imageService.saveImageFile(post, imageFile) }
+
         return post.postId
     }
 
@@ -155,7 +157,7 @@ class PostServiceImpl(
         val imageFile = post.imageFileList
         imageService.run {
             deleteImageFile(post, imageFile)
-            saveImageFile(post, image)
+            image?.let { saveImageFile(post, image) }
         }
         return post.postId
     }
@@ -167,7 +169,7 @@ class PostServiceImpl(
                 .orElseThrow { ApplicationNotFoundException() }
                 .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also { postRepository.deleteById(it.postId) }
-                ?: { throw PermissionDeniedException() }()
+                ?: throw PermissionDeniedException()
         post.imageFileList.let { imageFile ->
             imageService.deleteImageFile(post, imageFile) }
         imageFileRepository.deleteByPost(post)
@@ -179,7 +181,7 @@ class PostServiceImpl(
         for (image in imageFile) {
             try {
                 val list = visionApi.getVisionApi(image)
-                for (tag in list) { request.add(tag) }
+                for (tag in list) { request.add("#$tag") }
             }
             catch (e: Exception) {
                 e.printStackTrace()
@@ -189,7 +191,7 @@ class PostServiceImpl(
     }
 
 
-    fun getPostList(postPage: Page<Post>): PostListResponse {
+    private fun getPostList(postPage: Page<Post>): PostListResponse {
         val user = try { authService.authValidate() }
                 catch (e: Exception) { null }
         val postResponse: MutableList<PostResponse> = ArrayList()
@@ -199,9 +201,9 @@ class PostServiceImpl(
             val checked: Boolean = user
                     ?.let { viewRepository.findByUserAndPost(user, post)
                             ?.let { true }
-                            ?: { false }()
+                            ?: false
                     }
-                    ?:{ false }()
+                    ?: false
             postResponse.add(PostResponse(
                     id = post.postId,
                     title = post.title,

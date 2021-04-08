@@ -1,7 +1,6 @@
 package sinhee.kang.tutorial.domain.file.service
 
 import org.apache.commons.io.IOUtils
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.file.domain.ImageFile
@@ -14,13 +13,12 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.file.Files
 import java.util.*
-import javax.servlet.http.HttpSession
 
 @Service
 class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
-    val imageDirPath: String = "/home/ubuntu/resource/"
+    val imageDirPath: String = "file:///home/ubuntu/resource/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageDirPath, imageName)
@@ -31,11 +29,11 @@ class ImageServiceImpl(
         return IOUtils.toByteArray(inputStream)
     }
 
-    override fun saveImageFile(post: Post, imageFile: Array<MultipartFile>?) {
-        imageFile?.let {
-            for (file in imageFile) {
+    override fun saveImageFile(post: Post, imageFiles: Array<MultipartFile>) {
+        imageFiles.let {
+            for (img in imageFiles) {
                 val fileName = UUID.randomUUID().toString()
-                file.transferTo(File(imageDirPath + fileName))
+                img.transferTo(File(imageDirPath + fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
