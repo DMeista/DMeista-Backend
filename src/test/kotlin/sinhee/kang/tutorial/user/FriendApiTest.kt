@@ -86,21 +86,6 @@ class FriendApiTest: ApiTest() {
 
     @Test
     @Throws
-    fun getAcceptFriendListTest() {
-        requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
-        requestMvc(put("/users/friends/${user.id}"), token = user2Token)
-
-        val request = mappingResponse(
-            requestMvc(get("/users/friends"), token = user1Token),
-            UserListResponse::class.java
-        ) as UserListResponse
-
-        assert(request.applicationResponses[0].nickname == targetUser.nickname)
-    }
-
-
-    @Test
-    @Throws
     fun getReceiveFriendRequestTest() {
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         val request = mappingResponse(requestMvc(get("/users/friends"), token = user2Token), UserListResponse::class.java) as UserListResponse
