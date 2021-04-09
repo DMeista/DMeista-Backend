@@ -24,7 +24,7 @@ class FriendServiceImpl(
 
     override fun getFriendList(nickname: String): UserListResponse {
         val user = userRepository.findByNickname(nickname)
-                ?: { throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         val userResponse: MutableList<UserResponse> = ArrayList()
         for (users in user.friendList.filter { it.isAccept() }) {
             userResponse.add(UserResponse(
@@ -60,7 +60,7 @@ class FriendServiceImpl(
         val user = authService.authValidate()
         val requestList = friendRepository.findByTargetId(page, user)
                 ?.filter { it.isRequest() }
-                ?:{ throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         val userResponse: MutableList<UserResponse> = ArrayList()
 
         for (userRequest in requestList){

@@ -9,17 +9,15 @@ import sinhee.kang.tutorial.domain.user.service.friend.FriendService
 @RestController
 @RequestMapping("/users")
 class FriendController(
-        private var friendService: FriendService
+        private val friendService: FriendService
 ) {
 
-    @GetMapping("/{nickname}/friends")
-    fun getAcceptFriendList(@PathVariable nickname: String): UserListResponse {
-        return friendService.getFriendList(nickname)
-    }
-
     @GetMapping("/friends")
-    fun getReceiveFriendRequest(pageable: Pageable): UserListResponse? {
-        return friendService.receiveFriendRequestList(pageable)
+    fun getFriendsList(pageable: Pageable,
+                       @RequestParam(required = false) nickname: String?): UserListResponse? {
+        return nickname
+            ?.let { friendService.getFriendList(nickname) }
+            ?: run { friendService.receiveFriendRequestList(pageable) }
     }
 
     @PostMapping("/friends/{targetId}")
