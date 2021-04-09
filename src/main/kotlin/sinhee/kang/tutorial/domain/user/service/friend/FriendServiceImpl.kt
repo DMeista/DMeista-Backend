@@ -16,15 +16,23 @@ import kotlin.collections.ArrayList
 
 @Service
 class FriendServiceImpl(
-        private var authService: AuthService,
-        private var userRepository: UserRepository,
-        private var friendRepository: FriendRepository
+        private val authService: AuthService,
+        private val userRepository: UserRepository,
+        private val friendRepository: FriendRepository
 
 ): FriendService {
 
-    override fun getFriendList(nickname: String): UserListResponse {
-        val user = userRepository.findByNickname(nickname)
-                ?: throw UserNotFoundException()
+    override fun getFriendList(nickname: String?): UserListResponse {
+        lateinit var user: User
+        nickname
+            ?.let {
+                user = userRepository.findByNickname(it)
+                    ?: throw UserNotFoundException()
+            }
+            ?: run {
+                user = authService.authValidate()
+            }
+
         val userResponse: MutableList<UserResponse> = ArrayList()
         for (users in user.friendList.filter { it.isAccept() }) {
             userResponse.add(UserResponse(

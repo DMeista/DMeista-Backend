@@ -4,7 +4,7 @@ import org.springframework.data.domain.Pageable
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 
 interface FriendService {
-    fun getFriendList(nickname: String): UserListResponse
+    fun getFriendList(nickname: String?): UserListResponse
     fun receiveFriendRequestList(page: Pageable): UserListResponse?
 
     fun sendFriendRequest(userId: Int)

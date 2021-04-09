@@ -15,9 +15,12 @@ class FriendController(
     @GetMapping("/friends")
     fun getFriendsList(pageable: Pageable,
                        @RequestParam(required = false) nickname: String?): UserListResponse? {
-        return nickname
-            ?.let { friendService.getFriendList(nickname) }
-            ?: run { friendService.receiveFriendRequestList(pageable) }
+        return friendService.getFriendList(nickname)
+    }
+
+    @GetMapping("/friends/request")
+    fun receiveFriendRequestList(pageable: Pageable): UserListResponse? {
+        return friendService.receiveFriendRequestList(pageable)
     }
 
     @PostMapping("/friends/{targetId}")
