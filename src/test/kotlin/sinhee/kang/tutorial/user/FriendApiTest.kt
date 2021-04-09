@@ -38,10 +38,10 @@ class FriendApiTest: ApiTest() {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private val testMail = "rkdtlsgml50@naver.com"
+    private val testMail = "rkdtlsgml500@naver.com"
     private val username = "user1"
 
-    private val testMail2 = "rkdtlsgml40@naver.com"
+    private val testMail2 = "rkdtlsgml400@naver.com"
     private val username2 = "user2"
 
     private val passwd = "1234"
@@ -69,9 +69,9 @@ class FriendApiTest: ApiTest() {
         user2Token = "Bearer ${accessToken(testMail2, passwd)}"
 
         user = userRepository.findByNickname(username)
-                ?:{ throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         targetUser = userRepository.findByNickname(username2)
-                ?:{ throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
     }
 
     @AfterEach
@@ -89,7 +89,11 @@ class FriendApiTest: ApiTest() {
     fun getAcceptFriendListTest() {
         requestMvc(post("/users/friends/${targetUser.id}"), token = user1Token)
         requestMvc(put("/users/friends/${user.id}"), token = user2Token)
-        val request = mappingResponse(requestMvc(get("/users/user1/friends"), token = user1Token), UserListResponse::class.java) as UserListResponse
+
+        val request = mappingResponse(
+            requestMvc(get("/users/friends"), token = user1Token),
+            UserListResponse::class.java
+        ) as UserListResponse
 
         assert(request.applicationResponses[0].nickname == targetUser.nickname)
     }
@@ -121,7 +125,7 @@ class FriendApiTest: ApiTest() {
 
         assert(friendRepository.findByUserIdAndTargetIdAndStatus(user, targetUser, FriendStatus.ACCEPT)
                 ?.let { true }
-                ?:{ false }()
+                ?: false
         )
     }
 
@@ -137,7 +141,7 @@ class FriendApiTest: ApiTest() {
 
         assert(friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { throw Exception() }
-                ?:{ true }()
+                ?: true
         )
     }
 
@@ -155,7 +159,7 @@ class FriendApiTest: ApiTest() {
 
         assert(friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { throw Exception() }
-                ?:{ true }()
+                ?: true
         )
     }
 
@@ -163,7 +167,7 @@ class FriendApiTest: ApiTest() {
     private fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
         return friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { true }
-                ?:{ false }()
+                ?: false
     }
 
 

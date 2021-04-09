@@ -30,7 +30,7 @@ class AuthApiTest: ApiTest() {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private val testMail = "rkdtlsgml10@naver.com"
+    private val testMail = "rkdtlsgml500@naver.com"
     private val passwd = "1234"
     private val username = "user"
 

@@ -42,7 +42,7 @@ class CommentApiTest: ApiTest() {
     @Autowired
     private lateinit var objectMapper: ObjectMapper
 
-    private val testMail = "rkdtlsgml50@naver.com"
+    private val testMail = "rkdtlsgml500@naver.com"
     private val passwd = "1234"
     private val username = "user"
 
