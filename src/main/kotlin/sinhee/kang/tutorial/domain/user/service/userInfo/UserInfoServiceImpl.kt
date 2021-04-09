@@ -2,21 +2,31 @@ package sinhee.kang.tutorial.domain.user.service.userInfo
 
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
+import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
 import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
 
 @Service
 class UserInfoServiceImpl(
-        private var userRepository: UserRepository,
-        private var viewRepository: ViewRepository
+        private val userRepository: UserRepository,
+        private val viewRepository: ViewRepository,
+        private val authService: AuthService
 ): UserInfoService {
 
-    override fun getUserInfo(pageable: Pageable, nickname: String): UserInfoResponse? {
-        val user = userRepository.findByNickname(nickname)
-                ?: { throw UserNotFoundException() }()
+    override fun getUserInfo(pageable: Pageable, nickname: String?): UserInfoResponse? {
+        lateinit var user: User
+        nickname
+            ?.let {
+                user = userRepository.findByNickname(nickname)
+                    ?: throw UserNotFoundException()
+            }
+            ?: run {
+                user = authService.authValidate()
+            }
 
         val postResponse: MutableList<PostResponse> = ArrayList()
         for(post in user.postList.reversed()) {

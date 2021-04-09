@@ -8,12 +8,12 @@ import sinhee.kang.tutorial.domain.user.service.userInfo.UserInfoService
 @RestController
 @RequestMapping("/users")
 class UserInfoController(
-        private var userInfoService: UserInfoService
+        private val userInfoService: UserInfoService
 ) {
 
-    @GetMapping("/{nickname}")
+    @GetMapping
     fun userInfo(page: Pageable,
-                 @PathVariable nickname: String): UserInfoResponse? {
+                 @RequestParam(required = false) nickname: String?): UserInfoResponse? {
         return userInfoService.getUserInfo(page, nickname)
     }
 }
