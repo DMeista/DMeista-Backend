@@ -19,7 +19,7 @@ import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 import java.lang.Exception
 import java.time.LocalDateTime
 import java.util.*

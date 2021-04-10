@@ -14,9 +14,9 @@ import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
 import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.config.security.auth.AuthenticationFacade
-import sinhee.kang.tutorial.global.config.security.jwt.JwtTokenProvider
-import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+import sinhee.kang.tutorial.global.security.auth.AuthenticationFacade
+import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
+import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 
 @Service
 class AuthServiceImpl(

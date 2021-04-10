@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.security.exception
+package sinhee.kang.tutorial.global.security.exception
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType

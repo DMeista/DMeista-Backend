@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.security
+package sinhee.kang.tutorial.global.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -10,15 +10,12 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.util.matcher.RequestMatcher
-import org.springframework.web.cors.CorsConfiguration
-import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.CorsUtils
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import sinhee.kang.tutorial.global.config.security.exception.ExceptionConfigurer
-import sinhee.kang.tutorial.global.config.security.jwt.JwtConfigurer
-import sinhee.kang.tutorial.global.config.security.jwt.JwtTokenProvider
+import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
+import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
+import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.config.requestLog.RequestLogConfigurer
 import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
 import javax.servlet.http.HttpServletRequest

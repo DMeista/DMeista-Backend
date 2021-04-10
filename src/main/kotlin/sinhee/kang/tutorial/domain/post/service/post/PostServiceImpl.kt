@@ -2,7 +2,6 @@ package sinhee.kang.tutorial.domain.post.service.post
 
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
@@ -20,7 +19,7 @@ import sinhee.kang.tutorial.domain.post.exception.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 import sinhee.kang.tutorial.infra.api.vision.VisionApi
 import kotlin.collections.ArrayList
 

@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.security.jwt
+package sinhee.kang.tutorial.global.security.jwt
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
@@ -7,7 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import sinhee.kang.tutorial.domain.auth.exception.InvalidTokenException
-import sinhee.kang.tutorial.global.config.security.auth.AuthDetailsService
+import sinhee.kang.tutorial.global.security.auth.AuthDetailsService
 import java.util.*
 import javax.servlet.http.HttpServletRequest
 

@@ -24,7 +24,7 @@ import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepositor
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
-import sinhee.kang.tutorial.global.config.security.exception.UserNotFoundException
+import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 
 class FriendApiTest: ApiTest() {
     @Autowired

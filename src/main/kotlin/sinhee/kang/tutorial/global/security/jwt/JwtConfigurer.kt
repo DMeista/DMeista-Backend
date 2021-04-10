@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.security.jwt
+package sinhee.kang.tutorial.global.security.jwt
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
