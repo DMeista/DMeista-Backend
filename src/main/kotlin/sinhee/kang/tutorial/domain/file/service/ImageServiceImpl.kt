@@ -20,7 +20,7 @@ class ImageServiceImpl(
 ): ImageService {
 
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageDirPath, imageName)
+        val file = File(imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
