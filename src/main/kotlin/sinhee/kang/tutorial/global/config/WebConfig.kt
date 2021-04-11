@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebConfig: WebMvcConfigurer {
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/image/**")
-                .addResourceLocations("file:/home/ubuntu/resource/")
+        registry.addResourceHandler("/static/img/**")
+                .addResourceLocations("file:///home/resource/")
     }
 }

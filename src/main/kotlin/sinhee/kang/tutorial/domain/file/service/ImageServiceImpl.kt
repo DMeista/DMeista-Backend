@@ -18,9 +18,10 @@ import java.util.*
 class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
+    val imageDirPath: String = "file:///home/resource/"
 
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageName)
+        val file = File(imageDirPath, imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
@@ -32,7 +33,7 @@ class ImageServiceImpl(
         imageFiles?.let {
             for (img in imageFiles) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(fileName))
+                img.transferTo(File(imageDirPath, fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
@@ -45,7 +46,7 @@ class ImageServiceImpl(
     override fun deleteImageFile(post: Post, imageFile: List<ImageFile>?) {
         imageFile?.let {
             for (image in imageFile) {
-                Files.delete(File(image.fileName).toPath())
+                Files.delete(File(imageDirPath, image.fileName).toPath())
             }
             imageFileRepository.deleteByPost(post)
         }
