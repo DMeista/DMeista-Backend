@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
@@ -65,6 +66,11 @@ class SecurityConfig(
             .allowedOrigins("*")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
             .allowedHeaders("*");
+    }
+
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        registry.addResourceHandler("/static/img/**")
+            .addResourceLocations("file:///home/ubuntu/resources/")
     }
 
     @Bean

@@ -18,7 +18,7 @@ import java.util.*
 class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
-    val imageDirPath: String = "file:///home/resource/"
+    val imageDirPath: String = "file:///home/ubuntu/resources/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageDirPath, imageName)
