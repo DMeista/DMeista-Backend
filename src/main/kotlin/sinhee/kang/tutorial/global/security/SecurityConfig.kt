@@ -70,7 +70,7 @@ class SecurityConfig(
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/static/img/**")
-            .addResourceLocations("file:///home/ubuntu/resources/")
+            .addResourceLocations("file:///tmp/tomcat.***.8080/work/Tomcat/localhost/ROOT/")
     }
 
     @Bean
