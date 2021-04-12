@@ -68,7 +68,7 @@ class SecurityConfig(
             .allowedHeaders("*");
     }
 
-    @Bean
+
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/static/img/**")
             .addResourceLocations("file:///home/ubuntu/resource/")
