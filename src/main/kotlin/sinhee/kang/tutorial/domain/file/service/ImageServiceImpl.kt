@@ -19,10 +19,10 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
-    val imageUrl = "tmp/tomcat.3600659252962559519.8080/work/Tomcat/localhost/ROOT"
+    val imageUrl = "tmp/tomcat.3600659252962559519.8080/work/Tomcat/localhost/ROOT/"
 
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageUrl, imageName)
+        val file = File(imageUrl+imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
