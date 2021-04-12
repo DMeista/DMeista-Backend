@@ -19,7 +19,7 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
-    val imageUrl = "/tmp/tomcat.6308094755109712785.8080/work/Tomcat/localhost/ROOT/resource/"
+    val imageUrl = "/tmp/tomcat.***.8080/work/Tomcat/localhost/ROOT/resource/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageUrl, imageName)
