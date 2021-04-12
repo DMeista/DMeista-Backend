@@ -19,8 +19,10 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
+    val imageUrl = "file:///home/ubuntu/resource/"
+
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageName)
+        val file = File(imageUrl, imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
@@ -32,7 +34,7 @@ class ImageServiceImpl(
         imageFiles?.let {
             for (img in it) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(fileName))
+                img.transferTo(File(imageUrl, fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
@@ -44,8 +46,8 @@ class ImageServiceImpl(
 
     override fun deleteImageFile(post: Post, imageFile: List<ImageFile>?) {
         imageFile?.let {
-            for (image in imageFile) {
-                Files.delete(File(image.fileName).toPath())
+            for (image in it) {
+                Files.delete(File(imageUrl, image.fileName).toPath())
             }
             imageFileRepository.deleteByPost(post)
         }

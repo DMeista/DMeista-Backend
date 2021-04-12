@@ -24,8 +24,8 @@ import javax.servlet.http.HttpServletRequest
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private var jwtTokenProvider: JwtTokenProvider,
-        private var slackSenderManager: SlackSenderManager
+        private val jwtTokenProvider: JwtTokenProvider,
+        private val slackSenderManager: SlackSenderManager
 ) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
     @Bean
@@ -68,9 +68,10 @@ class SecurityConfig(
             .allowedHeaders("*");
     }
 
+    @Bean
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler("/static/img/**")
-            .addResourceLocations("file:///tmp/tomcat.***.8080/work/Tomcat/localhost/ROOT/")
+            .addResourceLocations("file:///home/ubuntu/resource/")
     }
 
     @Bean
