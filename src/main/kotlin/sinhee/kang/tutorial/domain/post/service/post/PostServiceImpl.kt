@@ -120,12 +120,14 @@ class PostServiceImpl(
 
     override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
-        var request: MutableList<String> = ArrayList()
-
-        tags?.run { request.add(this) }
+        var request: MutableList<String> = mutableListOf()
 
         if (imageFile != null && autoTags) {
             request = getTagsFromImage(imageFile)
+        }
+
+        tags?.let {
+            request.add(it)
         }
 
         val post = postRepository.save(Post(
