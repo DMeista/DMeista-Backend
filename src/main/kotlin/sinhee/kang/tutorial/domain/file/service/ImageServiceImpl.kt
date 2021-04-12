@@ -19,7 +19,7 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
-    val imageUrl = "file:///tmp/tomcat.3600659252962559519.8080/work/Tomcat/localhost/ROOT/"
+    val imageUrl = "file:///tmp/tomcat.6308094755109712785.8080/work/Tomcat/localhost/ROOT/resource/"
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imageUrl+imageName)
@@ -34,7 +34,7 @@ class ImageServiceImpl(
         imageFile?.let {
             for (img in it) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(fileName))
+                img.transferTo(File(imageUrl+fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
