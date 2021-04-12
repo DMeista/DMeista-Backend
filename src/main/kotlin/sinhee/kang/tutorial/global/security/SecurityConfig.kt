@@ -70,8 +70,10 @@ class SecurityConfig(
 
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry.addResourceHandler("/static/img/**")
-            .addResourceLocations("file:///resource/")
+        registry
+            .addResourceHandler("/uploads/**")
+            .addResourceLocations("file:resource/")
+            .setCachePeriod(0)
     }
 
     @Bean
