@@ -19,10 +19,10 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
-    val imageUrl = "file:///resource/"
+    val imageUrl = "/resource/"
 
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageUrl+imageName)
+        val file = File(imageUrl, imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
@@ -34,7 +34,7 @@ class ImageServiceImpl(
         imageFile?.let {
             for (img in it) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(imageUrl+fileName))
+                img.transferTo(File(imageUrl, fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
