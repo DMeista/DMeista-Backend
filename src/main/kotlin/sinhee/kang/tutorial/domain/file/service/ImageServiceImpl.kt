@@ -34,7 +34,7 @@ class ImageServiceImpl(
         imageFile?.let {
             for (img in it) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(imageUrl, fileName))
+                img.transferTo(File(fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
