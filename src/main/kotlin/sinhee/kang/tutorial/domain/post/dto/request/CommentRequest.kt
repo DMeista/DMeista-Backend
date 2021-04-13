@@ -1,8 +1,8 @@
 package sinhee.kang.tutorial.domain.post.dto.request
 
-import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotBlank
 
-class CommentRequest(
-        @NotEmpty
+data class CommentRequest(
+        @NotBlank
         var content: String
 )
