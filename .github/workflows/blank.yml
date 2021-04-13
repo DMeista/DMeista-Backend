@@ -18,6 +18,8 @@ jobs:
       KAKAO_REST_API_URI: ${{secrets.KAKAO_REST_API_URI}}
       REDIS_HOST: ${{secrets.REDIS_HOST}}
       REDIS_PORT: ${{secrets.REDIS_PORT}}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      SLACK_WEBHOOK_URL: ${{secrets.BUILD_SLACK_WEBHOOK_URL}}
 
     steps:
       - name: Checkout
@@ -38,6 +40,12 @@ jobs:
         
       - name: Build Docker Image
         run: docker build -t rkdtlsgml40/dmeista:latest .
+
+      - name: Action slack
+        uses: 8398a7/action-slack@v2.6.0
+        with:
+          status: ${{job.status}}
+          author_name: GitHub Actions Build Result
 
       - name: Publish To Registry
         uses: elgohr/Publish-Docker-Github-Action@master
