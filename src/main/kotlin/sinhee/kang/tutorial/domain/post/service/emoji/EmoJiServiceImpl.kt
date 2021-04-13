@@ -22,7 +22,7 @@ class EmoJiServiceImpl(
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
 
-        lateinit var response: EmojiResponse
+        var response = EmojiResponse()
 
         emojiRepository.findByUserAndPostOrStatus(user, post, status)
                 ?.let { emoji ->
