@@ -12,7 +12,7 @@ import javax.persistence.*
 @Entity(name = "tbl_post")
 class Post(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var postId: Int = 0,
+        var postId: Int? = null,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")
@@ -45,13 +45,4 @@ class Post(
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var imageFileList: MutableList<ImageFile> = ArrayList()
-) {
-    constructor(user: User, title: String, content: String, author: String, tags: String?): this(
-            user = user,
-            title = title,
-            content = content,
-            author = author,
-            tags = tags,
-            createdAt = LocalDateTime.now()
-    )
-}
+)
