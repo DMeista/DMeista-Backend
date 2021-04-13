@@ -27,7 +27,7 @@ import kotlin.collections.ArrayList
 class PostServiceImpl(
         private val authService: AuthService,
         private val imageService: ImageService,
-        private var visionApi: VisionApi,
+        private val visionApi: VisionApi,
 
         private val userRepository: UserRepository,
         private val postRepository: PostRepository,
@@ -120,7 +120,7 @@ class PostServiceImpl(
 
     override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
-        val request: MutableList<String> = mutableListOf()
+        val request: MutableSet<String> = mutableSetOf()
 
         tags?.let {
             request.add(it)
