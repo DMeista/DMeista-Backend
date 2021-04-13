@@ -3,14 +3,14 @@ package sinhee.kang.tutorial.domain.post.dto.response
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
-class PostContentResponse(
+data class PostContentResponse(
         var title: String = "",
 
         var author: String = "",
 
         var tags: String? = null,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         var createdAt: LocalDateTime? = null,
 
         var view: Int = 0,

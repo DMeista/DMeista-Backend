@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import java.time.LocalDateTime
 
-class PostCommentsResponse(
+data class PostCommentsResponse(
 
         var commentId: Int?,
 
@@ -12,7 +12,7 @@ class PostCommentsResponse(
 
         var author: String,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         var createdAt: LocalDateTime,
 
         var isMine: Boolean,

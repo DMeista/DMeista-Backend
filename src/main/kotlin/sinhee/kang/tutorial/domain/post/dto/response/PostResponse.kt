@@ -2,7 +2,7 @@ package sinhee.kang.tutorial.domain.post.dto.response
 
 import java.time.LocalDateTime
 
-class PostResponse(
+data class PostResponse (
         var id: Int? = 0,
 
         var title: String? = "",
