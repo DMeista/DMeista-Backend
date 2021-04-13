@@ -10,12 +10,10 @@ import sinhee.kang.tutorial.domain.file.service.ImageService
 @RestController
 @RequestMapping("/image")
 class ImageController(
-        private var imageService: ImageService
+        private val imageService: ImageService
 ) {
-    @GetMapping(
-            value = ["/{imageName}"],
-            produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE]
-    )
+    @GetMapping(value = ["/{imageName}"],
+                produces = [MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE])
     fun getImages(@PathVariable imageName: String): ByteArray {
         return imageService.getImage(imageName)
     }
