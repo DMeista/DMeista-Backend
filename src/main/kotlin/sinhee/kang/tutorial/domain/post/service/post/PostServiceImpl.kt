@@ -103,6 +103,7 @@ class PostServiceImpl(
                 author = post.author,
                 tags = post.tags,
                 view = post.viewList.count(),
+                emoji = post.emojiList.count(),
                 createdAt = post.createdAt,
                 isMine = (post.author == user.nickname),
 

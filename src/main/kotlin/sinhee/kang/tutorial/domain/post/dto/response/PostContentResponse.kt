@@ -15,6 +15,8 @@ data class PostContentResponse(
 
         var view: Int = 0,
 
+        var emoji: Int = 0,
+
         var content: String = "",
 
         var isMine: Boolean = false,
