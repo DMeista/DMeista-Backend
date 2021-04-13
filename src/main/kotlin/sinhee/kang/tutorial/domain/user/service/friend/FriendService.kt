@@ -1,13 +1,14 @@
 package sinhee.kang.tutorial.domain.user.service.friend
 
 import org.springframework.data.domain.Pageable
+import org.springframework.http.HttpStatus
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 
 interface FriendService {
     fun getFriendList(nickname: String?): UserListResponse
     fun receiveFriendRequestList(page: Pageable): UserListResponse?
 
-    fun sendFriendRequest(userId: Int)
-    fun acceptFriendRequest(userId: Int)
-    fun deleteFriend(userId: Int)
+    fun sendFriendRequest(username: String)
+    fun acceptFriendRequest(username: String)
+    fun deleteFriend(username: String)
 }

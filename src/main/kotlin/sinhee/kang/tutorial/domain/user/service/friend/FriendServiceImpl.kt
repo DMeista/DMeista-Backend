@@ -87,10 +87,10 @@ class FriendServiceImpl(
     }
 
 
-    override fun sendFriendRequest(userId: Int) {
+    override fun sendFriendRequest(username: String) {
         val user = authService.authValidate()
-        val targetUser = userRepository.findById(userId)
-                .orElseThrow{ BadRequestException() }
+        val targetUser = userRepository.findByNickname(username)
+            ?: throw UserNotFoundException()
 
         if (isCheckUserAndTargetUserExist(user, targetUser)
                 || isCheckUserAndTargetUserExist(user = targetUser, targetUser = user)
@@ -103,22 +103,22 @@ class FriendServiceImpl(
     }
 
 
-    override fun acceptFriendRequest(userId: Int) {
+    override fun acceptFriendRequest(username: String) {
         val targetUser = authService.authValidate()
-        val user = userRepository.findById(userId)
-                .orElseThrow { UserNotFoundException() }
+        val user = userRepository.findByNickname(username)
+            ?: throw UserNotFoundException()
 
         val userRequest = friendRepository.findByUserIdAndTargetIdAndStatus(userId = user, targetId = targetUser, status = FriendStatus.REQUEST)
-                ?: { throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         friendRepository.save(userRequest.acceptRequest(user))
         userRepository.save(user.addFriend(userRequest))
     }
 
 
-    override fun deleteFriend(userId: Int) {
+    override fun deleteFriend(username: String) {
         val user = authService.authValidate()
-        val targetUser = userRepository.findById(userId)
-                .orElseThrow { UserNotFoundException() }
+        val targetUser = userRepository.findByNickname(username)
+            ?: throw UserNotFoundException()
         when {
             isCheckUserAndTargetUserExist(user = user, targetUser = targetUser) -> {
                 friendRepository.findByUserIdAndTargetId(userId = user, targetId = targetUser)
