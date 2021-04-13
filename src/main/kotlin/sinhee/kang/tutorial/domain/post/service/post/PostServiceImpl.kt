@@ -171,7 +171,7 @@ class PostServiceImpl(
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
                 .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
-                ?.also { postRepository.deleteById(it.postId) }
+                ?.also { postRepository.deleteById(it.postId!!) }
                 ?: throw PermissionDeniedException()
         post.imageFileList.let { imageFile ->
             imageService.deleteImageFile(post, imageFile) }
