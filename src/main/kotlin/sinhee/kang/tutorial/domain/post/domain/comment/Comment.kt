@@ -34,14 +34,6 @@ class Comment(
         var subCommentList: MutableList<SubComment> = ArrayList()
 
 ) {
-        constructor(user: User, post: Post, content: String, author: String): this(
-                user = user,
-                post = post,
-                author = author,
-                content = content,
-                createdAt = LocalDateTime.now()
-        )
-
         fun addSubComment(subComment: MutableList<SubComment>): Comment {
                 subCommentList = subComment
                 return this

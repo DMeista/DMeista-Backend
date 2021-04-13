@@ -4,6 +4,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import kotlin.collections.ArrayList
+
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.service.ImageService
@@ -21,7 +23,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 import sinhee.kang.tutorial.infra.api.vision.VisionApi
-import kotlin.collections.ArrayList
 
 @Service
 class PostServiceImpl(
@@ -51,7 +52,7 @@ class PostServiceImpl(
         try {
             user = authService.authValidate()
             viewRepository.findByUserAndPost(user, post)
-                    ?: viewRepository.save(View(user, post))
+                    ?: viewRepository.save(View(user = user, post = post))
         }
         catch (e: Exception) {
             user = User()
@@ -158,6 +159,7 @@ class PostServiceImpl(
         }
 
         val imageFile = post.imageFileList
+
         imageService.run {
             deleteImageFile(post, imageFile)
             saveImageFile(post, image)

@@ -15,5 +15,4 @@ data class PostSubCommentsResponse(
         var createdAt: LocalDateTime,
 
         var isMine: Boolean
-
 )

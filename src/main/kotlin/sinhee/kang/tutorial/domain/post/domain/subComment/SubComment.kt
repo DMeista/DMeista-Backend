@@ -28,13 +28,5 @@ class SubComment(
 
         @CreatedDate
         @Column(nullable = false)
-        var createdAt: LocalDateTime
-) {
-        constructor(user: User, comment: Comment, content: String, author: String): this(
-                user = user,
-                comment = comment,
-                content = content,
-                author = author,
-                createdAt = LocalDateTime.now()
-        )
-}
+        var createdAt: LocalDateTime = LocalDateTime.now()
+)

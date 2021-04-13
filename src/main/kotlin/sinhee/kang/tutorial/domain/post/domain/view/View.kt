@@ -19,11 +19,5 @@ class View (
     var post: Post,
 
     @Column(nullable = false)
-    var createdAt: LocalDateTime
-) {
-    constructor(user: User, post: Post): this(
-            user = user,
-            post = post,
-            createdAt = LocalDateTime.now()
-    )
-}
+    var createdAt: LocalDateTime = LocalDateTime.now()
+)

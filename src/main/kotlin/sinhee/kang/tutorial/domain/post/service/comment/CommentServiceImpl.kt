@@ -15,11 +15,11 @@ import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 
 @Service
 class CommentServiceImpl(
-        private var authService: AuthService,
+        private val authService: AuthService,
 
-        private var postRepository: PostRepository,
-        private var commentRepository: CommentRepository,
-        private var subCommentRepository: SubCommentRepository
+        private val postRepository: PostRepository,
+        private val commentRepository: CommentRepository,
+        private val subCommentRepository: SubCommentRepository
 ) : CommentService {
 
     override fun postComment(postId: Int, commentRequest: CommentRequest): Int? {
@@ -31,8 +31,8 @@ class CommentServiceImpl(
                 commentRepository.save(Comment(
                         user = user,
                         post = post,
-                        author = user.nickname,
-                        content = commentRequest.content
+                        content = commentRequest.content,
+                        author = user.nickname
                 ))
         )
         return post.postId
@@ -66,7 +66,7 @@ class CommentServiceImpl(
                     it.content = commentRequest.content
                     commentRepository.save(it)
                 }
-                ?: { throw PermissionDeniedException() }()
+                ?: throw PermissionDeniedException()
         return comment.commentId
     }
 
@@ -80,7 +80,7 @@ class CommentServiceImpl(
                     it.content = commentRequest.content
                     subCommentRepository.save(it)
                 }
-                ?: { throw PermissionDeniedException() }()
+                ?: throw PermissionDeniedException()
         return subComment.subCommentId
     }
 
@@ -91,7 +91,7 @@ class CommentServiceImpl(
                 .orElseThrow { CommentNotFoundException() }
                 .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also { commentRepository.deleteById(it.commentId) }
-                ?: { throw PermissionDeniedException() }()
+                ?: throw PermissionDeniedException()
     }
 
 
@@ -101,6 +101,6 @@ class CommentServiceImpl(
                 .orElseThrow { CommentNotFoundException() }
                 .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
                 ?.also { subCommentRepository.deleteById(it.subCommentId) }
-                ?: { throw PermissionDeniedException() }()
+                ?: throw PermissionDeniedException()
     }
 }

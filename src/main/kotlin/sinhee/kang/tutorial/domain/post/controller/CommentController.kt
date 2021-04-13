@@ -8,7 +8,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/comments")
 class CommentController(
-        private var commentService: CommentService
+        private val commentService: CommentService
 ) {
 
     @PostMapping("/{postId}")

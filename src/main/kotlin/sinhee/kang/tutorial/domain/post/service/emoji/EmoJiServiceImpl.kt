@@ -22,7 +22,7 @@ class EmoJiServiceImpl(
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
 
-        var resp: EmojiResponse? = null
+        lateinit var response: EmojiResponse
 
         emojiRepository.findByUserAndPostOrStatus(user, post, status)
                 ?.let { emoji ->
@@ -32,7 +32,7 @@ class EmoJiServiceImpl(
                     else if (emoji.status != status) {
                         emoji.status = status
                         emojiRepository.save(emoji)
-                        resp = EmojiResponse(
+                        response = EmojiResponse(
                                 username = user.nickname,
                                 postId = post.postId,
                                 emojiStatus = emoji.status
@@ -40,14 +40,14 @@ class EmoJiServiceImpl(
                     }
                 }
                 ?: run {
-                    val emoji = emojiRepository.save(Emoji(user, post, status))
-                    resp = EmojiResponse(
+                    val emoji = emojiRepository.save(Emoji(user = user, post = post, status = status))
+                    response = EmojiResponse(
                         username = user.nickname,
                         postId = post.postId,
                         emojiStatus = emoji.status
                     )
                 }
-        return resp
+        return response
     }
 
     override fun getPostEmojiUserList(postId: Int): PostEmojiListResponse {

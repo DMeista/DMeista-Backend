@@ -24,12 +24,5 @@ class Emoji (
         var status: EmojiStatus? = null,
 
         @Column(nullable = false)
-        var createdAt: LocalDateTime
-) {
-        constructor(user: User, post: Post, status: EmojiStatus): this(
-                user = user,
-                post = post,
-                status = status,
-                createdAt = LocalDateTime.now()
-        )
-}
+        var createdAt: LocalDateTime = LocalDateTime.now()
+)
