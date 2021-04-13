@@ -32,12 +32,13 @@ class UserInfoServiceImpl(
         for(post in user.postList.reversed()) {
             val checkedUser = viewRepository.findByPost(post)
             postResponse.add(PostResponse(
-                    id = post.postId,
-                    title = post.title,
-                    content = post.content,
-                    author = post.author,
-                    view = checkedUser.count(),
-                    createdAt = post.createdAt
+                id = post.postId,
+                title = post.title,
+                content = post.content,
+                author = post.author,
+                view = checkedUser.count(),
+                emoji = post.emojiList.count(),
+                createdAt = post.createdAt
             ))
         }
         return UserInfoResponse(user.nickname, user.email, user.createdAt, postResponse)

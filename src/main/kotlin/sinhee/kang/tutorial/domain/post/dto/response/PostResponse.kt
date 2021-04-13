@@ -13,7 +13,9 @@ data class PostResponse (
 
         var tags: String? = null,
 
-        var view: Int? = 0,
+        var view: Int = 0,
+
+        var emoji: Int = 0,
 
         var checked: Boolean = false,
 

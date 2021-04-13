@@ -207,14 +207,15 @@ class PostServiceImpl(
                     }
                     ?: false
             postResponse.add(PostResponse(
-                    id = post.postId,
-                    title = post.title,
-                    content = post.content,
-                    author = post.author,
-                    tags = post.tags,
-                    view = checkedUser.count(),
-                    checked = checked,
-                    createdAt = post.createdAt
+                id = post.postId,
+                title = post.title,
+                content = post.content,
+                author = post.author,
+                tags = post.tags,
+                view = checkedUser.count(),
+                emoji = post.emojiList.count(),
+                checked = checked,
+                createdAt = post.createdAt
             ))
         }
         return PostListResponse(
