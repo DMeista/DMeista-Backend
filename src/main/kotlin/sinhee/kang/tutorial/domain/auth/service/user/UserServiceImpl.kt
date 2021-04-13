@@ -61,6 +61,7 @@ class UserServiceImpl(
 
         publisher.publishEvent(emailService.sendCelebrateEmail(user))
         emailVerificationRepository.save(emailVerification.setUnVerify())
+
         return HttpStatus.OK
     }
 

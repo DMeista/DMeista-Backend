@@ -6,7 +6,7 @@ import sinhee.kang.tutorial.domain.auth.domain.refreshToken.repository.RefreshTo
 
 @Service
 class RefreshTokenServiceImpl(
-        private var refreshTokenRepository: RefreshTokenRepository
+        private val refreshTokenRepository: RefreshTokenRepository
 ) : RefreshTokenService {
     override fun save(refreshToken: RefreshToken) {
         refreshTokenRepository.save(refreshToken)

@@ -1,9 +1,9 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.repository.RefreshTokenRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
@@ -24,7 +24,6 @@ class AuthServiceImpl(
         private val authenticationFacade: AuthenticationFacade,
 
         private val userRepository: UserRepository,
-        @Autowired
         private val refreshTokenRepository: RefreshTokenRepository,
 
         private val refreshTokenService: RefreshTokenService,

@@ -9,7 +9,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/auth")
 class AuthController(
-        private var authService: AuthService
+        private val authService: AuthService
 ) {
     @PostMapping
     fun signIn(@Valid @RequestBody dto: SignInRequest): TokenResponse {
