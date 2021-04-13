@@ -181,7 +181,7 @@ class PostServiceImpl(
     }
 
 
-    fun getTagsFromImage(imageFile: Array<MultipartFile>): MutableList<String> {
+    private fun getTagsFromImage(imageFile: Array<MultipartFile>): MutableList<String> {
         val request: MutableList<String> = ArrayList()
         for (image in imageFile) {
             try {
