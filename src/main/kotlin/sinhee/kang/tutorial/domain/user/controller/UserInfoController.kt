@@ -10,10 +10,8 @@ import sinhee.kang.tutorial.domain.user.service.userInfo.UserInfoService
 class UserInfoController(
         private val userInfoService: UserInfoService
 ) {
-
     @GetMapping
     fun userInfo(page: Pageable,
-                 @RequestParam(required = false) nickname: String?): UserInfoResponse? {
-        return userInfoService.getUserInfo(page, nickname)
-    }
+                 @RequestParam(required = false) nickname: String?): UserInfoResponse? =
+        userInfoService.getUserInfo(page, nickname)
 }

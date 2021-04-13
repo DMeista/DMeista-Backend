@@ -26,6 +26,7 @@ class Friend(
         @CreatedDate
         @Column(nullable = false)
         var connectedAt: LocalDateTime = LocalDateTime.now()
+
 ) {
         fun acceptRequest(targetId: User): Friend {
                 status = FriendStatus.ACCEPT

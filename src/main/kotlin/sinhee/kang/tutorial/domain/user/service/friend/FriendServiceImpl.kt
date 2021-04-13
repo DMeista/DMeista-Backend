@@ -136,7 +136,8 @@ class FriendServiceImpl(
     fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
         return friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { true }
-                ?:{ false }()
+                ?: false
     }
 
 }
+

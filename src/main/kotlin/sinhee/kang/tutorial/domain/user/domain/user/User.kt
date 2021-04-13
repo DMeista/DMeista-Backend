@@ -17,13 +17,13 @@ class User(
         var id: Int = 0,
 
         @Column(length = 100, unique = true, nullable = false)
-        var email: String,
+        var email: String = "default",
 
         @Column(length = 20, unique = true, nullable = false)
-        var nickname: String,
+        var nickname: String = "default",
 
         @Column(length = 100, nullable = false)
-        var password: String,
+        var password: String = "default",
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
@@ -51,11 +51,6 @@ class User(
         @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var friendList: MutableList<Friend> = ArrayList()
 ) {
-    constructor() : this(
-            email = "default",
-            nickname = "default",
-            password = "default"
-    )
 
     fun addFriend(friend: Friend): User {
         this.friendList.add(friend)
