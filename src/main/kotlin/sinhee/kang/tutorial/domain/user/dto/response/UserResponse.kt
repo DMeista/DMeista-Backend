@@ -2,7 +2,7 @@ package sinhee.kang.tutorial.domain.user.dto.response
 
 import java.time.LocalDateTime
 
-class UserResponse (
+data class UserResponse (
         var id: Int? = 0,
 
         var nickname: String = "",

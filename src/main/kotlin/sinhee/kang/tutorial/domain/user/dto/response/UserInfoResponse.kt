@@ -3,7 +3,7 @@ package sinhee.kang.tutorial.domain.user.dto.response
 import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
 import java.time.LocalDateTime
 
-class UserInfoResponse(
+data class UserInfoResponse(
         var username: String,
         var email: String,
         var createdAt: LocalDateTime,
