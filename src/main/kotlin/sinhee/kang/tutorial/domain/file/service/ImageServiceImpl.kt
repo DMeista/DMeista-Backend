@@ -19,10 +19,10 @@ class ImageServiceImpl(
         private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
-    val imageUrl = "file:///tmp/tomcat.*.8080/work/Tomcat/localhost/ROOT/resource/"
+    val imagePath = "/image/"
 
     override fun getImage(imageName: String): ByteArray {
-        val file = File(imageName)
+        val file = File(imagePath, imageName)
         if (!file.exists())
             throw ImageNotFoundException()
         val inputStream: InputStream = FileInputStream(file)
@@ -34,7 +34,7 @@ class ImageServiceImpl(
         imageFile?.let {
             for (img in it) {
                 val fileName = UUID.randomUUID().toString()
-                img.transferTo(File(fileName))
+                img.transferTo(File(imagePath, fileName))
 
                 imageFileRepository.save(ImageFile(
                     post = post,
@@ -47,7 +47,7 @@ class ImageServiceImpl(
     override fun deleteImageFile(post: Post, imageFile: List<ImageFile>?) {
         imageFile?.let {
             for (image in it) {
-                Files.delete(File(image.fileName).toPath())
+                Files.delete(File(imagePath, image.fileName).toPath())
             }
             imageFileRepository.deleteByPost(post)
         }

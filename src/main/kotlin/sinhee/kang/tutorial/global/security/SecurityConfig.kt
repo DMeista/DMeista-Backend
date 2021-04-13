@@ -69,13 +69,6 @@ class SecurityConfig(
     }
 
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        registry
-            .addResourceHandler("/uploads/**")
-            .addResourceLocations("file:resource/")
-            .setCachePeriod(0)
-    }
-
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 }
