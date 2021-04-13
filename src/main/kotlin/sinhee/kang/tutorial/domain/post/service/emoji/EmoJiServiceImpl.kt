@@ -17,12 +17,31 @@ class EmoJiServiceImpl(
         private val postRepository: PostRepository,
         private val emojiRepository: EmojiRepository
 ): EmojiService {
+
+    override fun getPostEmojiUserList(postId: Int): PostEmojiListResponse {
+        val post = postRepository.findById(postId)
+            .orElseThrow { ApplicationNotFoundException() }
+        val emojiResponse: MutableList<EmojiResponse> = ArrayList()
+        for (emoji in post.emojiList) {
+            emojiResponse.add(EmojiResponse(
+                username = emoji.user.nickname,
+                postId = emoji.post.postId,
+                emojiStatus = emoji.status
+            ))
+        }
+        return PostEmojiListResponse(
+            totalEmoji = post.emojiList.count(),
+            applicationResponses = emojiResponse
+        )
+    }
+
+
     override fun emojiService(postId: Int, status: EmojiStatus): EmojiResponse? {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
 
-        var response = EmojiResponse()
+        var response: EmojiResponse? = null
 
         emojiRepository.findByUserAndPostOrStatus(user, post, status)
                 ?.let { emoji ->
@@ -48,22 +67,5 @@ class EmoJiServiceImpl(
                     )
                 }
         return response
-    }
-
-    override fun getPostEmojiUserList(postId: Int): PostEmojiListResponse {
-        val post = postRepository.findById(postId)
-                .orElseThrow { ApplicationNotFoundException() }
-        val emojiResponse: MutableList<EmojiResponse> = ArrayList()
-        for (emoji in post.emojiList) {
-            emojiResponse.add(EmojiResponse(
-                    username = emoji.user.nickname,
-                    postId = emoji.post.postId,
-                    emojiStatus = emoji.status
-            ))
-        }
-        return PostEmojiListResponse(
-                totalEmoji = post.emojiList.count(),
-                applicationResponses = emojiResponse
-        )
     }
 }
