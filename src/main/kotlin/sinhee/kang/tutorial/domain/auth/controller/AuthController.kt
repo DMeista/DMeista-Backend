@@ -12,7 +12,7 @@ class AuthController(
         private var authService: AuthService
 ) {
     @PostMapping
-    fun signIn(@RequestBody @Valid dto: SignInRequest): TokenResponse {
+    fun signIn(@Valid @RequestBody dto: SignInRequest): TokenResponse {
         return authService.signIn(dto)
     }
 

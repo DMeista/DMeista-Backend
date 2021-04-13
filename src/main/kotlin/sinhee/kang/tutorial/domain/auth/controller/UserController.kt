@@ -13,12 +13,12 @@ class UserController(
 ) {
 
     @PostMapping("/email/verify/{sendType}")
-    fun sendEmail(@RequestBody @Valid emailRequest: EmailRequest,
+    fun sendEmail(@Valid @RequestBody emailRequest: EmailRequest,
                   @PathVariable sendType: String): HttpStatus =
         userService.userAuthenticationSendEmail(sendType, emailRequest)
 
     @PutMapping("/email/verify")
-    fun verifyEmail(@RequestBody verifyCodeRequest: VerifyCodeRequest): HttpStatus =
+    fun verifyEmail(@Valid @RequestBody verifyCodeRequest: VerifyCodeRequest): HttpStatus =
         userService.verifyEmail(verifyCodeRequest)
 
     @GetMapping("/nickname")
@@ -26,15 +26,15 @@ class UserController(
         userService.isVerifyNickname(nickname)
 
     @PostMapping
-    fun signUp(@RequestBody signUpRequest: SignUpRequest) =
+    fun signUp(@Valid @RequestBody signUpRequest: SignUpRequest) =
         userService.signUp(signUpRequest)
 
     @DeleteMapping
-    fun exitAccount(@RequestBody request: ChangePasswordRequest) =
+    fun exitAccount(@Valid @RequestBody request: ChangePasswordRequest) =
         userService.exitAccount(request)
 
     @PutMapping("/password")
-    fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest) =
+    fun changePassword(@Valid @RequestBody changePasswordRequest: ChangePasswordRequest) =
         userService.changePassword(changePasswordRequest)
 
 }
