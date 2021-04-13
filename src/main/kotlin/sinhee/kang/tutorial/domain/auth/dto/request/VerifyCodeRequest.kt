@@ -1,9 +1,11 @@
 package sinhee.kang.tutorial.domain.auth.dto.request
 
 import javax.validation.constraints.Email
+import javax.validation.constraints.NotBlank
 
-class VerifyCodeRequest (
+data class VerifyCodeRequest (
     @Email
+    @NotBlank
     var email: String,
 
     var authCode: String
