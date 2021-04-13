@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.domain.post.dto.response
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class PostResponse (
@@ -19,5 +20,6 @@ data class PostResponse (
 
         var checked: Boolean = false,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         var createdAt: LocalDateTime? = null
 )
