@@ -1,22 +1,14 @@
 package sinhee.kang.tutorial.post
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.MediaType
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import sinhee.kang.tutorial.ApiTest
-import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.TokenType
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.comment.repository.CommentRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
@@ -28,8 +20,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 
 class CommentApiTest: ApiTest() {
     @Autowired
-    private lateinit var mvc: MockMvc
-    @Autowired
     private lateinit var postRepository: PostRepository
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -37,151 +27,113 @@ class CommentApiTest: ApiTest() {
     private lateinit var commentRepository: CommentRepository
     @Autowired
     private lateinit var subCommentRepository: SubCommentRepository
-    @Autowired
-    private lateinit var passwordEncoder: PasswordEncoder
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
 
-    private val testMail = "rkdtlsgml500@naver.com"
-    private val passwd = "1234"
-    private val username = "user"
+    private val user: User = User(
+        nickname = "user",
+        email = "rkdtlsgml40@dsm.hs.kr",
+        password = passwordEncoder.encode("1234")
+    )
+
+    private lateinit var accessToken: String
 
     @BeforeEach
     fun setup() {
-        userRepository.save(User(
-                email = testMail,
-                password = passwordEncoder.encode(passwd),
-                nickname = username
-        ))
+        userRepository.save(user)
+        accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
     }
 
     @AfterEach
     fun clean() {
-        userRepository.findByNickname(username)
-                ?.let { user -> userRepository.delete(user) }
+        subCommentRepository.deleteAll()
+        commentRepository.deleteAll()
+        postRepository.deleteAll()
+        userRepository.deleteAll()
     }
 
 
     @Test
     @Throws
     fun uploadCommentTest() {
-        val postId = uploadPost()
-        val comment: Comment = uploadComment(postId, "댓글")
+        val postId = generatePost(token = accessToken)
+        val comment = uploadComment(postId, "Comment Content")
 
-        assert(comment.content == "댓글")
-
-        commentRepository.delete(comment)
-        postRepository.deleteById(postId)
+        assert(comment.content == "Comment Content")
     }
 
 
     @Test
     @Throws
     fun uploadSubCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
         val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
 
         assert(subComment.content == "대댓글")
-
-        subCommentRepository.delete(subComment)
-        commentRepository.delete(comment)
-        postRepository.deleteById(postId)
     }
 
 
     @Test
     @Throws
     fun changeCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         var comment: Comment = uploadComment(postId, "댓글")
         comment = editComment(comment.commentId, "수정된 댓글")
 
         assert(comment.content == "수정된 댓글")
-
-        commentRepository.delete(comment)
-        postRepository.deleteById(postId)
     }
 
 
     @Test
     @Throws
     fun changeSubCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
         var subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
         subComment = editSubComment(subComment.subCommentId, "수정된 대댓글")
 
         assert(subComment.content == "수정된 대댓글")
-
-        subCommentRepository.delete(subComment)
-        commentRepository.delete(comment)
-        postRepository.deleteById(postId)
     }
 
 
     @Test
     @Throws
     fun deleteCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
-        requestMvc(delete("/comments/${comment.commentId}"), token = "Bearer ${accessToken()}")
-
-        commentRepository.deleteAll()
-        postRepository.deleteById(postId)
+        requestBody(delete("/comments/${comment.commentId}"), token = accessToken)
     }
 
 
     @Test
     @Throws
     fun deleteSubCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
         val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
-        requestMvc(delete("/comments/sub/${subComment.subCommentId}"), token = "Bearer ${accessToken()}")
-
-        subCommentRepository.deleteAll()
-        commentRepository.deleteAll()
-        postRepository.deleteById(postId)
+        requestBody(delete("/comments/sub/${subComment.subCommentId}"), token = accessToken)
     }
 
 
     @Test
     @Throws
     fun deleteCommentWithSubCommentTest() {
-        val postId = uploadPost()
+        val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
         uploadSubComment(comment.commentId, "대댓글")
-        requestMvc(delete("/comments/${comment.commentId}"), token = "Bearer ${accessToken()}")
-
-        subCommentRepository.deleteAll()
-        commentRepository.deleteAll()
-        postRepository.deleteById(postId)
+        requestBody(delete("/comments/${comment.commentId}"), token = accessToken)
     }
 
 
-    private fun uploadPost(): Int {
-        val accessToken = accessToken()
-        return Integer.parseInt(mvc.perform(post("/posts")
-                .header("Authorization", "Bearer $accessToken")
-                .param("title", "title")
-                .param("content", "content")
-                .param("tags", "tags"))
-                .andExpect(status().isOk).andDo(print())
-                .andReturn().response.contentAsString)
-    }
-
-
-    private fun uploadComment(postId: Int, content: String): Comment {
-        requestMvc(post("/comments/$postId"), CommentRequest(content), "Bearer ${accessToken()}")
-        val post = postRepository.findById(postId)
+    private fun uploadComment(postId: Int?, content: String): Comment {
+        requestBody(post("/comments/$postId"), CommentRequest(content), accessToken)
+        val post = postRepository.findById(postId!!)
                 .orElseThrow { Exception() }
         return post.commentList[0]
     }
 
 
     private fun uploadSubComment(commentId: Int, content: String): SubComment {
-        requestMvc(post("/comments/sub/$commentId"), CommentRequest(content), "Bearer ${accessToken()}")
+        requestBody(post("/comments/sub/$commentId"), CommentRequest(content), accessToken)
         val comment = commentRepository.findById(commentId)
                 .orElseThrow { Exception() }
         return comment.subCommentList[0]
@@ -189,42 +141,15 @@ class CommentApiTest: ApiTest() {
 
 
     private fun editComment(commentId: Int, content: String): Comment {
-        requestMvc(patch("/comments/$commentId"), CommentRequest(content), "Bearer ${accessToken()}")
+        requestBody(patch("/comments/$commentId"), CommentRequest(content), accessToken)
         return commentRepository.findById(commentId)
                 .orElseThrow { Exception() }
     }
 
 
     private fun editSubComment(subCommentId: Int, content: String): SubComment {
-        requestMvc(patch("/comments/sub/$subCommentId"), CommentRequest(content), "Bearer ${accessToken()}")
+        requestBody(patch("/comments/sub/$subCommentId"), CommentRequest(content), accessToken)
         return subCommentRepository.findById(subCommentId)
                 .orElseThrow { Exception() }
-    }
-
-
-    private fun requestMvc(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
-        return mvc.perform(
-                method
-                        .header("Authorization", token)
-                        .content(objectMapper
-                                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                                .writeValueAsString(obj))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isOk)
-                .andReturn().response.contentAsString
-    }
-
-
-    private fun accessToken(): String {
-        val content = requestMvc(post("/auth"), SignInRequest(testMail, passwd))
-        val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
-        return response.accessToken
-    }
-
-
-    private fun mappingResponse(obj: String, cls: Class<*>): Any {
-        return objectMapper
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                .readValue(obj, cls)
     }
 }
