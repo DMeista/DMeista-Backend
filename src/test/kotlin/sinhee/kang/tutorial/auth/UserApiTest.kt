@@ -71,12 +71,12 @@ class UserApiTest: ApiTest() {
 
     @Test
     @Throws
-    fun exitAccountTest() {
-        userRepository.save(User(
-                email = testMail,
-                password = passwordEncoder.encode(passwd),
-                nickname = username
-        ))
+    fun userInfoTest() {
+        userRepository.save(user)
+        val accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
+        val userInfo = requestBody(get("/users"), token = accessToken)
+        val response = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
+        assert(response.username == user.nickname)
     }
 
 
