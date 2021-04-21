@@ -41,15 +41,15 @@ jobs:
       - name: Build Docker Image
         run: docker build -t rkdtlsgml40/dmeista:latest .
 
-      - name: Action slack
-        uses: 8398a7/action-slack@v2.6.0
-        with:
-          status: ${{job.status}}
-          author_name: GitHub Actions Build Result
-
       - name: Publish To Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
           name: rkdtlsgml40/dmeista:latest
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Action slack
+        uses: 8398a7/action-slack@v2.6.0
+        with:
+          status: ${{job.status}}
+          author_name: GitHub Actions Build Result
