@@ -10,8 +10,6 @@ import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.service.ImageService
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
-import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
-import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
@@ -34,7 +32,6 @@ class PostServiceImpl(
 
         private val userRepository: UserRepository,
         private val postRepository: PostRepository,
-        private val emojiRepository: EmojiRepository,
         private val viewRepository: ViewRepository,
         private val imageFileRepository: ImageFileRepository
 
@@ -101,8 +98,6 @@ class PostServiceImpl(
             ))
         }
 
-        val emoji: Emoji? = user?.let { emojiRepository.findByUserAndPostOrStatus(user = user, post = post) }
-
         return PostContentResponse(
                 title = post.title,
                 content = post.content,
@@ -110,7 +105,9 @@ class PostServiceImpl(
                 tags = post.tags,
                 viewCount = post.viewList.count(),
                 emojiCount = post.emojiList.count(),
-                emoji = emoji?.status,
+                emoji = post.emojiList
+                    .filter { emoji -> emoji.user == user }
+                    .map { it.status }.firstOrNull(),
                 createdAt = post.createdAt,
                 isMine = (post.author == user.nickname),
 
@@ -216,8 +213,6 @@ class PostServiceImpl(
                     }
                     ?: false
 
-            val emoji: Emoji? = user?.let { emojiRepository.findByUserAndPostOrStatus(user = user, post = post) }
-
             postResponse.add(PostResponse(
                 id = post.postId,
                 title = post.title,
@@ -226,7 +221,9 @@ class PostServiceImpl(
                 tags = post.tags,
                 viewCount = checkedUser.count(),
                 emojiCount = post.emojiList.count(),
-                emoji = emoji?.status,
+                emoji = post.emojiList
+                    .filter { emoji -> emoji.user == user }
+                    .map { it.status }.firstOrNull(),
                 checked = checked,
                 createdAt = post.createdAt
             ))

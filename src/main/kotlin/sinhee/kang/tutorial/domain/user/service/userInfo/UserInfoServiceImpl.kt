@@ -3,7 +3,6 @@ package sinhee.kang.tutorial.domain.user.service.userInfo
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
-import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
@@ -40,6 +39,9 @@ class UserInfoServiceImpl(
                 author = post.author,
                 viewCount = checkedUser.count(),
                 emojiCount = post.emojiList.count(),
+                emoji = post.emojiList
+                    .filter { emoji -> emoji.user == user }
+                    .map { it.status }.firstOrNull(),
                 createdAt = post.createdAt
             ))
         }
