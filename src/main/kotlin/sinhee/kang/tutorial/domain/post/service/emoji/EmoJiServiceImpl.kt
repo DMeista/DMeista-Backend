@@ -43,7 +43,7 @@ class EmoJiServiceImpl(
 
         var response: EmojiResponse? = null
 
-        emojiRepository.findByUserAndPostOrStatus(user, post, status)
+        emojiRepository.findByUserAndPostAndStatus(user, post, status)
                 ?.let { emoji ->
                     if (emoji.status == status) {
                         emojiRepository.delete(emoji)
