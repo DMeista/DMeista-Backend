@@ -1,6 +1,7 @@
 package sinhee.kang.tutorial.domain.post.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import java.time.LocalDateTime
 
 data class PostContentResponse(
@@ -13,9 +14,11 @@ data class PostContentResponse(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         var createdAt: LocalDateTime? = null,
 
-        var view: Int = 0,
+        var viewCount: Int = 0,
 
-        var emoji: Int = 0,
+        var emojiCount: Int = 0,
+
+        var emoji: EmojiStatus? = null,
 
         var content: String = "",
 

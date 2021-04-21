@@ -10,6 +10,8 @@ import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.service.ImageService
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
+import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
+import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
@@ -32,6 +34,7 @@ class PostServiceImpl(
 
         private val userRepository: UserRepository,
         private val postRepository: PostRepository,
+        private val emojiRepository: EmojiRepository,
         private val viewRepository: ViewRepository,
         private val imageFileRepository: ImageFileRepository
 
@@ -98,13 +101,16 @@ class PostServiceImpl(
             ))
         }
 
+        val emoji: Emoji? = user?.let { emojiRepository.findByUserAndPostOrStatus(user = user, post = post) }
+
         return PostContentResponse(
                 title = post.title,
                 content = post.content,
                 author = post.author,
                 tags = post.tags,
-                view = post.viewList.count(),
-                emoji = post.emojiList.count(),
+                viewCount = post.viewList.count(),
+                emojiCount = post.emojiList.count(),
+                emoji = emoji?.status,
                 createdAt = post.createdAt,
                 isMine = (post.author == user.nickname),
 
@@ -209,14 +215,18 @@ class PostServiceImpl(
                             ?: false
                     }
                     ?: false
+
+            val emoji: Emoji? = user?.let { emojiRepository.findByUserAndPostOrStatus(user = user, post = post) }
+
             postResponse.add(PostResponse(
                 id = post.postId,
                 title = post.title,
                 content = post.content,
                 author = post.author,
                 tags = post.tags,
-                view = checkedUser.count(),
-                emoji = post.emojiList.count(),
+                viewCount = checkedUser.count(),
+                emojiCount = post.emojiList.count(),
+                emoji = emoji?.status,
                 checked = checked,
                 createdAt = post.createdAt
             ))

@@ -3,6 +3,7 @@ package sinhee.kang.tutorial.domain.user.service.userInfo
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
+import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
@@ -29,6 +30,7 @@ class UserInfoServiceImpl(
             }
 
         val postResponse: MutableList<PostResponse> = ArrayList()
+
         for(post in user.postList.reversed()) {
             val checkedUser = viewRepository.findByPost(post)
             postResponse.add(PostResponse(
@@ -36,8 +38,8 @@ class UserInfoServiceImpl(
                 title = post.title,
                 content = post.content,
                 author = post.author,
-                view = checkedUser.count(),
-                emoji = post.emojiList.count(),
+                viewCount = checkedUser.count(),
+                emojiCount = post.emojiList.count(),
                 createdAt = post.createdAt
             ))
         }

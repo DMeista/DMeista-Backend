@@ -9,5 +9,5 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @Repository
 interface EmojiRepository: CrudRepository<Emoji, Int> {
-    fun findByUserAndPostOrStatus(user: User, post: Post, status: EmojiStatus): Emoji?
+    fun findByUserAndPostOrStatus(user: User, post: Post?, status: EmojiStatus? = null): Emoji?
 }
