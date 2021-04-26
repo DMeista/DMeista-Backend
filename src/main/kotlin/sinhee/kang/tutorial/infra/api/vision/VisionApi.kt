@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
 
-@Service
+@Component
 class VisionApi(
     @Value("\${kakao.rest.api.url}")
     private val url: String,
