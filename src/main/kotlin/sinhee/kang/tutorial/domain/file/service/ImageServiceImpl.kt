@@ -33,26 +33,26 @@ class ImageServiceImpl(
     }
 
     override fun saveImageFiles(post: Post, imageFiles: Array<MultipartFile>?) {
-        if (imageFiles.isNullOrEmpty()) throw BadRequestException()
+        imageFiles?.let {
+            for (image in it) {
+                val fileName: String = generateUniqueUUID()
+                image.transferTo(File(imagePath, fileName))
 
-        for (image in imageFiles) {
-            val fileName: String = generateUniqueUUID()
-            image.transferTo(File(imagePath, fileName))
-
-            imageFileRepository.save(ImageFile(
-                post = post,
-                fileName = fileName
-            ))
+                imageFileRepository.save(ImageFile(
+                    post = post,
+                    fileName = fileName
+                ))
+            }
         }
     }
 
     override fun deleteImageFiles(post: Post, imageFiles: List<ImageFile>?) {
-        if (imageFiles.isNullOrEmpty()) throw ImageNotFoundException()
-
-        for (image in imageFiles) {
-            Files.delete(File(imagePath, image.fileName).toPath())
+        imageFiles?.let {
+            for (image in imageFiles) {
+                Files.delete(File(imagePath, image.fileName).toPath())
+            }
+            imageFileRepository.deleteByPost(post)
         }
-        imageFileRepository.deleteByPost(post)
     }
 
     private fun generateUniqueUUID(): String {

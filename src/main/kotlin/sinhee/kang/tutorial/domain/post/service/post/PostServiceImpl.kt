@@ -136,9 +136,7 @@ class PostServiceImpl(
             tags =  request.joinToString()
         ))
 
-        if (!imageFiles.isNullOrEmpty()) {
-            imageService.saveImageFiles(post, imageFiles)
-        }
+        imageService.saveImageFiles(post, imageFiles)
 
         return post.postId
     }
