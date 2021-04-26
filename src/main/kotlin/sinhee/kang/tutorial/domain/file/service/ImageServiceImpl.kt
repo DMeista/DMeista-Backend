@@ -8,10 +8,10 @@ import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.exception.ImageNotFoundException
 import sinhee.kang.tutorial.domain.post.domain.post.Post
+import sinhee.kang.tutorial.global.security.exception.BadRequestException
 
 import java.io.File
 import java.io.FileInputStream
-import java.io.InputStream
 import java.nio.file.Files
 import java.util.*
 
@@ -25,33 +25,31 @@ class ImageServiceImpl(
 
     override fun getImage(imageName: String): ByteArray {
         val file = File(imagePath, imageName)
-        if (!file.exists())
-            throw ImageNotFoundException()
-        val inputStream: InputStream = FileInputStream(file)
+        if (!file.exists()) throw ImageNotFoundException()
 
-        return IOUtils.toByteArray(inputStream)
+        return IOUtils.toByteArray(FileInputStream(file))
     }
 
     override fun saveImageFiles(post: Post, imageFiles: Array<MultipartFile>?) {
-        imageFiles?.let {
-            for (image in it) {
-                val fileName = UUID.randomUUID().toString()
-                image.transferTo(File(imagePath, fileName))
+        if (imageFiles.isNullOrEmpty()) throw BadRequestException()
 
-                imageFileRepository.save(ImageFile(
-                    post = post,
-                    fileName = fileName
-                ))
-            }
+        for (image in imageFiles) {
+            val fileName = UUID.randomUUID().toString()
+            image.transferTo(File(imagePath, fileName))
+
+            imageFileRepository.save(ImageFile(
+                post = post,
+                fileName = fileName
+            ))
         }
     }
 
     override fun deleteImageFiles(post: Post, imageFiles: List<ImageFile>?) {
-        imageFiles?.let {
-            for (image in it) {
-                Files.delete(File(imagePath, image.fileName).toPath())
-            }
-            imageFileRepository.deleteByPost(post)
+        if (imageFiles.isNullOrEmpty()) throw ImageNotFoundException()
+
+        for (image in imageFiles) {
+            Files.delete(File(imagePath, image.fileName).toPath())
         }
+        imageFileRepository.deleteByPost(post)
     }
 }
