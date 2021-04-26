@@ -38,17 +38,17 @@ class PostServiceImpl(
 ) : PostService {
 
     override fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse {
-        tags?: throw ApplicationNotFoundException()
+        tags ?: throw ApplicationNotFoundException()
         return postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
                 ?.let { getPostList(it) }
                 ?: throw ApplicationNotFoundException()
     }
 
-
     override fun getPostContent(postId: Int): PostContentResponse {
         lateinit var user: User
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
+
         try {
             user = authService.authValidate()
             viewRepository.findByUserAndPost(user, post)
@@ -58,27 +58,20 @@ class PostServiceImpl(
             user = User()
         }
 
-        val commentList: MutableList<Comment> = post.commentList
+        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: Post()
+        val previousPost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
+
+        val commentsList: MutableList<Comment> = post.commentList
         val commentsResponse: MutableList<PostCommentsResponse> = ArrayList()
 
-        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: Post()
-        val prePost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
-
-        val imageNames: MutableList<String> = ArrayList()
-        post.imageFileList.let { imageFile ->
-            for (image in imageFile) {
-                imageNames.add(image.fileName)
-                }
-            }
-
-        for (comment in commentList) {
+        for (comment in commentsList) {
             val commentAuthor = userRepository.findByNickname(comment.author)
                     ?: throw UserNotFoundException()
 
-            val subCommentList: MutableList<SubComment> = comment.subCommentList
+            val subCommentsList: MutableList<SubComment> = comment.subCommentList
             val subCommentsResponses: MutableList<PostSubCommentsResponse> = ArrayList()
 
-            for (subComment in subCommentList) {
+            for (subComment in subCommentsList) {
                 subCommentsResponses.add(PostSubCommentsResponse(
                         subCommentId = subComment.subCommentId,
                         content = subComment.content,
@@ -112,18 +105,18 @@ class PostServiceImpl(
                 isMine = (post.author == user.nickname),
 
                 nextPostTitle = nextPost.title,
-                prePostTitle = prePost.title,
+                prevPostTitle = previousPost.title,
 
                 nextPostId = nextPost.postId,
-                prePostId = prePost.postId,
+                prevPostId = previousPost.postId,
 
-                images = imageNames,
+                images = post.imageFileList
+                    .map { it.fileName }.toList(),
                 comments = commentsResponse
         )
     }
 
-
-    override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int? {
+    override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
         val request: MutableSet<String> = mutableSetOf()
 
@@ -131,8 +124,8 @@ class PostServiceImpl(
             request.add(it)
         }
 
-        if (imageFile != null && autoTags) {
-            request.addAll(getTagsFromImage(imageFile))
+        if (!imageFiles.isNullOrEmpty() && autoTags) {
+            request.addAll(getTagsFromImage(imageFiles))
         }
 
         val post = postRepository.save(Post(
@@ -143,13 +136,12 @@ class PostServiceImpl(
             tags =  request.joinToString()
         ))
 
-        imageService.saveImageFile(post, imageFile)
+        imageService.saveImageFiles(post, imageFiles)
 
         return post.postId
     }
 
-
-    override fun changePost(postId: Int, title: String, content: String, tags: String?, image: Array<MultipartFile>?): Int? {
+    override fun changePost(postId: Int, title: String, content: String, tags: String?, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
@@ -164,12 +156,11 @@ class PostServiceImpl(
         val imageFile = post.imageFileList
 
         imageService.run {
-            deleteImageFile(post, imageFile)
-            saveImageFile(post, image)
+            deleteImageFiles(post, imageFile)
+            saveImageFiles(post, imageFiles)
         }
         return post.postId
     }
-
 
     override fun deletePost(postId: Int) {
         val user = authService.authValidate()
@@ -179,17 +170,16 @@ class PostServiceImpl(
                 ?.also { postRepository.deleteById(it.postId!!) }
                 ?: throw PermissionDeniedException()
         post.imageFileList.let { imageFile ->
-            imageService.deleteImageFile(post, imageFile) }
+            imageService.deleteImageFiles(post, imageFile) }
         imageFileRepository.deleteByPost(post)
     }
 
-
-    private fun getTagsFromImage(imageFile: Array<MultipartFile>): MutableList<String> {
+    private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableList<String> {
         val request: MutableList<String> = ArrayList()
-        for (image in imageFile) {
+        for (image in imageFiles) {
             try {
-                val list = visionApi.getVisionApi(image)
-                for (tag in list) { request.add("#$tag") }
+                val tagsList = visionApi.getVisionApi(image)
+                for (tag in tagsList) { request.add("#$tag") }
             }
             catch (e: Exception) {
                 e.printStackTrace()
@@ -197,7 +187,6 @@ class PostServiceImpl(
         }
         return request
     }
-
 
     private fun getPostList(postPage: Page<Post>): PostListResponse {
         val user = try { authService.authValidate() }

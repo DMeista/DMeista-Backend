@@ -10,7 +10,10 @@ interface PostService {
     fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse
 
     fun getPostContent(postId: Int): PostContentResponse
-    fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFile: Array<MultipartFile>?): Int?
-    fun changePost(postId: Int, title: String, content: String, tags: String?, image: Array<MultipartFile>?): Int?
+
+    fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int?
+
+    fun changePost(postId: Int, title: String, content: String, tags: String?, imageFiles: Array<MultipartFile>?): Int?
+
     fun deletePost(postId: Int)
 }

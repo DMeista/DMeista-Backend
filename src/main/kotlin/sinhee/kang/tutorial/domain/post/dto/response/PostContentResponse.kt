@@ -26,13 +26,13 @@ data class PostContentResponse(
 
         var nextPostTitle: String = "",
 
-        var prePostTitle: String = "",
+        var prevPostTitle: String = "",
 
         var nextPostId: Int? = null,
 
-        var prePostId: Int? = null,
+        var prevPostId: Int? = null,
 
-        var images: MutableList<String> = arrayListOf(),
+        var images: List<String> = arrayListOf(),
 
-        var comments: MutableList<PostCommentsResponse> = arrayListOf()
+        var comments: List<PostCommentsResponse> = arrayListOf()
 )
