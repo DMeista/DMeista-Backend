@@ -17,10 +17,10 @@ import java.util.*
 
 @Service
 class ImageServiceImpl(
-        private val imageFileRepository: ImageFileRepository,
+    @Value("\${upload.path}")
+    private val imagePath: String,
 
-        @Value("\${upload.path}")
-        private val imagePath: String
+    private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
     override fun getImage(imageName: String): ByteArray {
@@ -34,7 +34,7 @@ class ImageServiceImpl(
         if (imageFiles.isNullOrEmpty()) throw BadRequestException()
 
         for (image in imageFiles) {
-            val fileName = UUID.randomUUID().toString()
+            val fileName: String = generateUniqueUUID()
             image.transferTo(File(imagePath, fileName))
 
             imageFileRepository.save(ImageFile(
@@ -51,5 +51,19 @@ class ImageServiceImpl(
             Files.delete(File(imagePath, image.fileName).toPath())
         }
         imageFileRepository.deleteByPost(post)
+    }
+
+    private fun generateUniqueUUID(): String {
+        var fileName: String
+        do {
+            fileName = UUID.randomUUID().toString()
+        } while (fileName.isExistFileName())
+
+        return fileName
+    }
+
+    private fun String.isExistFileName(): Boolean {
+        val file = File(imagePath, this)
+        return file.exists()
     }
 }
