@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.file.service
 
 import org.apache.commons.io.IOUtils
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.file.domain.ImageFile
@@ -23,6 +24,7 @@ class ImageServiceImpl(
     private val imageFileRepository: ImageFileRepository
 ): ImageService {
 
+    @Cacheable(value = ["cache"])
     override fun getImage(imageName: String): ByteArray {
         val file = File(imagePath, imageName)
         if (!file.exists()) throw ImageNotFoundException()
