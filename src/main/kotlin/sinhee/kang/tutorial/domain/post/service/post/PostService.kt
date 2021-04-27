@@ -7,7 +7,7 @@ import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
 
 interface PostService {
-    fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse
+    fun getAllHashTagList(pageable: Pageable, tags: String): PostListResponse
 
     fun getPostContent(postId: Int): PostContentResponse
 

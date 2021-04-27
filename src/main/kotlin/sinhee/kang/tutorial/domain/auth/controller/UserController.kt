@@ -36,5 +36,4 @@ class UserController(
     @PutMapping("/password")
     fun changePassword(@Valid @RequestBody changePasswordRequest: ChangePasswordRequest) =
         userService.changePassword(changePasswordRequest)
-
 }

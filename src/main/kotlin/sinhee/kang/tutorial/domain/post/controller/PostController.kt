@@ -20,14 +20,13 @@ class PostController(
 ) {
 
     @GetMapping
-    fun getAllHashTagPostList(page: Pageable, @RequestParam(defaultValue = "") tags: String?): PostListResponse =
+    fun getAllHashTagPostList(page: Pageable,
+                              @RequestParam(defaultValue = "") tags: String): PostListResponse =
         postService.getAllHashTagList(page, tags)
-
 
     @GetMapping("/{postId}")
     fun getPostContent(@PathVariable postId: Int): PostContentResponse =
         postService.getPostContent(postId)
-
 
     @PostMapping
     fun uploadPost(@RequestParam title: String,
@@ -37,7 +36,6 @@ class PostController(
                    @RequestParam imageFile: Array<MultipartFile>?): Int? =
         postService.uploadPost(title, content, tags, autoTag?: false, imageFile)
 
-
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
                  @RequestParam title: String,
@@ -46,18 +44,16 @@ class PostController(
                  @RequestParam imageFile: Array<MultipartFile>?): Int? =
         postService.changePost(postId, title, content, tags, imageFile)
 
-
     @DeleteMapping("/{postId}")
     fun deletePost(@PathVariable postId: Int) =
         postService.deletePost(postId)
-
 
     @GetMapping("/{postId}/emoji")
     fun getEmojiUser(@PathVariable postId: Int): PostEmojiListResponse =
         emojiService.getPostEmojiUserList(postId)
 
-
     @PostMapping("/{postId}/emoji")
-    fun emojiPost(@PathVariable postId: Int, @RequestParam status: EmojiStatus): EmojiResponse? =
+    fun emojiPost(@PathVariable postId: Int,
+                  @RequestParam status: EmojiStatus): EmojiResponse? =
         emojiService.emojiService(postId, status)
 }

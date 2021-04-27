@@ -37,8 +37,7 @@ class PostServiceImpl(
 
 ) : PostService {
 
-    override fun getAllHashTagList(pageable: Pageable, tags: String?): PostListResponse {
-        tags ?: throw ApplicationNotFoundException()
+    override fun getAllHashTagList(pageable: Pageable, tags: String): PostListResponse {
         return postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
                 ?.let { getPostList(it) }
                 ?: throw ApplicationNotFoundException()
