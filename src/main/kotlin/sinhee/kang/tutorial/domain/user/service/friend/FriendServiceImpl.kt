@@ -12,7 +12,6 @@ import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 import sinhee.kang.tutorial.domain.user.dto.response.UserResponse
 import sinhee.kang.tutorial.global.security.exception.BadRequestException
 import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
-import kotlin.collections.ArrayList
 
 @Service
 class FriendServiceImpl(
@@ -21,7 +20,6 @@ class FriendServiceImpl(
         private val friendRepository: FriendRepository
 
 ): FriendService {
-
     override fun getFriendList(nickname: String?): UserListResponse {
         lateinit var user: User
         nickname
@@ -33,29 +31,11 @@ class FriendServiceImpl(
                 user = authService.authValidate()
             }
 
-        val userResponse: MutableList<UserResponse> = ArrayList()
-        for (users in user.friendList.filter { it.isAccept() }) {
-            userResponse.add(UserResponse(
-                    id = users.targetId.id,
-                    nickname = users.targetId.nickname,
-                    email = users.targetId.email,
-                    postContentItems = users.targetId.postList.count(),
-                    connectedAt = users.connectedAt
-            ))
-        }
-        friendRepository.findByTargetIdAndStatus(user, FriendStatus.ACCEPT)
-                ?.let {
-                    for (users in it){
-                        userResponse.add(UserResponse(
-                                id = users.userId.id,
-                                nickname = users.userId.nickname,
-                                email = users.userId.email,
-                                postContentItems = users.userId.postList.count(),
-                                connectedAt = users.connectedAt
-                        ))
-                    }
-                }
-        userResponse.sortBy { it.connectedAt }
+        val userResponse = user.friendList
+            .filter { it.isAccept() }
+            .toMutableList()
+            .addUserResponse()
+            .apply { sortBy { it.connectedAt } }
 
         return UserListResponse(
                 totalItems = userResponse.count(),
@@ -63,29 +43,18 @@ class FriendServiceImpl(
         )
     }
 
-
     override fun receiveFriendRequestList(page: Pageable): UserListResponse? {
         val user = authService.authValidate()
         val requestList = friendRepository.findByTargetId(page, user)
                 ?.filter { it.isRequest() }
                 ?: throw UserNotFoundException()
-        val userResponse: MutableList<UserResponse> = ArrayList()
+        val userResponse = requestList.toMutableList().addUserResponse()
 
-        for (userRequest in requestList){
-            userResponse.add(UserResponse(
-                    id = userRequest.userId.id,
-                    nickname = userRequest.userId.nickname,
-                    email = userRequest.userId.email,
-                    postContentItems = userRequest.userId.postList.count(),
-                    connectedAt = userRequest.connectedAt
-            ))
-        }
         return UserListResponse(
                 totalItems = requestList.count(),
                 applicationResponses = userResponse
         )
     }
-
 
     override fun sendFriendRequest(username: String) {
         val user = authService.authValidate()
@@ -102,7 +71,6 @@ class FriendServiceImpl(
         ))
     }
 
-
     override fun acceptFriendRequest(username: String) {
         val targetUser = authService.authValidate()
         val user = userRepository.findByNickname(username)
@@ -113,7 +81,6 @@ class FriendServiceImpl(
         friendRepository.save(userRequest.acceptRequest(user))
         userRepository.save(user.addFriend(userRequest))
     }
-
 
     override fun deleteFriend(username: String) {
         val user = authService.authValidate()
@@ -132,12 +99,24 @@ class FriendServiceImpl(
         }
     }
 
-
-    fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
+    private fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
         return friendRepository.findByUserIdAndTargetId(user, targetUser)
                 ?.let { true }
                 ?: false
     }
 
+    private fun MutableList<Friend>.addUserResponse(): MutableList<UserResponse> {
+        val userResponses: MutableList<UserResponse> = mutableListOf()
+        this.forEach {
+            userResponses.add(UserResponse(
+                id = it.userId.id,
+                nickname = it.userId.nickname,
+                email = it.userId.email,
+                postContentItems = it.userId.postList.count(),
+                connectedAt = it.connectedAt
+            ))
+        }
+        return userResponses
+    }
 }
 
