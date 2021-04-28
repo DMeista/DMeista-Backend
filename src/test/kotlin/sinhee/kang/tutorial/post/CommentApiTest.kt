@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import sinhee.kang.tutorial.ApiTest
 import sinhee.kang.tutorial.TokenType
@@ -52,7 +51,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun uploadCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment = uploadComment(postId, "Comment Content")
@@ -62,7 +60,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun uploadSubCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
@@ -73,7 +70,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun changeCommentTest() {
         val postId = generatePost(token = accessToken)
         var comment: Comment = uploadComment(postId, "댓글")
@@ -84,7 +80,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun changeSubCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
@@ -96,7 +91,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun deleteCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
@@ -105,7 +99,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun deleteSubCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
@@ -115,7 +108,6 @@ class CommentApiTest: ApiTest() {
 
 
     @Test
-    @Throws
     fun deleteCommentWithSubCommentTest() {
         val postId = generatePost(token = accessToken)
         val comment: Comment = uploadComment(postId, "댓글")
@@ -128,7 +120,7 @@ class CommentApiTest: ApiTest() {
         requestBody(post("/comments/$postId"), CommentRequest(content), accessToken)
         val post = postRepository.findById(postId!!)
                 .orElseThrow { Exception() }
-        return post.commentList[0]
+        return post.commentList.first()
     }
 
 
@@ -136,7 +128,7 @@ class CommentApiTest: ApiTest() {
         requestBody(post("/comments/sub/$commentId"), CommentRequest(content), accessToken)
         val comment = commentRepository.findById(commentId)
                 .orElseThrow { Exception() }
-        return comment.subCommentList[0]
+        return comment.subCommentList.first()
     }
 
 
