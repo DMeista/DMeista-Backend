@@ -23,7 +23,6 @@ import javax.transaction.Transactional
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "local")
 @Transactional
-@
 class ApiTest() {
 
     @Autowired
