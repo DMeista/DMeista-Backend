@@ -27,7 +27,7 @@ class Comment(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var subCommentList: MutableList<SubComment> = ArrayList()
 
 ) {
