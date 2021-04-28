@@ -55,6 +55,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: run build
+        run: ./gradlew clean build -x test
+
       - name: Build Docker Image
         run: docker build -t rkdtlsgml40/dmeista:latest .
 
