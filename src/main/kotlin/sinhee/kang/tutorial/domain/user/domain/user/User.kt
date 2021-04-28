@@ -17,13 +17,13 @@ class User(
         var id: Int = 0,
 
         @Column(length = 100, unique = true, nullable = false)
-        var email: String = "default",
+        var email: String = "none",
 
         @Column(length = 20, unique = true, nullable = false)
-        var nickname: String = "default",
+        var nickname: String = "none",
 
         @Column(length = 100, nullable = false)
-        var password: String = "default",
+        var password: String = "none",
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
