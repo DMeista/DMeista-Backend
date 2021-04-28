@@ -13,13 +13,13 @@ class CommentController(
 
     @PostMapping("/{postId}")
     fun uploadComment(@PathVariable postId: Int,
-                      @Valid @RequestBody commentRequest: CommentRequest): Int? {
+                      @Valid @RequestBody commentRequest: CommentRequest): Int {
         return commentService.postComment(postId, commentRequest)
     }
 
     @PatchMapping("/{commentId}")
     fun changeComment(@PathVariable commentId: Int,
-                      @Valid @RequestBody commentRequest: CommentRequest): Int? {
+                      @Valid @RequestBody commentRequest: CommentRequest): Int {
         return commentService.changeComment(commentId, commentRequest)
     }
 

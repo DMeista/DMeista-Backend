@@ -21,7 +21,7 @@ class CommentServiceImpl(
         private val commentRepository: CommentRepository,
         private val subCommentRepository: SubCommentRepository
 ) : CommentService {
-    override fun postComment(postId: Int, commentRequest: CommentRequest): Int? {
+    override fun postComment(postId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
