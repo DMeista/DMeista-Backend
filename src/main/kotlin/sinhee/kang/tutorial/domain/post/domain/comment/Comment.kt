@@ -23,9 +23,6 @@ class Comment(
         @Column(length = 100, nullable = false)
         var content: String = "none",
 
-        @Column(nullable = false)
-        var author: String = "none",
-
         @CreatedDate
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),

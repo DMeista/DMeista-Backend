@@ -12,11 +12,11 @@ import javax.persistence.*
 @Entity(name = "tbl_post")
 class Post(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var postId: Int? = null,
+        var postId: Int = 0,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")
-        var user: User? = null,
+        var user: User = User(),
 
         @Column(length = 50, nullable = false)
         var title: String = "none",
@@ -24,11 +24,8 @@ class Post(
         @Column(columnDefinition = "TEXT", length = 1600, nullable = false)
         var content: String = "none",
 
-        @Column(length = 10, unique = true, nullable = false)
-        var author: String = "none",
-
         @Column
-        var tags: String? = "",
+        var tags: String? = null,
 
         @CreatedDate
         @Column(nullable = false)

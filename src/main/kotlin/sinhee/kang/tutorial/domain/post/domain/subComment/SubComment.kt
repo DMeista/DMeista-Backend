@@ -23,9 +23,6 @@ class SubComment(
         @Column(length = 100, nullable = false)
         var content: String,
 
-        @Column(nullable = false)
-        var author: String,
-
         @CreatedDate
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now()
