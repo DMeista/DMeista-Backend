@@ -9,10 +9,8 @@ import kotlin.collections.ArrayList
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.service.ImageService
-import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
-import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.domain.view.View
 import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.*
@@ -20,8 +18,6 @@ import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
 import sinhee.kang.tutorial.domain.post.exception.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 import sinhee.kang.tutorial.infra.api.vision.VisionApi
 
 @Service
@@ -30,7 +26,6 @@ class PostServiceImpl(
         private val imageService: ImageService,
         private val visionApi: VisionApi,
 
-        private val userRepository: UserRepository,
         private val postRepository: PostRepository,
         private val viewRepository: ViewRepository,
         private val imageFileRepository: ImageFileRepository
@@ -112,14 +107,14 @@ class PostServiceImpl(
 
     override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
-        val request: MutableSet<String> = mutableSetOf()
+        val tagsResponse: MutableSet<String> = mutableSetOf()
 
         tags?.let {
-            request.add(it)
+            tagsResponse.add(it)
         }
 
         if (!imageFiles.isNullOrEmpty() && autoTags) {
-            request.addAll(getTagsFromImage(imageFiles))
+            tagsResponse.addAll(getTagsFromImage(imageFiles))
         }
 
         val post = postRepository.save(Post(
@@ -127,7 +122,6 @@ class PostServiceImpl(
             title = title,
             content = content,
             tags =  tagsResponse.joinToString()
-            tags =  request.joinToString()
         ))
 
         imageService.saveImageFiles(post, imageFiles)
