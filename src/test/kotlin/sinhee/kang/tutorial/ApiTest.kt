@@ -16,11 +16,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
+import javax.transaction.Transactional
 
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "local")
+@Transactional
+@
 class ApiTest() {
 
     @Autowired
