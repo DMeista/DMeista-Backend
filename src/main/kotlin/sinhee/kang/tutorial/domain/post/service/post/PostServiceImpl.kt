@@ -44,37 +44,29 @@ class PostServiceImpl(
     }
 
     override fun getPostContent(postId: Int): PostContentResponse {
-        lateinit var user: User
+        var currentUser: User
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
 
         try {
-            user = authService.authValidate()
-            viewRepository.findByUserAndPost(user, post)
-                    ?: viewRepository.save(View(user = user, post = post))
+            currentUser = authService.authValidate()
+            viewRepository.findByUserAndPost(currentUser, post)
+                    ?: viewRepository.save(View(user = currentUser, post = post))
         }
         catch (e: Exception) {
-            user = User()
+            currentUser = User()
         }
 
-        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: Post()
-        val previousPost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
-
-        val commentsList: MutableList<Comment> = post.commentList
         val commentsResponse: MutableList<PostCommentsResponse> = ArrayList()
 
-        for (comment in commentsList) {
-            val commentAuthor = userRepository.findByNickname(comment.author)
-                    ?: throw UserNotFoundException()
-
-            val subCommentsList: MutableList<SubComment> = comment.subCommentList
+        post.commentList.forEach { comment ->
             val subCommentsResponses: MutableList<PostSubCommentsResponse> = ArrayList()
 
-            for (subComment in subCommentsList) {
+            comment.subCommentList.forEach { subComment ->
                 subCommentsResponses.add(PostSubCommentsResponse(
-                        subCommentId = subComment.subCommentId,
-                        content = subComment.content,
-                        createdAt = subComment.createdAt,
+                    subCommentId = subComment.subCommentId,
+                    content = subComment.content,
+                    createdAt = subComment.createdAt,
                     author = subComment.user.nickname,
                     isMine = (subComment.user == currentUser)
                 ))
@@ -89,6 +81,9 @@ class PostServiceImpl(
                     subComments = subCommentsResponses
             ))
         }
+
+        val nextPost = postRepository.findTop1ByPostIdAfterOrderByPostIdAsc(postId) ?: Post()
+        val previousPost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
 
         return PostContentResponse(
                 title = post.title,
@@ -175,7 +170,7 @@ class PostServiceImpl(
 
     private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableList<String> {
         val request: MutableList<String> = ArrayList()
-        for (image in imageFiles) {
+        imageFiles.forEach { image ->
             try {
                 val tagsList = visionApi.getVisionApi(image)
                 for (tag in tagsList) { request.add("#$tag") }
