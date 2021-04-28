@@ -30,21 +30,23 @@ class UserInfoServiceImpl(
 
         val postResponse: MutableList<PostResponse> = ArrayList()
 
-        for(post in user.postList.reversed()) {
-            val checkedUser = viewRepository.findByPost(post)
-            postResponse.add(PostResponse(
-                id = post.postId,
-                title = post.title,
-                content = post.content,
+        user.postList.reversed()
+            .forEach { post ->
+                val checkedUser = viewRepository.findByPost(post)
+                postResponse.add(PostResponse(
+                    id = post.postId,
+                    title = post.title,
+                    content = post.content,
                     author = post.user.nickname,
-                viewCount = checkedUser.count(),
-                emojiCount = post.emojiList.count(),
-                emoji = post.emojiList
-                    .filter { emoji -> emoji.user == user }
-                    .map { it.status }.firstOrNull(),
-                createdAt = post.createdAt
-            ))
-        }
+                    viewCount = checkedUser.count(),
+                    emojiCount = post.emojiList.count(),
+                    emoji = post.emojiList
+                        .filter { emoji -> emoji.user == user }
+                        .map { it.status }.firstOrNull(),
+                    createdAt = post.createdAt
+                ))
+            }
+
         return UserInfoResponse(user.nickname, user.email, user.createdAt, postResponse)
     }
 }
