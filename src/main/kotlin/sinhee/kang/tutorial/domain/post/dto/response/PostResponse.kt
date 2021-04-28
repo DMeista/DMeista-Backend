@@ -1,7 +1,6 @@
 package sinhee.kang.tutorial.domain.post.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import java.time.LocalDateTime
 

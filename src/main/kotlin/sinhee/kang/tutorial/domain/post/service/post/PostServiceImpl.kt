@@ -75,8 +75,8 @@ class PostServiceImpl(
                         subCommentId = subComment.subCommentId,
                         content = subComment.content,
                         createdAt = subComment.createdAt,
-                        author = subComment.author,
-                        isMine = (commentAuthor.nickname == user.nickname)
+                    author = subComment.user.nickname,
+                    isMine = (subComment.user == currentUser)
                 ))
             }
 
@@ -84,8 +84,8 @@ class PostServiceImpl(
                     commentId = comment.commentId,
                     content = comment.content,
                     createdAt = comment.createdAt,
-                    author = commentAuthor.nickname,
-                    isMine = (commentAuthor.nickname == user.nickname),
+                    author = comment.user.nickname,
+                    isMine = (comment.user == currentUser),
                     subComments = subCommentsResponses
             ))
         }
@@ -93,15 +93,15 @@ class PostServiceImpl(
         return PostContentResponse(
                 title = post.title,
                 content = post.content,
-                author = post.author,
+                author = post.user.nickname,
                 tags = post.tags,
                 viewCount = post.viewList.count(),
                 emojiCount = post.emojiList.count(),
                 emoji = post.emojiList
-                    .filter { emoji -> emoji.user == user }
+                    .filter { emoji -> emoji.user == currentUser }
                     .map { it.status }.firstOrNull(),
                 createdAt = post.createdAt,
-                isMine = (post.author == user.nickname),
+                isMine = (post.user == currentUser),
 
                 nextPostTitle = nextPost.title,
                 prevPostTitle = previousPost.title,
@@ -131,7 +131,7 @@ class PostServiceImpl(
             user = user,
             title = title,
             content = content,
-            author = user.nickname,
+            tags =  tagsResponse.joinToString()
             tags =  request.joinToString()
         ))
 
@@ -144,7 +144,7 @@ class PostServiceImpl(
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
-        if ( post.author == user.nickname || user.isRoles(AccountRole.ADMIN) ) {
+        if ( post.user == user || user.isRoles(AccountRole.ADMIN) ) {
                 post.title = title
                 post.content = content
                 post.tags = tags
@@ -165,8 +165,8 @@ class PostServiceImpl(
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
-                .takeIf { it.author == user.nickname || user.isRoles(AccountRole.ADMIN) }
-                ?.also { postRepository.deleteById(it.postId!!) }
+                .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
+                ?.also { postRepository.deleteById(it.postId) }
                 ?: throw PermissionDeniedException()
         post.imageFileList.let { imageFile ->
             imageService.deleteImageFiles(post, imageFile) }
@@ -205,7 +205,7 @@ class PostServiceImpl(
                 id = post.postId,
                 title = post.title,
                 content = post.content,
-                author = post.author,
+                author = post.user.nickname,
                 tags = post.tags,
                 viewCount = checkedUser.count(),
                 emojiCount = post.emojiList.count(),
