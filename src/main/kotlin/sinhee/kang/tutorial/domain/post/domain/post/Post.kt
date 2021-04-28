@@ -31,15 +31,15 @@ class Post(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-        var commentList: MutableList<Comment> = ArrayList(),
+        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+        var commentList: MutableList<Comment> = mutableListOf(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var emojiList: MutableList<Emoji> = ArrayList(),
+        var emojiList: MutableList<Emoji> = mutableListOf(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var viewList: MutableList<View> = ArrayList(),
+        var viewList: MutableList<View> = mutableListOf(),
 
         @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var imageFileList: MutableList<ImageFile> = ArrayList()
+        var imageFileList: MutableList<ImageFile> = mutableListOf()
 )
