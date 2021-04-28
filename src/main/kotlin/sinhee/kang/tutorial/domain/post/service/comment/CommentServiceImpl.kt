@@ -21,7 +21,6 @@ class CommentServiceImpl(
         private val commentRepository: CommentRepository,
         private val subCommentRepository: SubCommentRepository
 ) : CommentService {
-
     override fun postComment(postId: Int, commentRequest: CommentRequest): Int? {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
@@ -35,6 +34,28 @@ class CommentServiceImpl(
                 ))
         )
         return post.postId
+    }
+
+    override fun changeComment(commentId: Int, commentRequest: CommentRequest): Int {
+        val user = authService.authValidate()
+        val comment = commentRepository.findById(commentId)
+            .orElseThrow { CommentNotFoundException() }
+            .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
+            ?.also {
+                it.content = commentRequest.content
+                commentRepository.save(it)
+            }
+            ?: throw PermissionDeniedException()
+        return comment.commentId
+    }
+
+    override fun deleteComment(commentId: Int) {
+        val user = authService.authValidate()
+        commentRepository.findById(commentId)
+            .orElseThrow { CommentNotFoundException() }
+            .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
+            ?.also { commentRepository.deleteById(it.commentId) }
+            ?: throw PermissionDeniedException()
     }
 
     override fun postSubComment(commentId: Int, commentRequest: CommentRequest): Int {
@@ -53,19 +74,6 @@ class CommentServiceImpl(
         return comment.commentId
     }
 
-    override fun changeComment(commentId: Int, commentRequest: CommentRequest): Int {
-        val user = authService.authValidate()
-        val comment = commentRepository.findById(commentId)
-                .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
-                ?.also {
-                    it.content = commentRequest.content
-                    commentRepository.save(it)
-                }
-                ?: throw PermissionDeniedException()
-        return comment.commentId
-    }
-
     override fun changeSubComment(subCommentId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val subComment = subCommentRepository.findById(subCommentId)
@@ -77,15 +85,6 @@ class CommentServiceImpl(
                 }
                 ?: throw PermissionDeniedException()
         return subComment.subCommentId
-    }
-
-    override fun deleteComment(commentId: Int) {
-        val user = authService.authValidate()
-        commentRepository.findById(commentId)
-                .orElseThrow { CommentNotFoundException() }
-                .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
-                ?.also { commentRepository.deleteById(it.commentId) }
-                ?: throw PermissionDeniedException()
     }
 
     override fun deleteSubComment(subCommentId: Int) {
