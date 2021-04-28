@@ -36,7 +36,7 @@ class UserInfoServiceImpl(
                 id = post.postId,
                 title = post.title,
                 content = post.content,
-                author = post.author,
+                    author = post.user.nickname,
                 viewCount = checkedUser.count(),
                 emojiCount = post.emojiList.count(),
                 emoji = post.emojiList
