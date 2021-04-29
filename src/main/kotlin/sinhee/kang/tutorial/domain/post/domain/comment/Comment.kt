@@ -16,7 +16,7 @@ class Comment(
         @JoinColumn(name = "user")
         var user: User,
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumn(name = "post")
         var post: Post,
 
@@ -27,7 +27,7 @@ class Comment(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        @OneToMany(mappedBy = "comment", cascade = [CascadeType.REMOVE])
         var subCommentList: MutableList<SubComment> = ArrayList()
 
 ) {

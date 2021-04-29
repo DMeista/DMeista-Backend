@@ -16,7 +16,7 @@ class SubComment(
         @JoinColumn(name = "user")
         var user: User,
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumn(name = "comment")
         var comment: Comment,
 
