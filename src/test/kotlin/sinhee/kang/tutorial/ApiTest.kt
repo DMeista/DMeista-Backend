@@ -22,7 +22,6 @@ import javax.transaction.Transactional
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("test", "local")
-@Transactional
 class ApiTest() {
 
     @Autowired
