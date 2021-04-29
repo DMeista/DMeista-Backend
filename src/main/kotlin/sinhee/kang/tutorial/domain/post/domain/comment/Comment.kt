@@ -12,7 +12,7 @@ class Comment(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var commentId: Int = 0,
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumn(name = "user")
         var user: User,
 

@@ -32,14 +32,14 @@ class Post(
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
         @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
-        var commentList: MutableList<Comment> = mutableListOf(),
+        var commentList: MutableList<Comment> = ArrayList(),
 
-        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var emojiList: MutableList<Emoji> = mutableListOf(),
+        @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+        var emojiList: MutableList<Emoji> = ArrayList(),
 
-        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var viewList: MutableList<View> = mutableListOf(),
+        @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+        var viewList: MutableList<View> = ArrayList(),
 
-        @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
-        var imageFileList: MutableList<ImageFile> = mutableListOf()
+        @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+        var imageFileList: MutableList<ImageFile> = ArrayList()
 )
