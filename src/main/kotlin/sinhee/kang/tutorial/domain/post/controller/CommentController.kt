@@ -14,7 +14,7 @@ class CommentController(
     @PostMapping("/{postId}")
     fun uploadComment(@PathVariable postId: Int,
                       @Valid @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.postComment(postId, commentRequest)
+        return commentService.uploadComment(postId, commentRequest)
     }
 
     @PatchMapping("/{commentId}")
@@ -31,7 +31,7 @@ class CommentController(
     @PostMapping("/sub/{commentId}")
     fun uploadSubComment(@PathVariable commentId: Int,
                          @Valid @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.postSubComment(commentId, commentRequest)
+        return commentService.uploadSubComment(commentId, commentRequest)
     }
 
     @PatchMapping("/sub/{subCommentId}")

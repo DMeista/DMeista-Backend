@@ -12,7 +12,7 @@ class Comment(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var commentId: Int = 0,
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumn(name = "user")
         var user: User,
 
@@ -27,12 +27,7 @@ class Comment(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "comment", cascade = [CascadeType.REMOVE])
+        @OneToMany(mappedBy = "comment", cascade = [CascadeType.ALL])
         var subCommentList: MutableList<SubComment> = ArrayList()
 
-) {
-        fun addSubComment(subComment: MutableList<SubComment>): Comment {
-                subCommentList = subComment
-                return this
-        }
-}
+)

@@ -21,19 +21,16 @@ class CommentServiceImpl(
         private val commentRepository: CommentRepository,
         private val subCommentRepository: SubCommentRepository
 ) : CommentService {
-    override fun postComment(postId: Int, commentRequest: CommentRequest): Int {
+    override fun uploadComment(postId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
-                .orElseThrow { ApplicationNotFoundException() }
-        val commentList: MutableList<Comment> = ArrayList()
-        commentList.add(
-                commentRepository.save(Comment(
-                        user = user,
-                        post = post,
-                        content = commentRequest.content
-                ))
-        )
-        return post.postId
+            .orElseThrow { ApplicationNotFoundException() }
+        val comment = commentRepository.save(Comment(
+            user = user,
+            post = post,
+            content = commentRequest.content
+        ))
+        return comment.commentId
     }
 
     override fun changeComment(commentId: Int, commentRequest: CommentRequest): Int {
@@ -58,20 +55,16 @@ class CommentServiceImpl(
             ?: throw PermissionDeniedException()
     }
 
-    override fun postSubComment(commentId: Int, commentRequest: CommentRequest): Int {
+    override fun uploadSubComment(commentId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val comment = commentRepository.findById(commentId)
-                .orElseThrow{ ApplicationNotFoundException() }
-        val subCommentList: MutableList<SubComment> = ArrayList()
-        subCommentList.add(
-                subCommentRepository.save(SubComment(
-                        user = user,
-                        comment = comment,
-                        content = commentRequest.content
-                ))
-        )
-        commentRepository.save(comment.addSubComment(subCommentList))
-        return comment.commentId
+            .orElseThrow{ ApplicationNotFoundException() }
+        val subComment = subCommentRepository.save(SubComment(
+            user = user,
+            comment = comment,
+            content = commentRequest.content
+        ))
+        return subComment.subCommentId
     }
 
     override fun changeSubComment(subCommentId: Int, commentRequest: CommentRequest): Int {

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.transaction.annotation.Transactional
 
 import sinhee.kang.tutorial.ApiTest
 import sinhee.kang.tutorial.TokenType
@@ -17,6 +18,7 @@ import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 
+@Transactional
 class CommentApiTest: ApiTest() {
     @Autowired
     private lateinit var postRepository: PostRepository
@@ -50,5 +52,94 @@ class CommentApiTest: ApiTest() {
     }
 
 
+    @Test
+    fun uploadCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment = uploadComment(postId, "Comment Content")
 
+        assert(comment.content == "Comment Content")
+    }
+
+    @Test
+    fun uploadSubCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment: Comment = uploadComment(postId, "댓글")
+        val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
+
+        assert(subComment.content == "대댓글")
+    }
+
+    @Test
+    fun changeCommentTest() {
+        val postId = generatePost(token = accessToken)
+        var comment: Comment = uploadComment(postId, "댓글")
+        comment = editComment(comment.commentId, "수정된 댓글")
+
+        assert(comment.content == "수정된 댓글")
+    }
+
+    @Test
+    fun changeSubCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment: Comment = uploadComment(postId, "댓글")
+        var subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
+        subComment = editSubComment(subComment.subCommentId, "수정된 대댓글")
+
+        assert(subComment.content == "수정된 대댓글")
+    }
+
+    @Test
+    fun deleteCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment: Comment = uploadComment(postId, "댓글")
+        requestBody(delete("/comments/${comment.commentId}"), token = accessToken)
+    }
+
+    @Test
+    fun deleteSubCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment: Comment = uploadComment(postId, "댓글")
+        val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글")
+        requestBody(delete("/comments/sub/${subComment.subCommentId}"), token = accessToken)
+    }
+
+    @Test
+    fun deleteCommentWithSubCommentTest() {
+        val postId = generatePost(token = accessToken)
+        val comment: Comment = uploadComment(postId, "댓글")
+        uploadSubComment(comment.commentId, "대댓글")
+        requestBody(delete("/comments/${comment.commentId}"), token = accessToken)
+    }
+
+    private fun uploadComment(postId: Int, content: String): Comment {
+        val commentId = requestBody(post("/comments/$postId"), CommentRequest(content), accessToken).toInt()
+        val post = postRepository.findById(postId)
+            .orElseThrow()
+        val comment = commentRepository.findById(commentId)
+            .orElseThrow()
+        post.commentList.add(comment)
+        return comment
+    }
+
+    private fun uploadSubComment(commentId: Int, content: String): SubComment {
+        val subCommentId = requestBody(post("/comments/sub/$commentId"), CommentRequest(content), accessToken).toInt()
+        val comment = commentRepository.findById(commentId)
+            .orElseThrow()
+        val subComment = subCommentRepository.findById(subCommentId)
+            .orElseThrow()
+        comment.subCommentList.add(subComment)
+        return subComment
+    }
+
+    private fun editComment(commentId: Int, content: String): Comment {
+        requestBody(patch("/comments/$commentId"), CommentRequest(content), accessToken)
+        return commentRepository.findById(commentId)
+            .orElseThrow { Exception() }
+    }
+
+    private fun editSubComment(subCommentId: Int, content: String): SubComment {
+        requestBody(patch("/comments/sub/$subCommentId"), CommentRequest(content), accessToken)
+        return subCommentRepository.findById(subCommentId)
+            .orElseThrow { Exception() }
+    }
 }

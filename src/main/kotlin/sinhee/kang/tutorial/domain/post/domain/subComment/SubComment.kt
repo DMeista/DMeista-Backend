@@ -12,7 +12,7 @@ class SubComment(
         @GeneratedValue(strategy = GenerationType.AUTO)
         var subCommentId: Int = 0,
 
-        @ManyToOne(fetch = FetchType.LAZY)
+        @ManyToOne
         @JoinColumn(name = "user")
         var user: User,
 
