@@ -27,12 +27,7 @@ class Comment(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "comment", cascade = [CascadeType.REMOVE])
+        @OneToMany(mappedBy = "comment", cascade = [CascadeType.MERGE])
         var subCommentList: MutableList<SubComment> = ArrayList()
 
-) {
-        fun addSubComment(subComment: MutableList<SubComment>): Comment {
-                subCommentList = subComment
-                return this
-        }
-}
+)

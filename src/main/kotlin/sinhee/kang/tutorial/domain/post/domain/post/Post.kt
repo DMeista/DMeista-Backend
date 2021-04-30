@@ -31,7 +31,7 @@ class Post(
         @Column(nullable = false)
         var createdAt: LocalDateTime = LocalDateTime.now(),
 
-        @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
+        @OneToMany(mappedBy = "post", cascade = [CascadeType.MERGE])
         var commentList: MutableList<Comment> = ArrayList(),
 
         @OneToMany(mappedBy = "post", cascade = [CascadeType.REMOVE])
