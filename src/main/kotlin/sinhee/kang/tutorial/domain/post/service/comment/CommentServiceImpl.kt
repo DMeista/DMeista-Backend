@@ -21,7 +21,7 @@ class CommentServiceImpl(
         private val commentRepository: CommentRepository,
         private val subCommentRepository: SubCommentRepository
 ) : CommentService {
-    override fun postComment(postId: Int, commentRequest: CommentRequest): Int {
+    override fun uploadComment(postId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
@@ -58,7 +58,7 @@ class CommentServiceImpl(
             ?: throw PermissionDeniedException()
     }
 
-    override fun postSubComment(commentId: Int, commentRequest: CommentRequest): Int {
+    override fun uploadSubComment(commentId: Int, commentRequest: CommentRequest): Int {
         val user = authService.authValidate()
         val comment = commentRepository.findById(commentId)
                 .orElseThrow{ ApplicationNotFoundException() }
