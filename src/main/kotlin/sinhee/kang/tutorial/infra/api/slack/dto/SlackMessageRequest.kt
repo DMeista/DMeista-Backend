@@ -1,5 +1,5 @@
 package sinhee.kang.tutorial.infra.api.slack.dto
 
-class SlackMessageRequest (
+data class SlackMessageRequest (
     var attachments: MutableList<Attachment>
 )
