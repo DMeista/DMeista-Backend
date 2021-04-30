@@ -23,7 +23,7 @@ class EmailServiceImpl(
         msg.run {
             setTo(email)
             setSubject("DMeista 인증메일입니다.")
-            setText("<h2>DMeista 서비스 인증 메일입니다.</h2> \n DMeista에 가입하신 것을 환영합니다.\n ${email}님 이메일 주소를 확인하기 위해 아래의 코드를 입력해주세요. \n\n[ $code ]")
+            setText("DMeista 서비스 인증 메일입니다. \n DMeista에 가입하신 것을 환영합니다.\n ${email}님 이메일 주소를 확인하기 위해 아래의 코드를 입력해주세요. \n\n[ $code ]")
         }
 
         javaMailSender.send(msg)
