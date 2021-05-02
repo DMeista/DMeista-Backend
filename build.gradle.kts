@@ -50,8 +50,8 @@ dependencies {
     implementation("io.springfox:springfox-swagger2:2.9.2")
     implementation("io.springfox:springfox-swagger-ui:2.9.2")
 
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.7.0")
+    implementation("com.squareup.retrofit2:converter-jackson:2.7.0")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
