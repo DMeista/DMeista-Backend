@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.vision
+package sinhee.kang.tutorial.infra.api.vision.service
 
 import org.springframework.web.multipart.MultipartFile
 

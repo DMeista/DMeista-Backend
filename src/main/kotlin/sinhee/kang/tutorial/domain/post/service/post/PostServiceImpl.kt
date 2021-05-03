@@ -18,7 +18,7 @@ import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
 import sinhee.kang.tutorial.domain.post.exception.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.infra.api.vision.VisionService
+import sinhee.kang.tutorial.infra.api.vision.service.VisionService
 
 @Service
 class PostServiceImpl(
