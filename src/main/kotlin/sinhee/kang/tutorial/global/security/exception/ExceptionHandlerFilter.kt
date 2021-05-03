@@ -5,16 +5,15 @@ import org.springframework.http.MediaType
 import org.springframework.web.filter.OncePerRequestFilter
 import sinhee.kang.tutorial.global.error.exception.BusinessException
 import sinhee.kang.tutorial.global.error.exception.ErrorCode
-import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
+import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
 import java.io.IOException
 import java.lang.Exception
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
 class ExceptionHandlerFilter(
-        private var slackSenderManager: SlackSenderManager
+    private val slackExceptionService: SlackExceptionService
 ): OncePerRequestFilter() {
 
     @Throws(IOException::class)
@@ -24,7 +23,7 @@ class ExceptionHandlerFilter(
         } catch (e: BusinessException) {
             this.setErrorResponse(response, e.errorCode)
         } catch (e: Exception) {
-            slackSenderManager.send(request, e)
+            slackExceptionService.sendMessage(request, e)
             e.printStackTrace()
         }
     }
@@ -34,8 +33,10 @@ class ExceptionHandlerFilter(
         val objectMapper = ObjectMapper()
         val jsonValue = objectMapper.writer()
                 .writeValueAsString(errorCode)
-        response.writer.write(jsonValue)
-        response.contentType = MediaType.APPLICATION_JSON_VALUE
-        response.status = errorCode.status
+        response.apply {
+            writer.write(jsonValue)
+            contentType = MediaType.APPLICATION_JSON_VALUE
+            status = errorCode.status
+        }
     }
 }
