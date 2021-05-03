@@ -5,7 +5,7 @@ import retrofit2.Call
 import retrofit2.http.*
 import sinhee.kang.tutorial.infra.api.vision.dto.VisionResponse
 
-interface KakaoApiInterface {
+interface KakaoApi {
     @Multipart
     @POST("/v2/vision/multitag/generate")
     fun generateTagFromImage(
