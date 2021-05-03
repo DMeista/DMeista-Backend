@@ -12,20 +12,19 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.config.requestLog.RequestLogConfigurer
-import sinhee.kang.tutorial.infra.api.slack.SlackSenderManager
+import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
 import javax.servlet.http.HttpServletRequest
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
         private val jwtTokenProvider: JwtTokenProvider,
-        private val slackSenderManager: SlackSenderManager
+        private val slackExceptionService: SlackExceptionService
 ) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
     @Bean
@@ -57,7 +56,7 @@ class SecurityConfig(
                 .antMatchers("/users/email/password/verify").permitAll()
                 .antMatchers("/users/email/verify").permitAll().and()
             .apply(JwtConfigurer(jwtTokenProvider)).and()
-            .apply(ExceptionConfigurer(slackSenderManager)).and()
+            .apply(ExceptionConfigurer(slackExceptionService)).and()
             .apply(RequestLogConfigurer())
     }
 

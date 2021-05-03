@@ -31,18 +31,18 @@ class PostController(
     @PostMapping
     fun uploadPost(@RequestParam title: String,
                    @RequestParam content: String,
-                   @RequestParam tags: String?,
+                   @RequestParam tags: List<String>?,
                    @RequestParam autoTag: Boolean?,
-                   @RequestParam imageFile: Array<MultipartFile>?): Int? =
-        postService.uploadPost(title, content, tags, autoTag?: false, imageFile)
+                   @RequestParam imageFiles: Array<MultipartFile>?): Int? =
+        postService.uploadPost(title, content, tags, autoTag?: false, imageFiles)
 
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
                  @RequestParam title: String,
                  @RequestParam content: String,
-                 @RequestParam tags: String?,
-                 @RequestParam imageFile: Array<MultipartFile>?): Int? =
-        postService.changePost(postId, title, content, tags, imageFile)
+                 @RequestParam tags: List<String>?,
+                 @RequestParam imageFiles: Array<MultipartFile>?): Int? =
+        postService.changePost(postId, title, content, tags, imageFiles)
 
     @DeleteMapping("/{postId}")
     fun deletePost(@PathVariable postId: Int) =
