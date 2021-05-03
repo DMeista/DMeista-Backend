@@ -18,17 +18,17 @@ import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
 import sinhee.kang.tutorial.domain.post.exception.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.infra.api.vision.VisionApi
+import sinhee.kang.tutorial.infra.api.vision.VisionService
 
 @Service
 class PostServiceImpl(
-        private val authService: AuthService,
-        private val imageService: ImageService,
-        private val visionApi: VisionApi,
+    private val authService: AuthService,
+    private val imageService: ImageService,
+    private val visionApi: VisionService,
 
-        private val postRepository: PostRepository,
-        private val viewRepository: ViewRepository,
-        private val imageFileRepository: ImageFileRepository
+    private val postRepository: PostRepository,
+    private val viewRepository: ViewRepository,
+    private val imageFileRepository: ImageFileRepository
 
 ) : PostService {
 
@@ -105,12 +105,12 @@ class PostServiceImpl(
         )
     }
 
-    override fun uploadPost(title: String, content: String, tags: String?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int? {
+    override fun uploadPost(title: String, content: String, tags: List<String>?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
         val tagsResponse: MutableSet<String> = mutableSetOf()
 
         tags?.let {
-            tagsResponse.add(it)
+            tagsResponse.addAll(it)
         }
 
         if (!imageFiles.isNullOrEmpty() && autoTags) {
@@ -121,7 +121,7 @@ class PostServiceImpl(
             user = user,
             title = title,
             content = content,
-            tags =  tagsResponse.joinToString()
+            tags = tagsResponse.joinToString { "#$it" }
         ))
 
         imageService.saveImageFiles(post, imageFiles)
@@ -129,14 +129,14 @@ class PostServiceImpl(
         return post.postId
     }
 
-    override fun changePost(postId: Int, title: String, content: String, tags: String?, imageFiles: Array<MultipartFile>?): Int? {
+    override fun changePost(postId: Int, title: String, content: String, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
         if ( post.user == user || user.isRoles(AccountRole.ADMIN) ) {
                 post.title = title
                 post.content = content
-                post.tags = tags
+                post.tags = tags?.joinToString { "#$it" }
 
                 postRepository.save(post)
         }
@@ -162,12 +162,12 @@ class PostServiceImpl(
         imageFileRepository.deleteByPost(post)
     }
 
-    private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableList<String> {
-        val request: MutableList<String> = ArrayList()
+    private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableSet<String> {
+        val request: MutableSet<String> = mutableSetOf()
         imageFiles.forEach { image ->
             try {
-                val tagsList = visionApi.getVisionApi(image)
-                for (tag in tagsList) { request.add("#$tag") }
+                val tagsList = visionApi.generateTagFromImage(image)
+                tagsList.forEach { e -> request.add(e) }
             }
             catch (e: Exception) {
                 e.printStackTrace()
