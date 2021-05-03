@@ -14,7 +14,7 @@ class VisionServiceImpl(
     @Value("\${kakao.rest.api.key}")
     private val authorizationKey: String
 ): VisionService {
-    private val visionConnection = Retrofit
+    private val connection = Retrofit
         .Builder()
             .baseUrl("https://dapi.kakao.com/")
             .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper()))
@@ -26,7 +26,7 @@ class VisionServiceImpl(
         val body: MultipartBody.Part = MultipartBody.Part
             .createFormData("image", imageFile.name, requestFile)
 
-        return visionConnection
+        return connection
             .generateTagFromImage(token = "KakaoAK $authorizationKey", image = body)
             .execute().body()?.result?.label_kr!!
     }
