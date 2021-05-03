@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.infra.api.slack.dto
 
-class Attachment(
+data class Attachment (
         var color: String,
         var pretext: String,
         var tile: String,
