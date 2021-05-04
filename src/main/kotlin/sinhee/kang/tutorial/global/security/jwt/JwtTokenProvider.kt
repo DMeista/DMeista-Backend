@@ -13,22 +13,22 @@ import javax.servlet.http.HttpServletRequest
 
 @Component(value = "jwtTokenProvider")
 class JwtTokenProvider(
-        private var authDetailsService: AuthDetailsService,
+        private val authDetailsService: AuthDetailsService,
 
         @Value("\${auth.jwt.secret}")
-        private var secretKey: String,
+        private val secretKey: String,
 
         @Value("\${auth.jwt.exp.access}")
-        private var accessTokenExpiration: Long,
+        private val accessTokenExpiration: Long,
 
         @Value("\${auth.jwt.exp.refresh}")
-        private var refreshTokenExpiration: Long,
+        private val refreshTokenExpiration: Long,
 
         @Value("\${auth.jwt.header}")
-        private var header: String,
+        private val header: String,
 
         @Value("\${auth.jwt.prefix}")
-        private var prefix: String
+        private val prefix: String
 ) {
 
     fun generateAccessToken(username: String): String {
