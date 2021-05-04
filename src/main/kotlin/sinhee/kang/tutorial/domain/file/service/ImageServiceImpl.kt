@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.file.domain.ImageFile
 import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
-import sinhee.kang.tutorial.domain.file.exception.ImageNotFoundException
+import sinhee.kang.tutorial.global.businessException.exception.common.ImageNotFoundException
 import sinhee.kang.tutorial.domain.post.domain.post.Post
-import sinhee.kang.tutorial.global.security.exception.BadRequestException
 
 import java.io.File
 import java.io.FileInputStream

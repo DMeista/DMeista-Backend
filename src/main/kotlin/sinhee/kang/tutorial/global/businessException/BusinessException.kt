@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.businessException.exception
+package sinhee.kang.tutorial.global.businessException
 
 
 open class BusinessException : RuntimeException {
