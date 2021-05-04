@@ -21,7 +21,7 @@ class ExceptionHandlerFilter(
         try {
             filterChain.doFilter(request, response)
         } catch (e: BusinessException) {
-            this.setErrorResponse(response, e.errorCode)
+            setErrorResponse(response, e.errorCode)
         } catch (e: Exception) {
             slackExceptionService.sendMessage(request, e)
             e.printStackTrace()
@@ -31,10 +31,10 @@ class ExceptionHandlerFilter(
     @Throws(IOException::class)
     private fun setErrorResponse(response: HttpServletResponse, errorCode: ErrorCode) {
         val objectMapper = ObjectMapper()
-        val jsonValue = objectMapper.writer()
+        val exception = objectMapper.writer()
                 .writeValueAsString(errorCode)
         response.apply {
-            writer.write(jsonValue)
+            writer.write(exception)
             contentType = MediaType.APPLICATION_JSON_VALUE
             status = errorCode.status
         }

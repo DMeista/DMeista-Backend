@@ -9,31 +9,17 @@ class AuthDetails(
         private val user: User
 ) : UserDetails {
 
-    override fun getAuthorities(): Collection<GrantedAuthority> {
-        return ArrayList()
-    }
+    override fun getAuthorities(): Collection<GrantedAuthority> = ArrayList()
 
-    override fun getPassword(): String {
-        return user.password
-    }
+    override fun getPassword(): String = user.password
 
-    override fun getUsername(): String {
-        return user.nickname
-    }
+    override fun getUsername(): String = user.nickname
 
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
+    override fun isAccountNonExpired(): Boolean = true
 
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
+    override fun isAccountNonLocked(): Boolean = true
 
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
+    override fun isCredentialsNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    override fun isEnabled(): Boolean = true
 }

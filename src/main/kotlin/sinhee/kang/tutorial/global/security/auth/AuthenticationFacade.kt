@@ -7,12 +7,8 @@ import org.springframework.stereotype.Component
 @Component
 class AuthenticationFacade {
 
-    fun getAuthentication(): Authentication {
-        return SecurityContextHolder.getContext().authentication
-    }
-
     fun getUserName(): String {
-        val auth: Authentication = this.getAuthentication()
+        val auth = getAuthentication()
         return if (auth.principal is AuthDetails) {
             (auth.principal as AuthDetails).username
         }
@@ -20,4 +16,6 @@ class AuthenticationFacade {
             getAuthentication().name
         }
     }
+
+    private fun getAuthentication(): Authentication = SecurityContextHolder.getContext().authentication
 }

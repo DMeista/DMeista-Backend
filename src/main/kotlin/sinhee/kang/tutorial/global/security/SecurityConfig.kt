@@ -27,11 +27,6 @@ class SecurityConfig(
         private val slackExceptionService: SlackExceptionService
 ) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
-    @Bean
-    override fun authenticationManager(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
-
     override fun configure(http: HttpSecurity) {
         http
             .csrf().disable()
@@ -67,6 +62,10 @@ class SecurityConfig(
             .allowedHeaders("*");
     }
 
+    @Bean
+    override fun authenticationManager(): AuthenticationManager {
+        return super.authenticationManagerBean()
+    }
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()

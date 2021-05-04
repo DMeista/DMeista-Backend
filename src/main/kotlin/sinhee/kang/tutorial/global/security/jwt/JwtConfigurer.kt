@@ -7,8 +7,8 @@ import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 class JwtConfigurer(
-        @Autowired
-        private val jwtTokenProvider: JwtTokenProvider
+    @Autowired
+    private val jwtTokenProvider: JwtTokenProvider
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(httpSecurity: HttpSecurity) {
