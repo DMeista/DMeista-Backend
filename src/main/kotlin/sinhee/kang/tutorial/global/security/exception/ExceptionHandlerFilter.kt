@@ -3,8 +3,8 @@ package sinhee.kang.tutorial.global.security.exception
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType
 import org.springframework.web.filter.OncePerRequestFilter
-import sinhee.kang.tutorial.global.error.exception.BusinessException
-import sinhee.kang.tutorial.global.error.exception.ErrorCode
+import sinhee.kang.tutorial.global.businessException.exception.BusinessException
+import sinhee.kang.tutorial.global.businessException.exception.ErrorCode
 import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
 import java.io.IOException
 import java.lang.Exception

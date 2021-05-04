@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.error
+package sinhee.kang.tutorial.global.businessException
 
 import org.springframework.stereotype.Component
 import java.io.IOException

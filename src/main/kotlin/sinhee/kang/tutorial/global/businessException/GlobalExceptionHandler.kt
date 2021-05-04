@@ -1,12 +1,12 @@
-package sinhee.kang.tutorial.global.error
+package sinhee.kang.tutorial.global.businessException
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
-import sinhee.kang.tutorial.global.error.exception.BusinessException
-import sinhee.kang.tutorial.global.error.exception.ErrorCode
+import sinhee.kang.tutorial.global.businessException.exception.BusinessException
+import sinhee.kang.tutorial.global.businessException.exception.ErrorCode
 
 @ControllerAdvice
 class GlobalExceptionHandler {
