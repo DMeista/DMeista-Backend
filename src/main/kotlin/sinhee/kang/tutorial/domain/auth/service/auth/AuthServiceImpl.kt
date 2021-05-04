@@ -8,15 +8,15 @@ import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.repository.RefreshTokenRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.domain.auth.exception.ExpiredTokenException
-import sinhee.kang.tutorial.domain.auth.exception.InvalidTokenException
+import sinhee.kang.tutorial.global.businessException.exception.auth.ExpiredTokenException
+import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidTokenException
 import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
-import sinhee.kang.tutorial.domain.post.exception.UnAuthorizedException
+import sinhee.kang.tutorial.global.businessException.exception.auth.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.security.auth.AuthenticationFacade
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
-import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
+import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 
 @Service
 class AuthServiceImpl(

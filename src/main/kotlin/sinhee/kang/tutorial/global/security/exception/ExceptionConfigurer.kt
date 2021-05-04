@@ -14,5 +14,4 @@ class ExceptionConfigurer(
         val handlerFilter = ExceptionHandlerFilter(slackExceptionService)
         httpSecurity.addFilterBefore(handlerFilter, JwtTokenFilter::class.java)
     }
-
 }
