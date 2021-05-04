@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
-import sinhee.kang.tutorial.global.config.requestLog.RequestLogConfigurer
+import sinhee.kang.tutorial.global.security.requestLog.RequestLogConfigurer
 import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
 import javax.servlet.http.HttpServletRequest
 

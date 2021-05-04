@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.requestLog
+package sinhee.kang.tutorial.global.security.requestLog
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
