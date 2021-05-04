@@ -9,12 +9,12 @@ import sinhee.kang.tutorial.global.security.exception.UserNotFoundException
 
 @Service
 class AuthDetailsService(
-        private var userRepository: UserRepository
+    private val userRepository: UserRepository
 ) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails {
         val user: User = userRepository.findByNickname(username)
-                ?: { throw UserNotFoundException() }()
+                ?: throw UserNotFoundException()
         return AuthDetails(user)
     }
 }

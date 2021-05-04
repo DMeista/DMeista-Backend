@@ -6,7 +6,7 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import java.util.*
 
 class AuthDetails(
-        private var user: User
+        private val user: User
 ) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
