@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config.requestLog
+package sinhee.kang.tutorial.global.security.requestLog
 
 import io.micrometer.core.instrument.util.StringUtils
 import org.apache.commons.io.IOUtils

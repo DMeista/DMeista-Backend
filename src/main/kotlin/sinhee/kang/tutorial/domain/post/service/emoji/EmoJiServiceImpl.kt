@@ -8,7 +8,7 @@ import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
-import sinhee.kang.tutorial.domain.post.exception.ApplicationNotFoundException
+import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationNotFoundException
 
 @Service
 class EmoJiServiceImpl(

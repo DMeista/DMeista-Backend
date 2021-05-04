@@ -9,7 +9,7 @@ import okhttp3.RequestBody
 import org.springframework.stereotype.Component
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import sinhee.kang.tutorial.global.error.ErrorHandler
+import sinhee.kang.tutorial.global.businessException.ErrorHandler
 import sinhee.kang.tutorial.infra.api.slack.SlackApi
 import sinhee.kang.tutorial.infra.api.slack.dto.Attachment
 import sinhee.kang.tutorial.infra.api.slack.dto.Field

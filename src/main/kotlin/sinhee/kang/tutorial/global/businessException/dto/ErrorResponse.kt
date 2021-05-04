@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.error
+package sinhee.kang.tutorial.global.businessException.dto
 
 class ErrorResponse(
         var status: Int,
