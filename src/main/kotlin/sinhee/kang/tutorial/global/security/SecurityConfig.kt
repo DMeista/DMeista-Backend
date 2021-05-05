@@ -1,5 +1,6 @@
 package sinhee.kang.tutorial.global.security
 
+import javax.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -13,18 +14,18 @@ import org.springframework.security.web.util.matcher.RequestMatcher
 import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+
 import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.security.requestLog.RequestLogConfigurer
 import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
-import javax.servlet.http.HttpServletRequest
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-        private val jwtTokenProvider: JwtTokenProvider,
-        private val slackExceptionService: SlackExceptionService
+    private val jwtTokenProvider: JwtTokenProvider,
+    private val slackExceptionService: SlackExceptionService
 ) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
     override fun configure(http: HttpSecurity) {
@@ -39,10 +40,9 @@ class SecurityConfig(
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-            .requestMatchers(RequestMatcher {
-                request: HttpServletRequest -> CorsUtils.isPreFlightRequest(request)
-            })
-            .permitAll()
+                .requestMatchers(
+                    RequestMatcher { request: HttpServletRequest ->
+                        CorsUtils.isPreFlightRequest(request) }).permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/post").permitAll()
@@ -63,9 +63,7 @@ class SecurityConfig(
     }
 
     @Bean
-    override fun authenticationManager(): AuthenticationManager {
-        return super.authenticationManagerBean()
-    }
+    override fun authenticationManager(): AuthenticationManager = super.authenticationManagerBean()
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
