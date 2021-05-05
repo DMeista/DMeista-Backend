@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.security.exception
+package sinhee.kang.tutorial.global.security.errorHandler
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.http.MediaType
@@ -6,7 +6,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 import sinhee.kang.tutorial.global.businessException.BusinessException
 import sinhee.kang.tutorial.global.businessException.ErrorCode
 import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
-import java.io.IOException
 import java.lang.Exception
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
@@ -16,7 +15,6 @@ class ExceptionHandlerFilter(
     private val slackExceptionService: SlackExceptionService
 ): OncePerRequestFilter() {
 
-    @Throws(IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         try {
             filterChain.doFilter(request, response)
@@ -28,7 +26,6 @@ class ExceptionHandlerFilter(
         }
     }
 
-    @Throws(IOException::class)
     private fun setErrorResponse(response: HttpServletResponse, errorCode: ErrorCode) {
         val objectMapper = ObjectMapper()
         val exception = objectMapper.writer()

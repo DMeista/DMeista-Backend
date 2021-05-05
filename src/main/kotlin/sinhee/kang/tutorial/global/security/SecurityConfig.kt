@@ -15,7 +15,7 @@ import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-import sinhee.kang.tutorial.global.security.exception.ExceptionConfigurer
+import sinhee.kang.tutorial.global.security.errorHandler.ExceptionHandlerConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.security.requestLog.RequestLogConfigurer
@@ -51,7 +51,7 @@ class SecurityConfig(
                 .antMatchers("/users/email/password/verify").permitAll()
                 .antMatchers("/users/email/verify").permitAll().and()
             .apply(JwtConfigurer(jwtTokenProvider)).and()
-            .apply(ExceptionConfigurer(slackExceptionService)).and()
+            .apply(ExceptionHandlerConfigurer(slackExceptionService)).and()
             .apply(RequestLogConfigurer())
     }
 
