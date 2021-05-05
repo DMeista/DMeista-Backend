@@ -7,7 +7,7 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.global.businessException.exception.auth.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.security.auth.AuthenticationFacade
+import sinhee.kang.tutorial.global.security.authentication.AuthenticationFacade
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 import javax.servlet.http.HttpServletResponse

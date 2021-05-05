@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.security.auth
+package sinhee.kang.tutorial.global.security.authentication
 
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

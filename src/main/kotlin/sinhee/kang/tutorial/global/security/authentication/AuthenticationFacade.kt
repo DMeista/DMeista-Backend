@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.security.auth
+package sinhee.kang.tutorial.global.security.authentication
 
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder

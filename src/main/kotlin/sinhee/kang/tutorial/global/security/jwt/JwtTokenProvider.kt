@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
 import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
 import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidTokenException
-import sinhee.kang.tutorial.global.security.auth.AuthDetailsService
+import sinhee.kang.tutorial.global.security.authentication.AuthDetailsService
 import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
 import java.util.*
 import javax.servlet.http.Cookie
