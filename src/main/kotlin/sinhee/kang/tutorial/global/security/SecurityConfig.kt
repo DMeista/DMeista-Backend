@@ -45,7 +45,7 @@ class SecurityConfig(
                         CorsUtils.isPreFlightRequest(request) }).permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/auth").permitAll()
-                .antMatchers("/post").permitAll()
+                .antMatchers("/posts").permitAll()
                 .antMatchers("/users").permitAll()
                 .antMatchers("/users/password").permitAll()
                 .antMatchers("/users/email/password/verify").permitAll()
