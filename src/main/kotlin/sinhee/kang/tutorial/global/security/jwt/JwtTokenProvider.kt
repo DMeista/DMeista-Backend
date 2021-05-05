@@ -26,11 +26,11 @@ class JwtTokenProvider(
 ) {
 
     fun getAuthentication(token: String): Authentication {
-        val authDetails = authDetailsService.loadUserByUsername(getUserNickname(token))
+        val authDetails = authDetailsService.loadUserByUsername(getUsername(token))
         return UsernamePasswordAuthenticationToken(authDetails, "", authDetails.authorities)
     }
 
-    fun getUserNickname(token: String): String = try {
+    fun getUsername(token: String): String = try {
         Jwts.parser().setSigningKey(secretKey)
             .parseClaimsJws(token).body.subject
         } catch (e: Exception) {
