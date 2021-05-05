@@ -39,7 +39,7 @@ class JwtTokenProvider(
 
     fun isValidateToken(token: String): Boolean {
         return try {
-            Jwts.parser().setSigningKey(secretKey)
+            !Jwts.parser().setSigningKey(secretKey)
                 .parseClaimsJws(token).body.expiration
                 .before(Date())
         } catch (e: Exception) {
