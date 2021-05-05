@@ -24,7 +24,7 @@ class AuthServiceImpl(
         val user = userRepository.findByEmail(request.email)
             ?: run { throw UserNotFoundException() }
         if (passwordEncoder.matches(request.password, user.password))
-            tokenProvider.addCookies(response, user.nickname)
+            tokenProvider.generateAuthCookies(response, user.nickname)
     }
 
     override fun authValidate(): User {
