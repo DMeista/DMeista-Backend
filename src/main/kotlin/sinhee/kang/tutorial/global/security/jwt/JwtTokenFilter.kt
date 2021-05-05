@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.global.security.jwt
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.IOException
@@ -8,20 +7,23 @@ import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
 
 class JwtTokenFilter(
-    @Autowired
-    private val jwtTokenProvider: JwtTokenProvider
+    private val tokenProvider: JwtTokenProvider
 ): OncePerRequestFilter() {
 
-    @Throws(ServletException::class, IOException::class)
-    override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
-        val token = jwtTokenProvider.resolveToken(request)
+    override fun doFilterInternal(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, filterChain: FilterChain) {
+        val accessToken: String? = try {
+            httpServletRequest.cookies
+                .first { cookie -> cookie.name == TokenType.ACCESS.cookieName }
+                .value
+        } catch (e: Exception) { null }
 
-        if (token != null && jwtTokenProvider.isValidateToken(token)) {
-            val auth = jwtTokenProvider.getAuthentication(token)
-            SecurityContextHolder.getContext().authentication = auth
-        }
-        filterChain.doFilter(request, response)
+        if (!accessToken.isNullOrEmpty() && tokenProvider.isValidateToken(accessToken))
+            SecurityContextHolder.getContext()
+                .authentication = tokenProvider.getAuthentication(accessToken)
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse)
     }
 }
