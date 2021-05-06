@@ -4,12 +4,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import sinhee.kang.tutorial.ApiTest
-import sinhee.kang.tutorial.TokenType
+import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
@@ -22,17 +21,14 @@ class PostApiTest: ApiTest() {
     private lateinit var userRepository: UserRepository
 
     private val user: User = User(
-        nickname = "user",
         email = "rkdtlsgml40@dsm.hs.kr",
+        nickname = "user",
         password = passwordEncoder.encode("1234")
     )
-
-    private lateinit var accessToken: String
 
     @BeforeEach
     fun setup() {
         userRepository.save(user)
-        accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
     }
 
     @AfterEach
@@ -42,34 +38,29 @@ class PostApiTest: ApiTest() {
     }
 
     @Test
-    @Throws
     fun uploadPostTest() {
-        val post = generatePost(post("/posts"), token = accessToken)
-        postRepository.findById(post)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        postRepository.findById(postId)
             .orElseThrow { throw Exception() }
-            .let { assert(post == it.postId) }
+            .let { assert(postId == it.postId) }
     }
 
-
     @Test
-    @Throws
     fun editPostTest() {
-        val post = generatePost(post("/posts"), token = accessToken)
-        generatePost(patch("/posts/$post"), title = "new title", token = accessToken)
-        postRepository.findById(post)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        generatePost(patch("/posts/$postId"), title = "new title", cookie = cookie)
+        postRepository.findById(postId)
             .orElseThrow { Exception() }
             .let { assert(it.title == "new title") }
     }
 
-
     @Test
-    @Throws
     fun deletePostTest() {
-        val post = generatePost(post("/posts"), token = accessToken)
-        mvc.perform(
-            delete("/posts/$post")
-                .header("Authorization", accessToken)
-        )
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        mvc.perform(delete("/posts/$postId").cookie(cookie))
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
     }
