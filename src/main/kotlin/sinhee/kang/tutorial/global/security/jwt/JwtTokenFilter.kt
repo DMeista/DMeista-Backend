@@ -1,28 +1,27 @@
 package sinhee.kang.tutorial.global.security.jwt
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.web.filter.GenericFilterBean
-import java.io.IOException
+import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
-import javax.servlet.ServletException
-import javax.servlet.ServletRequest
-import javax.servlet.ServletResponse
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 class JwtTokenFilter(
-        @Autowired
-        private val jwtTokenProvider: JwtTokenProvider
-) : GenericFilterBean() {
+    private val tokenProvider: JwtTokenProvider
+): OncePerRequestFilter() {
 
-    @Throws(ServletException::class, IOException::class)
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-        val token = jwtTokenProvider.resolveToken(request as HttpServletRequest)
+    override fun doFilterInternal(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, filterChain: FilterChain) {
+        val accessToken: String? = tokenProvider.getAccessToken(httpServletRequest)
+        val refreshToken: String? = tokenProvider.getRefreshToken(httpServletRequest)
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            val auth = jwtTokenProvider.getAuthentication(token)
-            SecurityContextHolder.getContext().authentication = auth
-        }
-        chain.doFilter(request, response)
+        accessToken
+            ?.takeIf { tokenProvider.isValidateToken(it) }
+            ?.apply { SecurityContextHolder.getContext().authentication = tokenProvider.getAuthentication(this) }
+
+        refreshToken
+            ?.takeIf { tokenProvider.isValidateToken(it) && tokenProvider.isRefreshToken(it) }
+            ?.apply { tokenProvider.updateAccessCookie(httpServletResponse, this) }
+
+        filterChain.doFilter(httpServletRequest, httpServletResponse)
     }
 }

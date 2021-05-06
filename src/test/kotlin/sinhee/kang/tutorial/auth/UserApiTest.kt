@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 
 import sinhee.kang.tutorial.ApiTest
-import sinhee.kang.tutorial.TokenType
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
@@ -23,8 +22,8 @@ class UserApiTest: ApiTest() {
     private lateinit var userRepository: UserRepository
 
     private val user: User = User(
-        nickname = "user",
         email = "rkdtlsgml40@dsm.hs.kr",
+        nickname = "user",
         password = passwordEncoder.encode("1234")
     )
 
@@ -33,16 +32,13 @@ class UserApiTest: ApiTest() {
         emailVerify()
     }
 
-
     @AfterEach
     fun clean() {
         emailVerificationRepository.deleteAll()
         userRepository.deleteAll()
     }
 
-
     @Test
-    @Throws
     fun signUpTest() {
         requestBody(post("/users"), SignUpRequest(user.email, "1234", user.nickname))
         userRepository.findByEmail(user.email)
@@ -50,35 +46,28 @@ class UserApiTest: ApiTest() {
             ?: throw Exception()
     }
 
-
     @Test
-    @Throws
     fun changePasswordTest() {
         userRepository.save(user)
         requestBody(put("/users/password"), ChangePasswordRequest(user.email, "4321"))
     }
 
-
     @Test
-    @Throws
     fun exitAccountTest() {
         userRepository.save(user)
+        val cookie = login(SignInRequest(user.email, "1234"))
         val request = ChangePasswordRequest(user.email, "1234")
-        val accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
-        requestBody(delete("/users"), request, accessToken)
+        requestBody(delete("/users"), request, cookie)
     }
 
-
     @Test
-    @Throws
     fun userInfoTest() {
         userRepository.save(user)
-        val accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
-        val userInfo = requestBody(get("/users"), token = accessToken)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val userInfo = requestBody(get("/users"), cookie = cookie)
         val response = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
         assert(response.username == user.nickname)
     }
-
 
     private fun emailVerify() {
         emailVerificationRepository.save(EmailVerification(

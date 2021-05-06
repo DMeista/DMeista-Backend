@@ -6,89 +6,97 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
+import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
+import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
 import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidTokenException
-import sinhee.kang.tutorial.global.security.auth.AuthDetailsService
+import sinhee.kang.tutorial.global.security.authentication.AuthDetailsService
+import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
 import java.util.*
+import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-@Component(value = "jwtTokenProvider")
+@Component
 class JwtTokenProvider(
-        private val authDetailsService: AuthDetailsService,
+    private val authDetailsService: AuthDetailsService,
 
-        @Value("\${auth.jwt.secret}")
-        private val secretKey: String,
+    private val refreshTokenService: RefreshTokenService,
 
-        @Value("\${auth.jwt.exp.access}")
-        private val accessTokenExpiration: Long,
-
-        @Value("\${auth.jwt.exp.refresh}")
-        private val refreshTokenExpiration: Long,
-
-        @Value("\${auth.jwt.header}")
-        private val header: String,
-
-        @Value("\${auth.jwt.prefix}")
-        private val prefix: String
+    @Value("\${auth.jwt.secret}")
+    private val secretKey: String
 ) {
 
-    fun generateAccessToken(username: String): String {
-        return Jwts.builder()
-                .setIssuedAt(Date())
-                .setExpiration(Date(System.currentTimeMillis() + accessTokenExpiration * 1000))
-                .setSubject(username)
-                .claim("type", "access_token")
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact()
-    }
+    fun getAccessToken(httpServletRequest: HttpServletRequest) = try {
+        httpServletRequest.cookies
+            .first { cookie -> cookie.name == TokenType.ACCESS.cookieName }.value
+        } catch (e: NoSuchElementException) {
+            httpServletRequest.cookies
+                .first { cookie -> cookie.name == TokenType.REFRESH.cookieName }.value
+                ?.let { generateTokenFactory(getUsername(it), TokenType.ACCESS) }
+        } catch (e: Exception) { null }
 
-    fun generateRefreshToken(username: String): String {
-        return Jwts.builder()
-                .setIssuedAt(Date())
-                .setExpiration(Date(System.currentTimeMillis() + refreshTokenExpiration * 1000))
-                .setSubject(username)
-                .claim("type", "refresh_token")
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact()
-    }
-
-    fun resolveToken(request: HttpServletRequest): String? {
-        val bearerToken = request.getHeader(header)
-        if (bearerToken != null && bearerToken.startsWith(prefix)) {
-            return bearerToken.substring(7)
-        }
-        return null
-    }
-
-    fun validateToken(token: String): Boolean {
-        try {
-            Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(token).body.subject
-            return true
-        } catch (e: Exception) {
-            throw InvalidTokenException()
-        }
-    }
+    fun getRefreshToken(httpServletRequest: HttpServletRequest) = try {
+        httpServletRequest.cookies
+            .first { cookie -> cookie.name == TokenType.REFRESH.cookieName }.value
+        } catch (e: Exception) { null }
 
     fun getAuthentication(token: String): Authentication {
-        val authDetails = authDetailsService.loadUserByUsername(getUserNickname(token))
+        val authDetails = authDetailsService.loadUserByUsername(getUsername(token))
         return UsernamePasswordAuthenticationToken(authDetails, "", authDetails.authorities)
     }
 
-    fun getUserNickname(token: String): String {
-        try {
-            return Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(token).body.subject
+    private fun getUsername(token: String): String = try {
+        Jwts.parser().setSigningKey(secretKey)
+            .parseClaimsJws(token).body.subject
         } catch (e: Exception) {
             throw InvalidTokenException()
+        }
+
+    fun isValidateToken(token: String): Boolean = try {
+        !Jwts.parser().setSigningKey(secretKey)
+            .parseClaimsJws(token).body.expiration
+            .before(Date())
+        } catch (e: Exception) {
+            throw InvalidTokenException()
+        }
+
+    fun isRefreshToken(token: String): Boolean = try {
+        Jwts.parser().setSigningKey(secretKey)
+            .parseClaimsJws(token).body["type"] == TokenType.REFRESH.tokenName
+        } catch (e: Exception) {
+            throw InvalidTokenException()
+        }
+
+    fun generateAuthCookies(httpServletResponse: HttpServletResponse, username: String) {
+        val refreshToken = generateTokenFactory(username, TokenType.REFRESH)
+            .apply { refreshTokenService.save(RefreshToken(username, this, TokenType.REFRESH.expiredTokenTime)) }
+        val accessToken = generateTokenFactory(username, TokenType.ACCESS)
+
+        httpServletResponse.apply {
+            addCookie(generateCookieFactory(TokenType.REFRESH, refreshToken))
+            addCookie(generateCookieFactory(TokenType.ACCESS, accessToken))
         }
     }
 
-    fun isRefreshToken(token: String): Boolean {
-        try {
-            return Jwts.parser().setSigningKey(secretKey)
-                    .parseClaimsJws(token).body["type"] == "refresh_token"
-        } catch (e: Exception) {
-            throw InvalidTokenException()
-        }
+    fun updateAccessCookie(httpServletResponse: HttpServletResponse, refreshToken: String) {
+        val accessToken = generateTokenFactory(getUsername(refreshToken), TokenType.ACCESS)
+
+        httpServletResponse.addCookie(generateCookieFactory(TokenType.ACCESS, accessToken))
     }
+
+    private fun generateCookieFactory(tokenType: TokenType, token: String): Cookie =
+        Cookie(tokenType.cookieName, token).apply {
+            maxAge = tokenType.expiredTokenTime.toInt()
+            isHttpOnly = true
+            path = "/"
+        }
+
+    private fun generateTokenFactory(username: String, tokenType: TokenType): String =
+        Jwts.builder()
+            .setIssuedAt(Date())
+            .setExpiration(Date(System.currentTimeMillis() + tokenType.expiredTokenTime * 1000))
+            .setSubject(username)
+            .claim("type", tokenType.tokenName)
+            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .compact()
 }

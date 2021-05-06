@@ -8,12 +8,13 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import sinhee.kang.tutorial.ApiTest
-import sinhee.kang.tutorial.TokenType
+import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepository
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
+import javax.servlet.http.Cookie
 
 class FriendApiTest: ApiTest() {
     @Autowired
@@ -21,27 +22,29 @@ class FriendApiTest: ApiTest() {
     @Autowired
     private lateinit var friendRepository: FriendRepository
 
+    private var user1Cookie: Cookie? = null
+    private var user2Cookie: Cookie? = null
+
     private val user1: User = User(
+        email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user1",
-        email = "rkdtlsgml500@naver.com",
         password = passwordEncoder.encode("1234")
     )
 
     private val user2: User = User(
+        email = "rkdtlsgml50@dsm.hs.kr",
         nickname = "user2",
-        email = "rkdtlsgml400@naver.com",
         password =  passwordEncoder.encode("1234")
     )
 
-    private lateinit var user1Token: String
-    private lateinit var user2Token: String
-
     @BeforeEach
     fun setup() {
-        userRepository.save(user1)
-        userRepository.save(user2)
-        user1Token = "Bearer ${getToken(TokenType.ACCESS, user1.email, "1234")}"
-        user2Token = "Bearer ${getToken(TokenType.ACCESS, user2.email, "1234")}"
+        userRepository.apply {
+            save(user1)
+            save(user2)
+        }
+        user1Cookie = login(SignInRequest(user1.email, "1234"))
+        user2Cookie = login(SignInRequest(user2.email, "1234"))
     }
 
 
@@ -55,9 +58,9 @@ class FriendApiTest: ApiTest() {
     @Test
     @Throws
     fun getReceiveFriendRequestTest() {
-        requestParam(post("/users/friends"), targetName = user2.nickname, token = user1Token)
+        requestParam(post("/users/friends"), targetName = user2.nickname, cookie = user1Cookie)
         val request = mappingResponse(
-            requestBody(get("/users/friends/request"), token = user2Token),
+            requestBody(get("/users/friends/request"), cookie = user2Cookie),
             UserListResponse::class.java
         ) as UserListResponse
 
@@ -68,7 +71,7 @@ class FriendApiTest: ApiTest() {
     @Test
     @Throws
     fun sendFriendRequestTest() {
-        requestParam(post("/users/friends"), targetName = user2.nickname, token = user1Token)
+        requestParam(post("/users/friends"), targetName = user2.nickname, cookie = user1Cookie)
         assert(isCheckUserAndTargetUserExist(user1, user2))
     }
 
@@ -76,8 +79,8 @@ class FriendApiTest: ApiTest() {
     @Test
     @Throws
     fun acceptFriendRequestTest() {
-        requestParam(post("/users/friends"), targetName = user2.nickname, token = user1Token)
-        requestParam(put("/users/friends"), targetName = user1.nickname, token = user2Token)
+        requestParam(post("/users/friends"), targetName = user2.nickname, cookie = user1Cookie)
+        requestParam(put("/users/friends"), targetName = user1.nickname, cookie = user2Cookie)
 
         assert(friendRepository.findByUserIdAndTargetIdAndStatus(user1, user2, FriendStatus.ACCEPT)
                 ?.let { true }
@@ -89,8 +92,8 @@ class FriendApiTest: ApiTest() {
     @Test
     @Throws
     fun deniedFriendRequestTest() {
-        requestParam(post("/users/friends"), targetName = user2.nickname, token = user1Token)
-        requestParam(delete("/users/friends"), targetName = user1.nickname, token = user2Token)
+        requestParam(post("/users/friends"), targetName = user2.nickname, cookie = user1Cookie)
+        requestParam(delete("/users/friends"), targetName = user1.nickname, cookie = user2Cookie)
 
         assert(!isCheckUserAndTargetUserExist(user1, user2))
     }
@@ -99,9 +102,9 @@ class FriendApiTest: ApiTest() {
     @Test
     @Throws
     fun deleteFriendTest() {
-        requestParam(post("/users/friends"), targetName = user2.nickname, token = user1Token)
-        requestParam(put("/users/friends"), targetName = user1.nickname, token = user2Token)
-        requestParam(delete("/users/friends"), targetName = user1.nickname, token = user2Token)
+        requestParam(post("/users/friends"), targetName = user2.nickname, cookie = user1Cookie)
+        requestParam(put("/users/friends"), targetName = user1.nickname, cookie = user2Cookie)
+        requestParam(delete("/users/friends"), targetName = user1.nickname, cookie = user2Cookie)
 
         assert(!isCheckUserAndTargetUserExist(user1, user2))
     }
@@ -114,11 +117,11 @@ class FriendApiTest: ApiTest() {
     }
 
 
-    private fun requestParam(method: MockHttpServletRequestBuilder, targetName: String? = null, token: String? = ""): String {
+    private fun requestParam(method: MockHttpServletRequestBuilder, targetName: String? = null, cookie: Cookie?): String {
         return mvc.perform(
             method
-                .header("Authorization", token)
-                .param("nickname", targetName))
+                .param("nickname", targetName)
+                .cookie(cookie))
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
     }
