@@ -6,7 +6,7 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import javax.servlet.http.HttpServletResponse
 
 interface AuthService {
-    fun signIn(request: SignInRequest, response: HttpServletResponse)
+    fun signIn(request: SignInRequest, response: HttpServletResponse): TokenResponse
 
     fun authValidate(): User
 }

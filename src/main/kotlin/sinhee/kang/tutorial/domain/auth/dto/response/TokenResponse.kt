@@ -1,7 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.dto.response
 
-class TokenResponse(
+data class TokenResponse (
         var accessToken: String = "",
-        var refreshToken: String = "",
-        var tokenType: String = ""
+        var tokenType: String = "Bearer"
 )
