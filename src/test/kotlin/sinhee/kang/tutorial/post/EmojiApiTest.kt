@@ -8,13 +8,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 import sinhee.kang.tutorial.ApiTest
-import sinhee.kang.tutorial.TokenType
+import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
+import javax.servlet.http.Cookie
 
 class EmojiApiTest: ApiTest() {
     @Autowired
@@ -25,17 +26,14 @@ class EmojiApiTest: ApiTest() {
     private lateinit var emojiRepository: EmojiRepository
 
     private val user: User = User(
-        nickname = "user",
         email = "rkdtlsgml40@dsm.hs.kr",
+        nickname = "user",
         password = passwordEncoder.encode("1234")
     )
-
-    private lateinit var accessToken: String
 
     @BeforeEach
     fun setup() {
         userRepository.save(user)
-        accessToken = "Bearer ${getToken(TokenType.ACCESS, user.email, "1234")}"
     }
 
     @AfterEach
@@ -45,45 +43,41 @@ class EmojiApiTest: ApiTest() {
         userRepository.deleteAll()
     }
 
-
     @Test
-    @Throws
     fun addEmojiTest() {
-        val postId = generatePost(token = accessToken)
-        val emoji = requestEmoji(postId, EmojiStatus.LIKE)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        val emoji = requestEmoji(postId, EmojiStatus.LIKE, cookie)
 
         val response = mappingResponse(emoji, EmojiResponse::class.java) as EmojiResponse
         assert(response.emojiStatus == EmojiStatus.LIKE)
     }
 
-
     @Test
-    @Throws
     fun changeEmojiTest() {
-        val postId = generatePost(token = accessToken)
-        requestEmoji(postId, EmojiStatus.LIKE)
-        requestEmoji(postId, EmojiStatus.NICE)
-        val emoji = requestEmoji(postId, EmojiStatus.FUN)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        requestEmoji(postId, EmojiStatus.LIKE, cookie)
+        requestEmoji(postId, EmojiStatus.NICE, cookie)
+        val emoji = requestEmoji(postId, EmojiStatus.FUN, cookie)
 
         val response = mappingResponse(emoji, EmojiResponse::class.java) as EmojiResponse
         assert(response.emojiStatus == EmojiStatus.FUN)
     }
 
-
     @Test
-    @Throws
     fun removeEmojiTest() {
-        val postId = generatePost(token = accessToken)
-        requestEmoji(postId, EmojiStatus.SAD)
-        requestEmoji(postId, EmojiStatus.SAD)
+        val cookie = login(SignInRequest(user.email, "1234"))
+        val postId = generatePost(cookie = cookie)
+        requestEmoji(postId, EmojiStatus.SAD, cookie)
+        requestEmoji(postId, EmojiStatus.SAD, cookie)
     }
 
-
-    private fun requestEmoji(postId: Int, status: EmojiStatus): String =
+    private fun requestEmoji(postId: Int, status: EmojiStatus, cookie: Cookie?): String =
         mvc.perform(
             post("/posts/$postId/emoji")
-                .header("Authorization", accessToken)
-                .param("status", "$status"))
+                .param("status", "$status")
+                .cookie(cookie))
             .andExpect(status().isOk)
             .andReturn().response.contentAsString
 }
