@@ -31,11 +31,9 @@ class ApiTest() {
 
     protected final val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
 
-
-    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
+    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null): String {
         return mvc.perform(
             method
-                .header("Authorization", token)
                 .content(ObjectMapper()
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .writeValueAsString(obj))
