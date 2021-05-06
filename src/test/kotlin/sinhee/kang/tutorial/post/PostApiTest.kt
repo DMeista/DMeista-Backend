@@ -12,6 +12,7 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
+import javax.servlet.http.Cookie
 
 class PostApiTest: ApiTest() {
     @Autowired
@@ -19,6 +20,8 @@ class PostApiTest: ApiTest() {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    private var cookie: Cookie? = null
 
     private val user: User = User(
         email = "rkdtlsgml40@dsm.hs.kr",
@@ -29,6 +32,7 @@ class PostApiTest: ApiTest() {
     @BeforeEach
     fun setup() {
         userRepository.save(user)
+        cookie = login(SignInRequest(user.email, "1234"))
     }
 
     @AfterEach
@@ -39,7 +43,6 @@ class PostApiTest: ApiTest() {
 
     @Test
     fun uploadPostTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         postRepository.findById(postId)
             .orElseThrow { throw Exception() }
@@ -48,7 +51,6 @@ class PostApiTest: ApiTest() {
 
     @Test
     fun editPostTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         generatePost(patch("/posts/$postId"), title = "new title", cookie = cookie)
         postRepository.findById(postId)
@@ -58,7 +60,6 @@ class PostApiTest: ApiTest() {
 
     @Test
     fun deletePostTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         mvc.perform(delete("/posts/$postId").cookie(cookie))
             .andExpect(status().isOk)

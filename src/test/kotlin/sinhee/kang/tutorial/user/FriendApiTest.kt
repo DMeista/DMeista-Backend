@@ -22,6 +22,9 @@ class FriendApiTest: ApiTest() {
     @Autowired
     private lateinit var friendRepository: FriendRepository
 
+    private var user1Cookie: Cookie? = null
+    private var user2Cookie: Cookie? = null
+
     private val user1: User = User(
         email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user1",
@@ -33,9 +36,6 @@ class FriendApiTest: ApiTest() {
         nickname = "user2",
         password =  passwordEncoder.encode("1234")
     )
-
-    private var user1Cookie: Cookie? = null
-    private var user2Cookie: Cookie? = null
 
     @BeforeEach
     fun setup() {

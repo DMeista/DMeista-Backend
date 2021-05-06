@@ -30,6 +30,8 @@ class CommentApiTest: ApiTest() {
     @Autowired
     private lateinit var subCommentRepository: SubCommentRepository
 
+    private var cookie: Cookie? = null
+
     private val user: User = User(
         email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user",
@@ -39,6 +41,7 @@ class CommentApiTest: ApiTest() {
     @BeforeEach
     fun setup() {
         userRepository.save(user)
+        cookie = login(SignInRequest(user.email, "1234"))
     }
 
     @AfterEach
@@ -51,7 +54,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun uploadCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment = uploadComment(postId, "Comment Content", cookie)
 
@@ -60,7 +62,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun uploadSubCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment: Comment = uploadComment(postId, "댓글", cookie)
         val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글", cookie)
@@ -70,7 +71,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun changeCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         var comment: Comment = uploadComment(postId, "댓글", cookie)
         comment = editComment(comment.commentId, "수정된 댓글", cookie)
@@ -80,7 +80,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun changeSubCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment: Comment = uploadComment(postId, "댓글", cookie)
         var subComment: SubComment = uploadSubComment(comment.commentId, "대댓글", cookie)
@@ -91,7 +90,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun deleteCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment: Comment = uploadComment(postId, "댓글", cookie)
         requestBody(delete("/comments/${comment.commentId}"), cookie = cookie)
@@ -99,7 +97,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun deleteSubCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment: Comment = uploadComment(postId, "댓글", cookie)
         val subComment: SubComment = uploadSubComment(comment.commentId, "대댓글", cookie)
@@ -108,7 +105,6 @@ class CommentApiTest: ApiTest() {
 
     @Test
     fun deleteCommentWithSubCommentTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val comment: Comment = uploadComment(postId, "댓글", cookie)
         uploadSubComment(comment.commentId, "대댓글", cookie)

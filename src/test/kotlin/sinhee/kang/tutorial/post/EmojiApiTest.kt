@@ -25,6 +25,8 @@ class EmojiApiTest: ApiTest() {
     @Autowired
     private lateinit var emojiRepository: EmojiRepository
 
+    private var cookie: Cookie? = null
+
     private val user: User = User(
         email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user",
@@ -34,6 +36,7 @@ class EmojiApiTest: ApiTest() {
     @BeforeEach
     fun setup() {
         userRepository.save(user)
+        cookie = login(SignInRequest(user.email, "1234"))
     }
 
     @AfterEach
@@ -45,7 +48,6 @@ class EmojiApiTest: ApiTest() {
 
     @Test
     fun addEmojiTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         val emoji = requestEmoji(postId, EmojiStatus.LIKE, cookie)
 
@@ -55,7 +57,6 @@ class EmojiApiTest: ApiTest() {
 
     @Test
     fun changeEmojiTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         requestEmoji(postId, EmojiStatus.LIKE, cookie)
         requestEmoji(postId, EmojiStatus.NICE, cookie)
@@ -67,7 +68,6 @@ class EmojiApiTest: ApiTest() {
 
     @Test
     fun removeEmojiTest() {
-        val cookie = login(SignInRequest(user.email, "1234"))
         val postId = generatePost(cookie = cookie)
         requestEmoji(postId, EmojiStatus.SAD, cookie)
         requestEmoji(postId, EmojiStatus.SAD, cookie)
