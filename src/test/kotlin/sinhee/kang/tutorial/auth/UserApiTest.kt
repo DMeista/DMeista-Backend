@@ -22,7 +22,7 @@ class UserApiTest: ApiTest() {
     private lateinit var userRepository: UserRepository
 
     private val user: User = User(
-        email = "rkdtlsgml500@naver.com",
+        email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user",
         password = passwordEncoder.encode("1234")
     )
