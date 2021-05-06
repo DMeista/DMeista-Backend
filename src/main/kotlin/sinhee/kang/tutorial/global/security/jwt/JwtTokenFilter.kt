@@ -14,8 +14,11 @@ class JwtTokenFilter(
     override fun doFilterInternal(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, filterChain: FilterChain) {
         val accessToken: String? = try {
             httpServletRequest.cookies
-                .first { cookie -> cookie.name == TokenType.ACCESS.cookieName }
-                .value
+                .first { cookie -> cookie.name == TokenType.ACCESS.cookieName }.value
+        } catch (e: NoSuchElementException) {
+            httpServletRequest.cookies
+                .first { cookie -> cookie.name == TokenType.REFRESH.cookieName }.value
+                ?.let { tokenProvider.generateTokenFactory(tokenProvider.getUsername(it), TokenType.ACCESS) }
         } catch (e: Exception) { null }
 
         if (!accessToken.isNullOrEmpty() && tokenProvider.isValidateToken(accessToken))
