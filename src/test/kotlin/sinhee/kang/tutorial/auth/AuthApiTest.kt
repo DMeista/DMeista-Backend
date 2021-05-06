@@ -28,37 +28,19 @@ class AuthApiTest: ApiTest() {
     @BeforeEach
     fun setup() {
         userRepository.save(user)
-    }
 
+    }
 
     @AfterEach
     fun clean() {
        userRepository.deleteAll()
     }
 
-
     @Test
-    @Throws
     fun signInTest() {
         requestBody(post("/auth"), SignInRequest(user.email, "1234"))
         userRepository.findByEmail(user.email)
             ?.let { assert(it.nickname == user.nickname) }
             ?: throw Exception()
-    }
-
-
-    @Test
-    @Throws
-    fun refreshTokenTest() {
-        requestExpiredToken(put("/auth"), token = getToken(TokenType.REFRESH, user.email, "1234"))
-    }
-
-
-    private fun requestExpiredToken(method: MockHttpServletRequestBuilder, token: String) {
-        mvc.perform(
-            method
-                .header("X-Refresh-Token", token))
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andReturn().response.contentAsString
     }
 }
