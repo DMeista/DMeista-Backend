@@ -14,9 +14,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
-import javax.transaction.Transactional
+import javax.servlet.http.Cookie
 
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -31,11 +30,9 @@ class ApiTest() {
 
     protected final val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
 
-
-    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String? = ""): String {
+    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null): String {
         return mvc.perform(
             method
-                .header("Authorization", token)
                 .content(ObjectMapper()
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .writeValueAsString(obj))
@@ -44,34 +41,43 @@ class ApiTest() {
             .andReturn().response.contentAsString
     }
 
-
-    protected fun getToken(tokenType: TokenType, email: String, password: String): String {
-        val content = requestBody(post("/auth"), SignInRequest(email, password))
-        val response = mappingResponse(content, TokenResponse::class.java) as TokenResponse
-
-        return when (tokenType) {
-            TokenType.ACCESS -> response.accessToken
-            TokenType.REFRESH -> response.refreshToken
-        }
+    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null, cookie: Cookie?): String {
+        return mvc.perform(
+            method
+                .content(ObjectMapper()
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                    .writeValueAsString(obj))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .cookie(cookie))
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andReturn().response.contentAsString
     }
 
+    protected fun login(signInRequest: SignInRequest): Cookie? {
+        return mvc.perform(
+            post("/auth")
+                .content(ObjectMapper()
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                    .writeValueAsString(signInRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andReturn().response.cookies.first { it.name == "_Access" }
+    }
 
     protected fun generatePost(
         method: MockHttpServletRequestBuilder = post("/posts"),
         title: String = "title",
         content: String = "content",
         tags: String = "#tag",
-        token: String
+        cookie: Cookie?
     ): Int =
         mvc.perform(
             method
-                .header("Authorization", token)
                 .param("title", title)
                 .param("content", content)
-                .param("tags", tags))
+                .param("tags", tags)
+                .cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString.toInt()
-
 
     protected fun mappingResponse(obj: String, cls: Class<*>): Any {
         return objectMapper
