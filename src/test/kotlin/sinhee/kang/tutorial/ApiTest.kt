@@ -67,13 +67,15 @@ class ApiTest() {
         method: MockHttpServletRequestBuilder = post("/posts"),
         title: String = "title",
         content: String = "content",
-        tags: String = "#tag"
+        tags: String = "#tag",
+        cookie: Cookie?
     ): Int =
         mvc.perform(
             method
                 .param("title", title)
                 .param("content", content)
-                .param("tags", tags))
+                .param("tags", tags)
+                .cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString.toInt()
 
