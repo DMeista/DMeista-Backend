@@ -5,25 +5,22 @@ import org.springframework.web.filter.OncePerRequestFilter
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
 
 class JwtTokenFilter(
     private val tokenProvider: JwtTokenProvider
 ): OncePerRequestFilter() {
 
     override fun doFilterInternal(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, filterChain: FilterChain) {
-        val accessToken: String? = try {
-            httpServletRequest.cookies
-                .first { cookie -> cookie.name == TokenType.ACCESS.cookieName }.value
-        } catch (e: NoSuchElementException) {
-            httpServletRequest.cookies
-                .first { cookie -> cookie.name == TokenType.REFRESH.cookieName }.value
-                ?.let { tokenProvider.generateTokenFactory(tokenProvider.getUsername(it), TokenType.ACCESS) }
-        } catch (e: Exception) { null }
+        val accessToken: String? = tokenProvider.getAccessToken(httpServletRequest)
+        val refreshToken: String? = tokenProvider.getRefreshToken(httpServletRequest)
 
-        if (!accessToken.isNullOrEmpty() && tokenProvider.isValidateToken(accessToken))
-            SecurityContextHolder.getContext()
-                .authentication = tokenProvider.getAuthentication(accessToken)
+        accessToken
+            ?.takeIf { tokenProvider.isValidateToken(it) }
+            ?.apply { SecurityContextHolder.getContext().authentication = tokenProvider.getAuthentication(this) }
+
+        refreshToken
+            ?.takeIf { tokenProvider.isValidateToken(it) && tokenProvider.isRefreshToken(it) }
+            ?.apply { tokenProvider.updateAccessCookie(httpServletResponse, this) }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse)
     }
