@@ -3,33 +3,20 @@ package sinhee.kang.tutorial.auth
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 
-import sinhee.kang.tutorial.ApiTest
+import sinhee.kang.tutorial.TestApis
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.*
-import sinhee.kang.tutorial.domain.user.domain.user.User
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
 
-class UserApiTest: ApiTest() {
-    @Autowired
-    private lateinit var emailVerificationRepository: EmailVerificationRepository
-    @Autowired
-    private lateinit var userRepository: UserRepository
-
-    private val user: User = User(
-        email = "rkdtlsgml40@dsm.hs.kr",
-        nickname = "user",
-        password = passwordEncoder.encode("1234")
-    )
+class UserTestApis: TestApis() {
 
     @BeforeEach
     fun setup() {
         emailVerify()
+        userRepository.save(user)
     }
 
     @AfterEach
@@ -40,6 +27,7 @@ class UserApiTest: ApiTest() {
 
     @Test
     fun signUpTest() {
+        userRepository.deleteAll()
         requestBody(post("/users"), SignUpRequest(user.email, "1234", user.nickname))
         userRepository.findByEmail(user.email)
             ?.let { assert(it.nickname == user.nickname) }
@@ -48,24 +36,20 @@ class UserApiTest: ApiTest() {
 
     @Test
     fun changePasswordTest() {
-        userRepository.save(user)
         requestBody(put("/users/password"), ChangePasswordRequest(user.email, "4321"))
     }
 
     @Test
     fun exitAccountTest() {
-        userRepository.save(user)
-        val cookie = login(SignInRequest(user.email, "1234"))
         val request = ChangePasswordRequest(user.email, "1234")
-        requestBody(delete("/users"), request, cookie)
+        requestBody(delete("/users"), request, token = getAccessToken(signInRequest))
     }
 
     @Test
     fun userInfoTest() {
-        userRepository.save(user)
-        val cookie = login(SignInRequest(user.email, "1234"))
-        val userInfo = requestBody(get("/users"), cookie = cookie)
+        val userInfo = requestBody(get("/users"), token = getAccessToken(signInRequest))
         val response = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
+
         assert(response.username == user.nickname)
     }
 
