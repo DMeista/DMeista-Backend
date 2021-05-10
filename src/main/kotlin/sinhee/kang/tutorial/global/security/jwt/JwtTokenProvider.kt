@@ -80,7 +80,7 @@ class JwtTokenProvider(
     }
 
     private fun generateCookieFactory(token: String): Cookie =
-        Cookie(TokenType.REFRESH.name, token)
+        Cookie(TokenType.REFRESH.tokenName, token)
             .apply {
                 maxAge = TokenType.REFRESH.expiredTokenTime.toInt()
                 isHttpOnly = true
