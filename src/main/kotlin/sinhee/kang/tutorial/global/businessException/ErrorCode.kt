@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 enum class ErrorCode(var status: Int, var message: String) {
     BAD_REQUEST(400, "Bad Request(Invalid Parameter)"),
+    INCORRECT_PASSWORD(403, "Incorrect Password"),
     USER_NOT_FOUND(404, "User Not Found."),
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
 

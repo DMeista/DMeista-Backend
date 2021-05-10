@@ -11,16 +11,11 @@ class JwtTokenFilter(
 ): OncePerRequestFilter() {
 
     override fun doFilterInternal(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse, filterChain: FilterChain) {
-        val accessToken: String? = tokenProvider.getAccessToken(httpServletRequest)
-        val refreshToken: String? = tokenProvider.getRefreshToken(httpServletRequest)
+        val accessToken = tokenProvider.getAccessToken(httpServletRequest)
 
         accessToken
             ?.takeIf { tokenProvider.isValidateToken(it) }
-            ?.apply { SecurityContextHolder.getContext().authentication = tokenProvider.getAuthentication(this) }
-
-        refreshToken
-            ?.takeIf { tokenProvider.isValidateToken(it) && tokenProvider.isRefreshToken(it) }
-            ?.apply { tokenProvider.updateAccessCookie(httpServletResponse, this) }
+            ?.also { SecurityContextHolder.getContext().authentication = tokenProvider.getAuthentication(it) }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse)
     }
