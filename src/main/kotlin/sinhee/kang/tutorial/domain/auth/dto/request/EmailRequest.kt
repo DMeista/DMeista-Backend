@@ -6,5 +6,5 @@ import javax.validation.constraints.NotBlank
 data class EmailRequest(
         @Email
         @NotBlank
-        var email: String
+        val email: String
 )

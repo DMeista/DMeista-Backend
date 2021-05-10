@@ -1,6 +1,7 @@
 package sinhee.kang.tutorial.domain.post.dto.response
 
 data class PostEmojiListResponse (
-        var totalEmoji: Int = 0,
-        var applicationResponses: MutableList<EmojiResponse> = arrayListOf()
+        val totalEmoji: Int = 0,
+
+        val applicationResponses: MutableList<EmojiResponse> = arrayListOf()
 )
