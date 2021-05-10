@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.dto.response
 
-data class TokenResponse (
-        var accessToken: String = "",
-        var tokenType: String = "Bearer"
+data class TokenResponse(
+        val tokenType: String = "Bearer",
+        val accessToken: String
 )
