@@ -12,33 +12,38 @@ import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFou
 
 @Service
 class UserInfoServiceImpl(
-        private val userRepository: UserRepository,
-        private val viewRepository: ViewRepository,
-        private val authService: AuthService
+    private val userRepository: UserRepository,
+    private val viewRepository: ViewRepository,
+    private val authService: AuthService
 ): UserInfoService {
 
     override fun getUserInfo(pageable: Pageable, nickname: String?): UserInfoResponse? {
-        lateinit var user: User
-        nickname
-            ?.let {
-                user = userRepository.findByNickname(nickname)
-                    ?: throw UserNotFoundException()
-            }
-            ?: run {
-                user = authService.authValidate()
-            }
+        val user: User = nickname
+            ?.let { userRepository.findByNickname(it)
+                ?: throw UserNotFoundException() }
+            ?: run { authService.authValidate() }
 
+        val postResponse: MutableList<PostResponse> = generatePostResponse(user)
+
+        return UserInfoResponse(
+            username = user.nickname,
+            email = user.email,
+            createdAt = user.createdAt,
+            postList = postResponse
+        )
+    }
+
+    private fun generatePostResponse(user: User): MutableList<PostResponse> {
         val postResponse: MutableList<PostResponse> = ArrayList()
-
-        user.postList.reversed()
+        user.postList
+            .reversed()
             .forEach { post ->
-                val checkedUser = viewRepository.findByPost(post)
                 postResponse.add(PostResponse(
                     id = post.postId,
                     title = post.title,
                     content = post.content,
                     author = post.user.nickname,
-                    viewCount = checkedUser.count(),
+                    viewCount = viewRepository.findByPost(post).count(),
                     emojiCount = post.emojiList.count(),
                     emoji = post.emojiList
                         .filter { emoji -> emoji.user == user }
@@ -46,7 +51,6 @@ class UserInfoServiceImpl(
                     createdAt = post.createdAt
                 ))
             }
-
-        return UserInfoResponse(user.nickname, user.email, user.createdAt, postResponse)
+        return postResponse
     }
 }
