@@ -7,8 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import sinhee.kang.tutorial.domain.auth.domain.refreshToken.RefreshToken
+import sinhee.kang.tutorial.domain.auth.domain.refreshToken.repository.RefreshTokenRepository
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.domain.auth.service.refreshtoken.RefreshTokenService
 import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidTokenException
 import sinhee.kang.tutorial.global.security.authentication.AuthDetailsService
 import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
@@ -24,7 +24,7 @@ class JwtTokenProvider(
 
     private val authDetailsService: AuthDetailsService,
 
-    private val refreshTokenService: RefreshTokenService
+    private val refreshTokenRepository: RefreshTokenRepository
 ) {
 
     fun getAuthentication(token: String): Authentication {
@@ -68,10 +68,11 @@ class JwtTokenProvider(
     fun setToken(httpServletResponse: HttpServletResponse, username: String): TokenResponse {
         generateTokenFactory(username, TokenType.REFRESH)
             .let { refreshToken ->
-                refreshTokenService.save(RefreshToken(
+                refreshTokenRepository.save(RefreshToken(
                     nickname = username,
                     refreshToken = refreshToken,
-                    ttl = TokenType.REFRESH.expiredTokenTime))
+                    ttl = TokenType.REFRESH.expiredTokenTime
+                ))
                 httpServletResponse.addCookie(generateCookieFactory(refreshToken))
             }
         val accessToken = generateTokenFactory(username, TokenType.ACCESS)
