@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_emoji")
-class Emoji (
+data class Emoji(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
         var Id: Int = 0,
 

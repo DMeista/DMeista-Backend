@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_view")
-class View (
+data class View (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var Id: Int = 0,
 

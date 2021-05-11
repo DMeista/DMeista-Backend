@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_comment")
-class Comment(
+data class Comment(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var commentId: Int = 0,
 
