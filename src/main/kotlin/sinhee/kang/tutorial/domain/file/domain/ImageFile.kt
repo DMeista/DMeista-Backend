@@ -4,7 +4,7 @@ import sinhee.kang.tutorial.domain.post.domain.post.Post
 import javax.persistence.*
 
 @Entity(name = "tbl_image")
-class ImageFile (
+data class ImageFile (
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var imageId: Int = 0,
 
