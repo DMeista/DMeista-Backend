@@ -7,23 +7,28 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_sub_comment")
-class SubComment(
+data class SubComment(
         @Id
         @GeneratedValue(strategy = GenerationType.AUTO)
-        var subCommentId: Int = 0,
+        val subCommentId: Int = 0,
 
         @ManyToOne
         @JoinColumn(name = "user")
-        var user: User,
+        val user: User,
 
         @ManyToOne
         @JoinColumn(name = "comment")
-        var comment: Comment,
+        val comment: Comment,
 
         @Column(length = 100, nullable = false)
         var content: String,
 
         @CreatedDate
         @Column(nullable = false)
-        var createdAt: LocalDateTime = LocalDateTime.now()
-)
+        val createdAt: LocalDateTime = LocalDateTime.now()
+) {
+        fun update(content: String): SubComment {
+                this.content = content
+                return this
+        }
+}

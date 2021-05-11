@@ -6,29 +6,23 @@ import org.springframework.data.redis.core.TimeToLive
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 
 @RedisHash(timeToLive = 60 * 3)
-class EmailVerification(
-        val MINUTE: Long = 60L,
-
+data class EmailVerification(
         @Id
-        var email: String,
+        val email: String,
 
-        var authCode: String,
+        val authCode: String,
 
-        var status: EmailVerificationStatus = EmailVerificationStatus.UNVERIFID,
+        var status: EmailVerificationStatus = EmailVerificationStatus.UNVERIFIED,
 
         @TimeToLive
-        var ttl: Long = 0
+        var ttl: Long = 60L
 ) {
-    fun verify() {
-        this.status = EmailVerificationStatus.VERIFIED
-        this.ttl = 3 * MINUTE
-    }
-    fun setUnVerify(): EmailVerification {
-        this.status = EmailVerificationStatus.UNVERIFID
+    fun verify(): EmailVerification {
+        status = EmailVerificationStatus.VERIFIED
+        ttl *= 3
         return this
     }
 
-    fun isVerify(): Boolean {
-        return status == EmailVerificationStatus.VERIFIED
-    }
+    fun isVerify(): Boolean =
+        status == EmailVerificationStatus.VERIFIED
 }

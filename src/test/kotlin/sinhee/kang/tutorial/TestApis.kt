@@ -16,7 +16,7 @@ import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test", "local")
-class TestApis(): DiVariables() {
+class TestApis: DiVariables() {
 
     protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any): String {
         return mvc.perform(

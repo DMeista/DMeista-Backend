@@ -3,13 +3,13 @@ package sinhee.kang.tutorial.domain.user.dto.response
 import java.time.LocalDateTime
 
 data class UserResponse (
-        var id: Int? = 0,
+        val id: Int? = 0,
 
-        var nickname: String = "",
+        val nickname: String = "",
 
-        var email: String = "",
+        val email: String = "",
 
-        var postContentItems: Int = 0,
+        val postContentItems: Int = 0,
 
-        var connectedAt: LocalDateTime
+        val connectedAt: LocalDateTime
 )

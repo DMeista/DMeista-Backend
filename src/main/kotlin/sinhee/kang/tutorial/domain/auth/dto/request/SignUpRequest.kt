@@ -7,12 +7,12 @@ import javax.validation.constraints.Pattern
 data class SignUpRequest(
         @NotBlank
         @Email
-        var email: String,
+        val email: String,
 
         @NotBlank
         @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&_~])[A-Za-z\\d@$!%*?&_~]{8,}$")
-        var password: String,
+        val password: String,
 
         @NotBlank
-        var nickname: String
+        val nickname: String
 )

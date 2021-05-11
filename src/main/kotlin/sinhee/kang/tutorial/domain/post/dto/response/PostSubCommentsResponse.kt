@@ -5,14 +5,14 @@ import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import java.time.LocalDateTime
 
 data class PostSubCommentsResponse(
-        var subCommentId: Int?,
+        val subCommentId: Int?,
 
-        var content: String,
+        val content: String,
 
-        var author: String,
+        val author: String,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-        var createdAt: LocalDateTime,
+        val createdAt: LocalDateTime,
 
-        var isMine: Boolean
+        val isMine: Boolean
 )

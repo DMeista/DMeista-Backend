@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
+import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
 
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
@@ -30,6 +31,8 @@ open class DiVariables {
     protected lateinit var friendRepository: FriendRepository
     @Autowired
     protected lateinit var emailVerificationRepository: EmailVerificationRepository
+    @Autowired
+    protected lateinit var emailLimiterRepository: EmailLimiterRepository
     @Autowired
     protected lateinit var postRepository: PostRepository
     @Autowired
