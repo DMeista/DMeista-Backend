@@ -15,8 +15,8 @@ import sinhee.kang.tutorial.domain.post.service.post.PostService
 @RestController
 @RequestMapping("/posts")
 class PostController(
-        private val postService: PostService,
-        private val emojiService: EmojiService
+    private val postService: PostService,
+    private val emojiService: EmojiService
 ) {
 
     @GetMapping
