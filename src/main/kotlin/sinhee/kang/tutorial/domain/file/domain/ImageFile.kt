@@ -5,12 +5,12 @@ import javax.persistence.*
 
 @Entity(name = "tbl_image")
 data class ImageFile (
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var imageId: Int = 0,
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val imageId: Int = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image")
-    var post: Post,
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "image")
+        val post: Post,
 
-    var fileName: String
+        val fileName: String
 )
