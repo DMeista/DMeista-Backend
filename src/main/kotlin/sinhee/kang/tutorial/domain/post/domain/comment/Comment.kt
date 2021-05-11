@@ -10,24 +10,24 @@ import javax.persistence.*
 @Entity(name = "tbl_comment")
 data class Comment(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
-        var commentId: Int = 0,
+        val commentId: Int = 0,
 
         @ManyToOne
         @JoinColumn(name = "user")
-        var user: User,
+        val user: User,
 
         @ManyToOne
         @JoinColumn(name = "post")
-        var post: Post,
+        val post: Post,
 
         @Column(length = 100, nullable = false)
         var content: String = "none",
 
         @CreatedDate
         @Column(nullable = false)
-        var createdAt: LocalDateTime = LocalDateTime.now(),
+        val createdAt: LocalDateTime = LocalDateTime.now(),
 
         @OneToMany(mappedBy = "comment", cascade = [CascadeType.ALL])
-        var subCommentList: MutableList<SubComment> = ArrayList()
+        val subCommentList: MutableList<SubComment> = ArrayList()
 
 )
