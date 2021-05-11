@@ -12,26 +12,26 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_user")
-class User(
+data class User(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Int = 0,
+        val id: Int = 0,
 
         @Column(length = 100, unique = true, nullable = false)
-        var email: String = "none",
+        val email: String = "none",
 
         @Column(length = 20, unique = true, nullable = false)
-        var nickname: String = "none",
+        val nickname: String = "none",
 
         @Column(length = 100, nullable = false)
         var password: String = "none",
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
-        private var roles: AccountRole = AccountRole.USER,
+        private val roles: AccountRole = AccountRole.USER,
 
         @CreatedDate
         @Column(nullable = false)
-        var createdAt: LocalDateTime = LocalDateTime.now(),
+        val createdAt: LocalDateTime = LocalDateTime.now(),
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var postList: MutableList<Post> = ArrayList(),
@@ -51,7 +51,6 @@ class User(
         @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var friendList: MutableList<Friend> = ArrayList()
 ) {
-
     fun addFriend(friend: Friend): User {
         this.friendList.add(friend)
         return this

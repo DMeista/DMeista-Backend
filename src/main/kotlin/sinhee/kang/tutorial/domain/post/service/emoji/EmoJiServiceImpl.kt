@@ -12,29 +12,31 @@ import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationN
 
 @Service
 class EmoJiServiceImpl(
-        private val authService: AuthService,
+    private val authService: AuthService,
 
-        private val postRepository: PostRepository,
-        private val emojiRepository: EmojiRepository
+    private val postRepository: PostRepository,
+    private val emojiRepository: EmojiRepository
 ): EmojiService {
 
     override fun getPostEmojiUserList(postId: Int): PostEmojiListResponse {
         val post = postRepository.findById(postId)
             .orElseThrow { ApplicationNotFoundException() }
+
         val emojiResponse: MutableList<EmojiResponse> = ArrayList()
-        for (emoji in post.emojiList) {
+
+        post.emojiList.forEach { emoji ->
             emojiResponse.add(EmojiResponse(
                 username = emoji.user.nickname,
                 postId = emoji.post.postId,
                 emojiStatus = emoji.status
             ))
         }
+
         return PostEmojiListResponse(
             totalEmoji = post.emojiList.count(),
             applicationResponses = emojiResponse
         )
     }
-
 
     override fun emojiService(postId: Int, status: EmojiStatus): EmojiResponse? {
         val user = authService.authValidate()
@@ -44,28 +46,23 @@ class EmoJiServiceImpl(
         var response: EmojiResponse? = null
 
         emojiRepository.findByUserAndPostAndStatus(user, post, status)
-                ?.let { emoji ->
-                    if (emoji.status == status) {
-                        emojiRepository.delete(emoji)
-                    }
-                    else if (emoji.status != status) {
-                        emoji.status = status
-                        emojiRepository.save(emoji)
-                        response = EmojiResponse(
-                                username = user.nickname,
-                                postId = post.postId,
-                                emojiStatus = emoji.status
-                        )
-                    }
-                }
-                ?: run {
-                    val emoji = emojiRepository.save(Emoji(user = user, post = post, status = status))
+            ?.let { emoji ->
+                if (emoji.status == status)
+                    emojiRepository.delete(emoji)
+                else {
                     response = EmojiResponse(
                         username = user.nickname,
                         postId = post.postId,
-                        emojiStatus = emoji.status
+                        emojiStatus = emojiRepository.save(emoji.update(status)).status
                     )
                 }
+            }
+            ?: run {
+                response = EmojiResponse(
+                    username = user.nickname,
+                    postId = post.postId,
+                    emojiStatus = emojiRepository.save(Emoji(user = user, post = post, status = status)).status)
+            }
         return response
     }
 }

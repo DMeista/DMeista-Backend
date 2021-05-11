@@ -7,7 +7,6 @@ import org.springframework.web.multipart.MultipartFile
 import kotlin.collections.ArrayList
 
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
-import sinhee.kang.tutorial.domain.file.domain.repository.ImageFileRepository
 import sinhee.kang.tutorial.domain.file.service.ImageService
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
@@ -28,14 +27,12 @@ class PostServiceImpl(
 
     private val postRepository: PostRepository,
     private val viewRepository: ViewRepository,
-    private val imageFileRepository: ImageFileRepository
-
-) : PostService {
+): PostService {
 
     override fun getAllHashTagList(pageable: Pageable, tags: String): PostListResponse {
         return postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
-                ?.let { getPostList(it) }
-                ?: throw ApplicationNotFoundException()
+            ?.let { getPostList(it) }
+            ?: throw ApplicationNotFoundException()
     }
 
     override fun getPostContent(postId: Int): PostContentResponse {
@@ -46,7 +43,7 @@ class PostServiceImpl(
         try {
             currentUser = authService.authValidate()
             viewRepository.findByUserAndPost(currentUser, post)
-                    ?: viewRepository.save(View(user = currentUser, post = post))
+                ?: viewRepository.save(View(user = currentUser, post = post))
         }
         catch (e: Exception) {
             currentUser = User()
@@ -68,12 +65,12 @@ class PostServiceImpl(
             }
 
             commentsResponse.add(PostCommentsResponse(
-                    commentId = comment.commentId,
-                    content = comment.content,
-                    createdAt = comment.createdAt,
-                    author = comment.user.nickname,
-                    isMine = (comment.user == currentUser),
-                    subComments = subCommentsResponses
+                commentId = comment.commentId,
+                content = comment.content,
+                createdAt = comment.createdAt,
+                author = comment.user.nickname,
+                isMine = (comment.user == currentUser),
+                subComments = subCommentsResponses
             ))
         }
 
@@ -81,27 +78,27 @@ class PostServiceImpl(
         val previousPost = postRepository.findTop1ByPostIdBeforeOrderByPostIdDesc(postId) ?: Post()
 
         return PostContentResponse(
-                title = post.title,
-                content = post.content,
-                author = post.user.nickname,
-                tags = post.tags,
-                viewCount = post.viewList.count(),
-                emojiCount = post.emojiList.count(),
-                emoji = post.emojiList
-                    .filter { emoji -> emoji.user == currentUser }
-                    .map { it.status }.firstOrNull(),
-                createdAt = post.createdAt,
-                isMine = (post.user == currentUser),
+            title = post.title,
+            content = post.content,
+            author = post.user.nickname,
+            tags = post.tags,
+            viewCount = post.viewList.count(),
+            emojiCount = post.emojiList.count(),
+            emoji = post.emojiList
+                .filter { emoji -> emoji.user == currentUser }
+                .map { it.status }.firstOrNull(),
+            createdAt = post.createdAt,
+            isMine = (post.user == currentUser),
 
-                nextPostTitle = nextPost.title,
-                prevPostTitle = previousPost.title,
+            nextPostTitle = nextPost.title,
+            prevPostTitle = previousPost.title,
 
-                nextPostId = nextPost.postId,
-                prevPostId = previousPost.postId,
+            nextPostId = nextPost.postId,
+            prevPostId = previousPost.postId,
 
-                images = post.imageFileList
-                    .map { it.fileName }.toList(),
-                comments = commentsResponse
+            images = post.imageFileList
+                .map { it.fileName }.toList(),
+            comments = commentsResponse
         )
     }
 
@@ -134,11 +131,11 @@ class PostServiceImpl(
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
         if ( post.user == user || user.isRoles(AccountRole.ADMIN) ) {
-                post.title = title
-                post.content = content
-                post.tags = tags?.joinToString { "#$it" }
+            post.title = title
+            post.content = content
+            post.tags = tags?.joinToString { "#$it" }
 
-                postRepository.save(post)
+            postRepository.save(post)
         }
 
         val imageFile = post.imageFileList
@@ -153,13 +150,13 @@ class PostServiceImpl(
     override fun deletePost(postId: Int) {
         val user = authService.authValidate()
         val post = postRepository.findById(postId)
-                .orElseThrow { ApplicationNotFoundException() }
-                .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
-                ?.also { postRepository.deleteById(it.postId) }
-                ?: throw PermissionDeniedException()
+            .orElseThrow { ApplicationNotFoundException() }
+            .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
+            ?.also { postRepository.deleteById(it.postId) }
+            ?: throw PermissionDeniedException()
         post.imageFileList.let { imageFile ->
-            imageService.deleteImageFiles(post, imageFile) }
-        imageFileRepository.deleteByPost(post)
+            imageService.deleteImageFiles(post, imageFile)
+        }
     }
 
     private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableSet<String> {
@@ -184,11 +181,11 @@ class PostServiceImpl(
         for (post in postPage) {
             val checkedUser = viewRepository.findByPost(post)
             val checked: Boolean = user
-                    ?.let { viewRepository.findByUserAndPost(user, post)
-                            ?.let { true }
-                            ?: false
-                    }
+                ?.let { viewRepository.findByUserAndPost(user, post)
+                    ?.let { true }
                     ?: false
+                }
+                ?: false
 
             postResponse.add(PostResponse(
                 id = post.postId,
@@ -206,9 +203,9 @@ class PostServiceImpl(
             ))
         }
         return PostListResponse(
-                postPage.totalElements.toInt(),
-                postPage.totalPages,
-                postResponse
+            postPage.totalElements.toInt(),
+            postPage.totalPages,
+            postResponse
         )
     }
 }

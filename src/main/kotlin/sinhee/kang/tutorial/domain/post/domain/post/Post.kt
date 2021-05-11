@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_post")
-class Post(
+data class Post(
         @Id @GeneratedValue(strategy = GenerationType.AUTO)
         var postId: Int = 0,
 

@@ -5,34 +5,34 @@ import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
 import java.time.LocalDateTime
 
 data class PostContentResponse(
-        var title: String = "",
+        val title: String = "",
 
-        var author: String = "",
+        val author: String = "",
 
-        var tags: String? = null,
+        val tags: String? = null,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-        var createdAt: LocalDateTime? = null,
+        val createdAt: LocalDateTime? = null,
 
-        var viewCount: Int = 0,
+        val viewCount: Int = 0,
 
-        var emojiCount: Int = 0,
+        val emojiCount: Int = 0,
 
-        var emoji: EmojiStatus? = null,
+        val emoji: EmojiStatus? = null,
 
-        var content: String = "",
+        val content: String = "",
 
-        var isMine: Boolean = false,
+        val isMine: Boolean = false,
 
-        var nextPostTitle: String = "",
+        val nextPostTitle: String = "",
 
-        var prevPostTitle: String = "",
+        val prevPostTitle: String = "",
 
-        var nextPostId: Int? = null,
+        val nextPostId: Int? = null,
 
-        var prevPostId: Int? = null,
+        val prevPostId: Int? = null,
 
-        var images: List<String> = arrayListOf(),
+        val images: List<String> = arrayListOf(),
 
-        var comments: List<PostCommentsResponse> = arrayListOf()
+        val comments: List<PostCommentsResponse> = arrayListOf()
 )

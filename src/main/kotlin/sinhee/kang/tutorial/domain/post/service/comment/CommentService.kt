@@ -4,10 +4,14 @@ import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 
 interface CommentService {
     fun uploadComment(postId: Int, commentRequest: CommentRequest): Int
-    fun changeComment(commentId: Int, commentRequest: CommentRequest): Int
-    fun deleteComment(commentId: Int)
+
+    fun updateComment(commentId: Int, commentRequest: CommentRequest): Int
+
+    fun removeComment(commentId: Int)
 
     fun uploadSubComment(commentId: Int, commentRequest: CommentRequest): Int
-    fun changeSubComment(subCommentId: Int, commentRequest: CommentRequest): Int
-    fun deleteSubComment(subCommentId: Int)
+
+    fun updateSubComment(subCommentId: Int, commentRequest: CommentRequest): Int
+
+    fun removeSubComment(subCommentId: Int)
 }

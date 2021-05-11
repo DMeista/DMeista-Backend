@@ -18,10 +18,10 @@ import javax.servlet.http.HttpServletResponse
 
 @Service
 class AuthServiceImpl(
-    private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: JwtTokenProvider,
     private val authenticationFacade: AuthenticationFacade,
+    private val userRepository: UserRepository,
 ) : AuthService {
 
     override fun signIn(signInRequest: SignInRequest, httpServletResponse: HttpServletResponse): TokenResponse {

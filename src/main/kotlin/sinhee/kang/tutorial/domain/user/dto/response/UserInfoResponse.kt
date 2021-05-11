@@ -5,12 +5,12 @@ import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
 import java.time.LocalDateTime
 
 data class UserInfoResponse(
-        var username: String = "",
+        val username: String = "",
 
-        var email: String = "",
+        val email: String = "",
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-        var createdAt: LocalDateTime? = null,
+        val createdAt: LocalDateTime? = null,
 
-        var postList: MutableList<PostResponse> = mutableListOf()
+        val postList: MutableList<PostResponse> = mutableListOf()
 )

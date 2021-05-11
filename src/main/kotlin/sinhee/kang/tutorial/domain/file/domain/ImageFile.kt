@@ -4,13 +4,13 @@ import sinhee.kang.tutorial.domain.post.domain.post.Post
 import javax.persistence.*
 
 @Entity(name = "tbl_image")
-class ImageFile (
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var imageId: Int = 0,
+data class ImageFile (
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val imageId: Int = 0,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image")
-    var post: Post,
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "image")
+        val post: Post,
 
-    var fileName: String
+        val fileName: String
 )

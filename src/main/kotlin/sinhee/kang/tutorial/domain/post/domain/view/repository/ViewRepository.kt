@@ -9,5 +9,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 @Repository
 interface ViewRepository: CrudRepository<View, Int> {
     fun findByUserAndPost(user: User, post: Post): View?
+
     fun findByPost(post: Post): MutableList<View>
 }

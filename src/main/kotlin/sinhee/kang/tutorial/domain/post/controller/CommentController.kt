@@ -8,7 +8,7 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/comments")
 class CommentController(
-        private val commentService: CommentService
+    private val commentService: CommentService
 ) {
 
     @PostMapping("/{postId}")
@@ -20,12 +20,12 @@ class CommentController(
     @PatchMapping("/{commentId}")
     fun changeComment(@PathVariable commentId: Int,
                       @Valid @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.changeComment(commentId, commentRequest)
+        return commentService.updateComment(commentId, commentRequest)
     }
 
     @DeleteMapping("{commentId}")
     fun deleteComment(@PathVariable commentId: Int) {
-        commentService.deleteComment(commentId)
+        commentService.removeComment(commentId)
     }
 
     @PostMapping("/sub/{commentId}")
@@ -37,11 +37,11 @@ class CommentController(
     @PatchMapping("/sub/{subCommentId}")
     fun changeSubComment(@PathVariable subCommentId: Int,
                          @Valid @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.changeSubComment(subCommentId, commentRequest)
+        return commentService.updateSubComment(subCommentId, commentRequest)
     }
 
     @DeleteMapping("/sub/{subCommentId}")
     fun deleteSubComment(@PathVariable subCommentId: Int) {
-        commentService.deleteSubComment(subCommentId)
+        commentService.removeSubComment(subCommentId)
     }
 }

@@ -5,21 +5,19 @@ import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.TimeToLive
 
 @RedisHash(value = "email_limiter")
-class EmailLimiter(
+data class EmailLimiter(
         @Id
-        var email: String = "",
+        val email: String = "",
 
         @TimeToLive
-        var count: Long
+        var count: Long = 0
 ) {
-    fun update(limit: Int): EmailLimiter {
-        if (isBelowLimit()) {
-            count += limit
-        }
+    fun updateCount(): EmailLimiter {
+        if (isBelowLimit())
+            count += 6
         return this
     }
 
-    fun isBelowLimit(): Boolean {
-        return count <= 60
-    }
+    fun isBelowLimit(): Boolean =
+        count <= 60
 }

@@ -7,22 +7,27 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_emoji")
-class Emoji (
+data class Emoji(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var Id: Int = 0,
+        val Id: Int = 0,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")
-        var user: User,
+        val user: User,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "post")
-        var post: Post,
+        val post: Post,
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
         var status: EmojiStatus? = null,
 
         @Column(nullable = false)
-        var createdAt: LocalDateTime = LocalDateTime.now()
-)
+        val createdAt: LocalDateTime = LocalDateTime.now()
+) {
+        fun update(emojiStatus: EmojiStatus): Emoji {
+                this.status = emojiStatus
+                return this
+        }
+}

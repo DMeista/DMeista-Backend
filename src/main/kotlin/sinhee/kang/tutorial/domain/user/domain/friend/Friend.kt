@@ -7,9 +7,9 @@ import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity(name = "tbl_friend")
-class Friend(
+data class Friend(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Int = 0,
+        val id: Int = 0,
 
         @Column(nullable = false)
         @Enumerated(EnumType.STRING)
@@ -17,15 +17,15 @@ class Friend(
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "userId")
-        var userId: User,
+        val userId: User,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "targetId")
-        var targetId: User,
+        val targetId: User,
 
         @CreatedDate
         @Column(nullable = false)
-        var connectedAt: LocalDateTime = LocalDateTime.now()
+        val connectedAt: LocalDateTime = LocalDateTime.now()
 
 ) {
         fun acceptRequest(targetId: User): Friend {

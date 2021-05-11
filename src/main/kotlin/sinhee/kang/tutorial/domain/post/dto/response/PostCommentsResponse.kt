@@ -5,17 +5,16 @@ import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import java.time.LocalDateTime
 
 data class PostCommentsResponse(
+        val commentId: Int?,
 
-        var commentId: Int?,
+        val content: String,
 
-        var content: String,
-
-        var author: String,
+        val author: String,
 
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-        var createdAt: LocalDateTime,
+        val createdAt: LocalDateTime,
 
-        var isMine: Boolean,
+        val isMine: Boolean,
 
-        var subComments: MutableList<PostSubCommentsResponse>
+        val subComments: MutableList<PostSubCommentsResponse>
 )

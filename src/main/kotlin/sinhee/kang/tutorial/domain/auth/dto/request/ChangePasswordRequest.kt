@@ -6,11 +6,11 @@ import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Pattern
 
 data class ChangePasswordRequest (
-    @Email
-    @NotBlank
-    val email: String,
+        @Email
+        @NotBlank
+        val email: String,
 
-    @Pattern(regexp = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
-    @NotEmpty
-    var password: String
+        @Pattern(regexp = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
+        @NotEmpty
+        val password: String
 )
