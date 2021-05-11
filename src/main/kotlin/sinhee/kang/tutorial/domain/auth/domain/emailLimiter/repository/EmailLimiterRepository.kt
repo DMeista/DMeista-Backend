@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
 
 @Repository
-interface EmailLimiterRepository : CrudRepository<EmailLimiter, String> {
-}
+interface EmailLimiterRepository : CrudRepository<EmailLimiter, String>
