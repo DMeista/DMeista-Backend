@@ -29,5 +29,9 @@ data class Comment(
 
         @OneToMany(mappedBy = "comment", cascade = [CascadeType.ALL])
         val subCommentList: MutableList<SubComment> = ArrayList()
-
-)
+) {
+        fun update(content: String): Comment {
+                this.content = content
+                return this
+        }
+}
