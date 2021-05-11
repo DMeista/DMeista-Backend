@@ -1,11 +1,16 @@
 package sinhee.kang.tutorial.auth
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import sinhee.kang.tutorial.TestApis
+import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.*
@@ -22,6 +27,7 @@ class UserTestApis: TestApis() {
     @AfterEach
     fun clean() {
         emailVerificationRepository.deleteAll()
+        emailLimiterRepository.deleteAll()
         userRepository.deleteAll()
     }
 
@@ -51,6 +57,30 @@ class UserTestApis: TestApis() {
         val response = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
 
         assert(response.username == user.nickname)
+    }
+
+    @Test
+    fun sendEmailTest() {
+        requestBody(post("/users/email/verify/user"), EmailRequest(user.email))
+        requestBody(post("/users/email/verify/signup"), EmailRequest(user2.email))
+    }
+
+    @Test
+    fun tooManyRequestErrorTest() {
+        userRepository.deleteAll()
+        emailLimiterRepository.findById(user.email)
+            .orElseGet{ emailLimiterRepository.save(EmailLimiter(user.email)) }
+            .let { limit ->
+                (0..9).map { emailLimiterRepository.save(limit.updateCount()) }
+            }
+
+        mvc.perform(
+            post("/users/email/verify/signup")
+                .content(ObjectMapper()
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                    .writeValueAsString(EmailRequest(user.email)))
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(MockMvcResultMatchers.status().isTooManyRequests)
     }
 
     private fun emailVerify() {
