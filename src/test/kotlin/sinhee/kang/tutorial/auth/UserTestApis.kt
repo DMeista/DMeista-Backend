@@ -57,7 +57,7 @@ class UserTestApis: TestApis() {
         emailVerificationRepository.save(EmailVerification(
                 email = user.email,
                 authCode = "AUTH_CODE",
-                status = EmailVerificationStatus.UNVERIFID
+                status = EmailVerificationStatus.UNVERIFIED
         ))
         requestBody(put("/users/email/verify"), VerifyCodeRequest(user.email, "AUTH_CODE"))
     }
