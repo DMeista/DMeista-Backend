@@ -8,17 +8,17 @@ import sinhee.kang.tutorial.domain.user.service.friend.FriendService
 @RestController
 @RequestMapping("/users")
 class FriendController(
-        private val friendService: FriendService
+    private val friendService: FriendService
 ) {
 
     @GetMapping("/friends")
     fun getFriendsList(pageable: Pageable,
                        @RequestParam(required = false) nickname: String?): UserListResponse? =
-        friendService.getFriendList(nickname)
+        friendService.getFriendsList(nickname)
 
     @GetMapping("/friends/request")
     fun receiveFriendRequestList(pageable: Pageable): UserListResponse? =
-        friendService.receiveFriendRequestList(pageable)
+        friendService.getFriendRequestsList(pageable)
 
     @PostMapping("/friends")
     fun sendFriendRequest(@RequestParam nickname: String) =
@@ -30,5 +30,5 @@ class FriendController(
 
     @DeleteMapping("/friends")
     fun deniedFriendRequest(@RequestParam nickname: String) =
-        friendService.deleteFriend(nickname)
+        friendService.removeFriend(nickname)
 }
