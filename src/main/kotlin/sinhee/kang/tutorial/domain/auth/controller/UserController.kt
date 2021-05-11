@@ -1,28 +1,29 @@
 package sinhee.kang.tutorial.domain.auth.controller
 
-import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.auth.dto.request.*
+import sinhee.kang.tutorial.domain.auth.service.email.EmailService
 import sinhee.kang.tutorial.domain.auth.service.user.UserService
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/users")
 class UserController(
-        private val userService: UserService
+    private val userService: UserService,
+    private val emailService: EmailService
 ) {
 
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@Valid @RequestBody emailRequest: EmailRequest,
-                  @PathVariable sendType: String): HttpStatus =
-        userService.userAuthenticationSendEmail(sendType, emailRequest)
+                  @PathVariable sendType: String) =
+        emailService.sendVerificationEmail(emailRequest, sendType)
 
     @PutMapping("/email/verify")
-    fun verifyEmail(@Valid @RequestBody verifyCodeRequest: VerifyCodeRequest): HttpStatus =
-        userService.verifyEmail(verifyCodeRequest)
+    fun verifyEmail(@Valid @RequestBody verifyCodeRequest: VerifyCodeRequest) =
+        emailService.verifyEmail(verifyCodeRequest)
 
     @GetMapping("/nickname")
-    fun isVerifyNickname(@RequestParam nickname: String): HttpStatus =
+    fun isVerifyNickname(@RequestParam nickname: String) =
         userService.isVerifyNickname(nickname)
 
     @PostMapping
