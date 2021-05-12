@@ -10,10 +10,10 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import sinhee.kang.tutorial.infra.api.kakao.KakaoApi
 
 @Component
-class VisionServiceImpl(
+class VisionLabelServiceImpl(
     @Value("\${kakao.rest.api.key}")
     private val authorizationKey: String
-): VisionService {
+): VisionLabelService {
     private val connection = Retrofit
         .Builder()
             .baseUrl("https://dapi.kakao.com/")
