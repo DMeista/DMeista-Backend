@@ -17,7 +17,7 @@ import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class SlackExceptionServiceImpl: SlackExceptionService {
+class SlackMessageServiceImpl: SlackMessageService {
     private val connection = Retrofit
         .Builder()
             .baseUrl("https://hooks.slack.com/services/")
