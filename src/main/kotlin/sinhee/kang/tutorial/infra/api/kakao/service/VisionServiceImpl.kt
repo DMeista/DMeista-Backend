@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.vision.service
+package sinhee.kang.tutorial.infra.api.kakao.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import okhttp3.*
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import sinhee.kang.tutorial.infra.api.vision.KakaoApi
+import sinhee.kang.tutorial.infra.api.kakao.KakaoApi
 
 @Component
 class VisionServiceImpl(

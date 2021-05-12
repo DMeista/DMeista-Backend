@@ -17,7 +17,7 @@ import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationN
 import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.infra.api.vision.service.VisionService
+import sinhee.kang.tutorial.infra.api.kakao.service.VisionService
 
 @Service
 class PostServiceImpl(

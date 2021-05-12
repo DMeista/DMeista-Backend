@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.vision.dto
+package sinhee.kang.tutorial.infra.api.kakao.dto
 
 class ResultResponse {
     var label_kr: List<String> = listOf()
