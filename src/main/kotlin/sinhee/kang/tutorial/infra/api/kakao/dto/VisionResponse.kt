@@ -1,7 +1,7 @@
 package sinhee.kang.tutorial.infra.api.kakao.dto
 
-class VisionResponse {
-        var rid: String = ""
+data class VisionResponse (
+        val rid: String,
 
-        var result: ResultResponse = ResultResponse()
-}
+        val result: ResultResponse
+)
