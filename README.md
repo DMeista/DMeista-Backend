@@ -9,7 +9,7 @@
 #### Tech Stack
 
 * Kotlin
-* Spring boot, Spring Data Jpa, Junit, Swagger
+* Spring boot, Spring Security,  Spring Data Jpa, Junit5, Swagger, Retrofit
 * MySQL, Redis
 * Kakao Vision API, Slack API
 * Github Actions, AWS(EC2, RDS), Docker, Swarmpit
