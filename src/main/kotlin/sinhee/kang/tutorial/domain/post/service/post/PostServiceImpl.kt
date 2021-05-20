@@ -17,13 +17,13 @@ import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationN
 import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.infra.api.vision.service.VisionService
+import sinhee.kang.tutorial.infra.api.kakao.service.VisionLabelService
 
 @Service
 class PostServiceImpl(
     private val authService: AuthService,
     private val imageService: ImageService,
-    private val visionApi: VisionService,
+    private val visionLabelApi: VisionLabelService,
 
     private val postRepository: PostRepository,
     private val viewRepository: ViewRepository,
@@ -163,7 +163,7 @@ class PostServiceImpl(
         val request: MutableSet<String> = mutableSetOf()
         imageFiles.forEach { image ->
             try {
-                val tagsList = visionApi.generateTagFromImage(image)
+                val tagsList = visionLabelApi.generateTagFromImage(image)
                 tagsList.forEach { e -> request.add(e) }
             }
             catch (e: Exception) {

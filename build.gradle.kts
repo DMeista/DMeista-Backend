@@ -45,8 +45,6 @@ dependencies {
     implementation("it.ozimov:embedded-redis:0.7.3")
     runtimeOnly("mysql:mysql-connector-java")
 
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-
     implementation("io.springfox:springfox-swagger2:2.9.2")
     implementation("io.springfox:springfox-swagger-ui:2.9.2")
 

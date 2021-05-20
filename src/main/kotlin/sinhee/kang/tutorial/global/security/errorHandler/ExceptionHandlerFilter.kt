@@ -5,14 +5,14 @@ import org.springframework.http.MediaType
 import org.springframework.web.filter.OncePerRequestFilter
 import sinhee.kang.tutorial.global.businessException.BusinessException
 import sinhee.kang.tutorial.global.businessException.ErrorCode
-import sinhee.kang.tutorial.infra.api.slack.service.SlackExceptionService
+import sinhee.kang.tutorial.infra.api.slack.service.SlackMessageService
 import java.lang.Exception
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 class ExceptionHandlerFilter(
-    private val slackExceptionService: SlackExceptionService
+    private val slackMessageService: SlackMessageService
 ): OncePerRequestFilter() {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
@@ -21,7 +21,7 @@ class ExceptionHandlerFilter(
         } catch (e: BusinessException) {
             setErrorResponse(response, e.errorCode)
         } catch (e: Exception) {
-            slackExceptionService.sendMessage(request, e)
+            slackMessageService.sendMessage(request, e)
             e.printStackTrace()
         }
     }
