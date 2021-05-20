@@ -8,7 +8,6 @@ import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.domain.subComment.repository.SubCommentRepository
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
-import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationNotFoundException
 import sinhee.kang.tutorial.global.businessException.exception.post.CommentNotFoundException
 import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
