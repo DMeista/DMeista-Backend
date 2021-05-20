@@ -37,9 +37,7 @@ class EmailServiceImpl(
             checkedEmailExist(sendType)
             belowRequestLimit()
         }
-        GlobalScope.launch {
-            sendEmailTemplate(email)
-        }
+        sendEmailTemplate(email)
     }
 
     override fun sendCelebrateEmail(user: User) =
@@ -78,13 +76,15 @@ class EmailServiceImpl(
     }
 
     private fun sendEmail(targetEmail: String, subject: String, text: String) {
-        javaMailSender.send(SimpleMailMessage()
-            .apply {
-                setFrom(username)
-                setTo(targetEmail)
-                setSubject(subject)
-                setText(text)
-            })
+        GlobalScope.launch {
+            javaMailSender.send(SimpleMailMessage()
+                .apply {
+                    setFrom(username)
+                    setTo(targetEmail)
+                    setSubject(subject)
+                    setText(text)
+                })
+        }
     }
 
     private fun String.checkedEmailExist(sendType: String?) {
