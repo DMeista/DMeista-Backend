@@ -33,6 +33,7 @@ class EmailServiceImpl(
 ) : EmailService {
 
     override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: String) {
+    override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email.apply {
             checkedEmailExist(sendType)
             belowRequestLimit()
@@ -87,11 +88,13 @@ class EmailServiceImpl(
         }
     }
 
-    private fun String.checkedEmailExist(sendType: String?) {
+    private fun String.checkedEmailExist(sendType: SendType?) {
         val user = userRepository.findByEmail(this)
         when(sendType) {
-            "signup" -> user?.let { throw UserAlreadyExistsException() }
-            "user" -> user ?: throw UserNotFoundException()
+            SendType.REGISTER -> user
+                ?.let { throw UserAlreadyExistsException() }
+            SendType.USER -> user
+                ?: throw UserNotFoundException()
         }
     }
 
