@@ -3,6 +3,7 @@ package sinhee.kang.tutorial.domain.user.domain.friend
 import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
+import sinhee.kang.tutorial.domain.user.dto.response.UserResponse
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -33,11 +34,18 @@ data class Friend(
                 return this
         }
 
-        fun isAccept(): Boolean {
-                return status == FriendStatus.ACCEPT
-        }
+        fun isAccept(): Boolean =
+                status == FriendStatus.ACCEPT
 
-        fun isRequest(): Boolean {
-                return status == FriendStatus.REQUEST
-        }
+        fun isRequest(): Boolean =
+                status == FriendStatus.REQUEST
+
+        fun toUserResponse(user: User): UserResponse =
+                UserResponse(
+                        id = user.id,
+                        nickname = user.nickname,
+                        email = user.email,
+                        postContentItems = user.postList.count(),
+                        connectedAt = connectedAt
+                )
 }
