@@ -33,23 +33,11 @@ class FriendServiceImpl(
         user.friendList
             .filter(Friend::isAccept)
             .forEach {
-                userResponses.add(UserResponse(
-                    id = it.targetId.id,
-                    nickname = it.targetId.nickname,
-                    email = it.targetId.email,
-                    postContentItems = it.targetId.postList.count(),
-                    connectedAt = it.connectedAt
-                ))
+                userResponses.add(it.toUserResponse(it.targetId))
             }
         friendRepository.findByTargetIdAndStatus(user, FriendStatus.ACCEPT)
             ?.forEach {
-                userResponses.add(UserResponse(
-                    id = it.userId.id,
-                    nickname = it.userId.nickname,
-                    email = it.userId.email,
-                    postContentItems = it.userId.postList.count(),
-                    connectedAt = it.connectedAt
-                ))
+                userResponses.add(it.toUserResponse(it.userId))
             }
         userResponses.sortBy { it.connectedAt }
 
@@ -64,13 +52,7 @@ class FriendServiceImpl(
         friendRepository.findByTargetId(page, user)
             ?.filter(Friend::isRequest)?.toList()
             ?.forEach {
-                userResponses.add(UserResponse(
-                    id = it.userId.id,
-                    nickname = it.userId.nickname,
-                    email = it.userId.email,
-                    postContentItems = it.userId.postList.count(),
-                    connectedAt = it.connectedAt
-                ))
+                userResponses.add(it.toUserResponse(it.userId))
             }
             ?: throw UserNotFoundException()
 
