@@ -52,7 +52,7 @@ class FriendTestApis: TestApis() {
         requestParam(post("/users/friends"), targetName = user2.nickname, token = currentUserToken)
         requestParam(put("/users/friends"), targetName = user.nickname, token = targetUserToken)
 
-        assert(friendRepository.findByUserIdAndTargetIdAndStatus(user, user2, FriendStatus.ACCEPT)
+        assert(friendRepository.findByUserAndTargetUserAndStatus(user, user2, FriendStatus.ACCEPT)
                 ?.let { true }
                 ?: false
         )
@@ -76,7 +76,7 @@ class FriendTestApis: TestApis() {
     }
 
     private fun isCheckUserAndTargetUserExist(user: User, targetUser: User): Boolean {
-        return friendRepository.findByUserIdAndTargetId(user, targetUser)
+        return friendRepository.findByUserAndTargetUser(user, targetUser)
                 ?.let { true }
                 ?: false
     }

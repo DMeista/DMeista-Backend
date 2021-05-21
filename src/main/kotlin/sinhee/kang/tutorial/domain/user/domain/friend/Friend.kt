@@ -17,12 +17,12 @@ data class Friend(
         var status: FriendStatus = FriendStatus.REQUEST,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "userId")
-        val userId: User,
+        @JoinColumn(name = "user")
+        val user: User,
 
         @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "targetId")
-        val targetId: User,
+        @JoinColumn(name = "targetUser")
+        val targetUser: User,
 
         @CreatedDate
         @Column(nullable = false)
