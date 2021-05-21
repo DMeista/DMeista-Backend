@@ -14,8 +14,6 @@ import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthCodeException
-import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthEmailException
 import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 import kotlin.random.Random
@@ -32,59 +30,61 @@ class EmailServiceImpl(
     private val emailVerificationRepository: EmailVerificationRepository
 ) : EmailService {
 
-    override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: String) {
+    override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest) {
+        val email: String = verifyCodeRequest.email
+        val code: String = verifyCodeRequest.authCode
+
+        emailVerificationRepository.apply {
+            findById(email)
+                .orElseThrow { UserNotFoundException() }
+                .checkAuthCode(code)
+                .apply { save(setVerify()) }
+        }
+    }
+
     override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email.apply {
             checkedEmailExist(sendType)
             belowRequestLimit()
         }
-        sendEmailTemplate(email)
+        sendVerifyEmailFactory(email)
     }
 
-    override fun sendCelebrateEmail(user: User) =
+    override fun sendCelebrateEmail(user: User) {
+        val email = user.email
+        val nickname = user.nickname
+
         sendEmail(
-            targetEmail = user.email,
+            targetEmail = email,
             subject = "DMeista 가입을 축하합니다!",
-            text = "${user.nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
+            text = "${nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
         )
-
-    override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest) {
-        val email: String = verifyCodeRequest.email
-        val code: String = verifyCodeRequest.authCode
-
-        val emailVerification = emailVerificationRepository.findById(email)
-            .orElseThrow { InvalidAuthEmailException() }
-
-        if (emailVerification.authCode != code)
-            throw InvalidAuthCodeException()
-
-        emailVerificationRepository.save(emailVerification.verify())
     }
 
-    private fun sendEmailTemplate(email: String) {
+    private fun sendVerifyEmailFactory(email: String) {
         val randomCode = generateRandomCode()
-
         emailVerificationRepository.save(EmailVerification(email, randomCode))
+
         sendEmail(
             targetEmail = email,
             subject = "DMeista 인증메일입니다.",
-            text = "DMeista 서비스 인증 메일입니다." +
-                    "DMeista에 가입하신 것을 환영합니다." +
-                    "${email}님 이메일 주소를 확인하기 위해 아래의 코드를 입력해주세요." +
-                    "" +
+            text = "DMeista 서비스 인증 메일입니다.\n" +
+                    "DMeista에 가입하신 것을 환영합니다.\n" +
+                    "${email}님 이메일 주소를 확인하기 위해 아래의 코드를 입력해주세요.\n\n" +
                     "[ $randomCode ]"
         )
     }
 
     private fun sendEmail(targetEmail: String, subject: String, text: String) {
         GlobalScope.launch {
-            javaMailSender.send(SimpleMailMessage()
-                .apply {
+            javaMailSender.send(
+                SimpleMailMessage().apply {
                     setFrom(username)
                     setTo(targetEmail)
                     setSubject(subject)
                     setText(text)
-                })
+                }
+            )
         }
     }
 

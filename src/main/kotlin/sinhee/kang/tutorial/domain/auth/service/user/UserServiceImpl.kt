@@ -31,7 +31,7 @@ class UserServiceImpl(
         userRepository.apply {
             findByEmail(email)
                 ?.let { throw UserAlreadyExistsException() }
-            userRepository.save(signUpRequest.toEntity(passwordEncoder))
+            save(signUpRequest.toEntity(passwordEncoder))
                 .also { publisher.publishEvent(emailService.sendCelebrateEmail(it)) }
         }
     }
