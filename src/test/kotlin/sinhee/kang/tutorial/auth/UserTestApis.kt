@@ -61,8 +61,8 @@ class UserTestApis: TestApis() {
 
     @Test
     fun sendEmailTest() {
-        requestBody(post("/users/email/verify/user"), EmailRequest(user.email))
-        requestBody(post("/users/email/verify/signup"), EmailRequest(user2.email))
+        requestBody(post("/users/email/verify/USER"), EmailRequest(user.email))
+        requestBody(post("/users/email/verify/REGISTER"), EmailRequest(user2.email))
     }
 
     @Test
@@ -75,7 +75,7 @@ class UserTestApis: TestApis() {
             }
 
         mvc.perform(
-            post("/users/email/verify/signup")
+            post("/users/email/verify/REGISTER")
                 .content(ObjectMapper()
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                     .writeValueAsString(EmailRequest(user.email)))
