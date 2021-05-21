@@ -71,7 +71,7 @@ class UserTestApis: TestApis() {
         emailLimiterRepository.findById(user.email)
             .orElseGet{ emailLimiterRepository.save(EmailLimiter(user.email)) }
             .let { limit ->
-                (0..9).map { emailLimiterRepository.save(limit.updateCount()) }
+                (0..9).map { emailLimiterRepository.save(limit.update()) }
             }
 
         mvc.perform(
