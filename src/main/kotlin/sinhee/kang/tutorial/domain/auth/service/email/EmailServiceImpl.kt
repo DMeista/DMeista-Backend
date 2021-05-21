@@ -1,9 +1,10 @@
 package sinhee.kang.tutorial.domain.auth.service.email
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
@@ -15,7 +16,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthCodeException
 import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthEmailException
-import sinhee.kang.tutorial.global.businessException.exception.auth.TooManyEmailRequestException
 import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 import kotlin.random.Random
@@ -33,15 +33,19 @@ class EmailServiceImpl(
 ) : EmailService {
 
     override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: String) {
-        val email = emailRequest.email
-            .apply {
-                checkedEmailExist(sendType)
-                isBelowRequestLimit()
-            }
-        val randomCode: String = generateRandomCode()
-
-        sendVerifyEmail(email, randomCode)
+        val email = emailRequest.email.apply {
+            checkedEmailExist(sendType)
+            belowRequestLimit()
+        }
+        sendEmailTemplate(email)
     }
+
+    override fun sendCelebrateEmail(user: User) =
+        sendEmail(
+            targetEmail = user.email,
+            subject = "DMeista 가입을 축하합니다!",
+            text = "${user.nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
+        )
 
     override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest) {
         val email: String = verifyCodeRequest.email
@@ -56,17 +60,10 @@ class EmailServiceImpl(
         emailVerificationRepository.save(emailVerification.verify())
     }
 
-    @Async
-    override fun sendCelebrateEmail(user: User) =
-        sendEmail(
-            targetEmail = user.email,
-            subject = "DMeista 가입을 축하합니다!",
-            text = "${user.nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
-        )
+    private fun sendEmailTemplate(email: String) {
+        val randomCode = generateRandomCode()
 
-    @Async
-    fun sendVerifyEmail(email: String, code: String) {
-        emailVerificationRepository.save(EmailVerification(email, code))
+        emailVerificationRepository.save(EmailVerification(email, randomCode))
         sendEmail(
             targetEmail = email,
             subject = "DMeista 인증메일입니다.",
@@ -74,19 +71,20 @@ class EmailServiceImpl(
                     "DMeista에 가입하신 것을 환영합니다." +
                     "${email}님 이메일 주소를 확인하기 위해 아래의 코드를 입력해주세요." +
                     "" +
-                    "[ $code ]"
+                    "[ $randomCode ]"
         )
     }
 
-    fun sendEmail(targetEmail: String, subject: String, text: String) {
-        SimpleMailMessage()
-            .apply {
-                setFrom(username)
-                setTo(targetEmail)
-                setSubject(subject)
-                setText(text)
-            }
-            .let { javaMailSender.send(it) }
+    private fun sendEmail(targetEmail: String, subject: String, text: String) {
+        GlobalScope.launch {
+            javaMailSender.send(SimpleMailMessage()
+                .apply {
+                    setFrom(username)
+                    setTo(targetEmail)
+                    setSubject(subject)
+                    setText(text)
+                })
+        }
     }
 
     private fun String.checkedEmailExist(sendType: String?) {
@@ -97,12 +95,11 @@ class EmailServiceImpl(
         }
     }
 
-    private fun String.isBelowRequestLimit() =
+    private fun String.belowRequestLimit() {
         emailLimiterRepository.findById(this)
-            .orElseGet{ emailLimiterRepository.save(EmailLimiter(this)) }
-            .let { limit -> emailLimiterRepository.save(limit.updateCount()) }
-            .takeIf { !it.isBelowLimit() }
-            ?.also { throw TooManyEmailRequestException() }
+            .orElseGet { emailLimiterRepository.save(EmailLimiter(this)) }
+            .apply { emailLimiterRepository.save(update()) }
+    }
 
     private fun generateRandomCode(): String {
         val charPool : List<Char> = ('A'..'Z') + ('0'..'9')

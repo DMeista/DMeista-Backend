@@ -63,8 +63,10 @@ class SecurityConfig(
     }
 
     @Bean
-    override fun authenticationManager(): AuthenticationManager = super.authenticationManagerBean()
+    override fun authenticationManager(): AuthenticationManager =
+        super.authenticationManagerBean()
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    fun passwordEncoder(): PasswordEncoder =
+        BCryptPasswordEncoder()
 }
