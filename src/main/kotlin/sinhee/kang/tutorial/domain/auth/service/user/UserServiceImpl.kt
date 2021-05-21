@@ -8,7 +8,6 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVeri
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
-import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.auth.*
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
@@ -28,19 +27,13 @@ class UserServiceImpl(
     override fun signUp(signUpRequest: SignUpRequest) {
         val email = signUpRequest.email
             .apply { isVerifyEmail() }
-        val passwd = passwordEncoder.encode(signUpRequest.password)
-        val username = signUpRequest.nickname
 
-        userRepository.findByEmail(email)
-            ?.let { throw UserAlreadyExistsException() }
-
-        val user = userRepository.save(User(
-            email = email,
-            password = passwd,
-            nickname = username
-        ))
-
-        publisher.publishEvent(emailService.sendCelebrateEmail(user))
+        userRepository.apply {
+            findByEmail(email)
+                ?.let { throw UserAlreadyExistsException() }
+            userRepository.save(signUpRequest.toEntity(passwordEncoder))
+                .also { publisher.publishEvent(emailService.sendCelebrateEmail(it)) }
+        }
     }
 
     override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
