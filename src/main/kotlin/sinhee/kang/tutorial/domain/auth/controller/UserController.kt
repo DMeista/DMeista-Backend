@@ -3,6 +3,7 @@ package sinhee.kang.tutorial.domain.auth.controller
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
+import sinhee.kang.tutorial.domain.auth.service.email.SendType
 import sinhee.kang.tutorial.domain.auth.service.user.UserService
 import javax.validation.Valid
 
@@ -15,7 +16,7 @@ class UserController(
 
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@Valid @RequestBody emailRequest: EmailRequest,
-                  @PathVariable sendType: String) =
+                  @PathVariable sendType: SendType) =
         emailService.sendVerificationEmail(emailRequest, sendType)
 
     @PutMapping("/email/verify")

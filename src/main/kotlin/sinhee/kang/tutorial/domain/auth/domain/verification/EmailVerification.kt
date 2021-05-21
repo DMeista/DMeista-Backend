@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.TimeToLive
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
+import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthCodeException
 
 @RedisHash(timeToLive = 60 * 3)
 data class EmailVerification(
@@ -17,9 +18,15 @@ data class EmailVerification(
         @TimeToLive
         var ttl: Long = 60L
 ) {
-    fun verify(): EmailVerification {
+    fun setVerify(): EmailVerification {
         status = EmailVerificationStatus.VERIFIED
         ttl *= 3
+        return this
+    }
+
+    fun checkAuthCode(code: String): EmailVerification {
+        if (authCode != code)
+            throw InvalidAuthCodeException()
         return this
     }
 
