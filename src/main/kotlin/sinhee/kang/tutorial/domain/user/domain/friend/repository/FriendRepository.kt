@@ -10,11 +10,11 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @Repository
 interface FriendRepository: CrudRepository<Friend, Int> {
-    fun findByTargetIdAndStatus(targetId: User, status: FriendStatus): MutableList<Friend>?
+    fun findByTargetUserAndStatus(targetId: User, status: FriendStatus): MutableList<Friend>?
 
-    fun findByTargetId(pageable: Pageable, targetId: User): Page<Friend>?
+    fun findByTargetUser(pageable: Pageable, targetId: User): Page<Friend>?
 
-    fun findByUserIdAndTargetId(userId: User, targetId: User): Friend?
+    fun findByUserAndTargetUser(userId: User, targetId: User): Friend?
 
-    fun findByUserIdAndTargetIdAndStatus(userId: User, targetId: User, status: FriendStatus): Friend?
+    fun findByUserAndTargetUserAndStatus(userId: User, targetId: User, status: FriendStatus): Friend?
 }
