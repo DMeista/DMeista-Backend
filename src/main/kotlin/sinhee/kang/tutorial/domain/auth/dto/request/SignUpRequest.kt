@@ -1,5 +1,7 @@
 package sinhee.kang.tutorial.domain.auth.dto.request
 
+import org.springframework.security.crypto.password.PasswordEncoder
+import sinhee.kang.tutorial.domain.user.domain.user.User
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Pattern
@@ -15,4 +17,11 @@ data class SignUpRequest(
 
         @NotBlank
         val nickname: String
-)
+) {
+        fun toEntity(passwordEncoder: PasswordEncoder): User =
+            User(
+                email = email,
+                password = passwordEncoder.encode(password),
+                nickname = nickname
+            )
+}
