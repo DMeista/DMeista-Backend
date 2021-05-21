@@ -48,7 +48,7 @@ data class User(
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var viewList: MutableList<View> = ArrayList(),
 
-        @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
+        @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
         var friendList: MutableList<Friend> = ArrayList()
 ) {
     fun addFriend(friend: Friend): User {

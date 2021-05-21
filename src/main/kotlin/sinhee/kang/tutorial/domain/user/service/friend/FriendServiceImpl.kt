@@ -33,11 +33,11 @@ class FriendServiceImpl(
         user.friendList
             .filter(Friend::isAccept)
             .forEach {
-                userResponses.add(it.toUserResponse(it.targetId))
+                userResponses.add(it.toUserResponse(it.targetUser))
             }
-        friendRepository.findByTargetIdAndStatus(user, FriendStatus.ACCEPT)
+        friendRepository.findByTargetUserAndStatus(user, FriendStatus.ACCEPT)
             ?.forEach {
-                userResponses.add(it.toUserResponse(it.userId))
+                userResponses.add(it.toUserResponse(it.user))
             }
         userResponses.sortBy { it.connectedAt }
 
@@ -49,10 +49,10 @@ class FriendServiceImpl(
 
         val userResponses: MutableList<UserResponse> = mutableListOf()
 
-        friendRepository.findByTargetId(page, user)
+        friendRepository.findByTargetUser(page, user)
             ?.filter(Friend::isRequest)?.toList()
             ?.forEach {
-                userResponses.add(it.toUserResponse(it.userId))
+                userResponses.add(it.toUserResponse(it.user))
             }
             ?: throw UserNotFoundException()
 
@@ -68,8 +68,8 @@ class FriendServiceImpl(
             throw BadRequestException()
 
         friendRepository.save(Friend(
-            userId = user,
-            targetId = targetUser,
+            user = user,
+            targetUser = targetUser,
             status = FriendStatus.REQUEST
         ))
     }
@@ -79,7 +79,7 @@ class FriendServiceImpl(
         val targetUser = userRepository.findByNickname(username)
             ?: throw UserNotFoundException()
 
-        val userRequest = friendRepository.findByUserIdAndTargetIdAndStatus(
+        val userRequest = friendRepository.findByUserAndTargetUserAndStatus(
                 userId = targetUser, targetId = user, status = FriendStatus.REQUEST)
             ?: throw UserNotFoundException()
 
@@ -94,11 +94,11 @@ class FriendServiceImpl(
 
         when {
             user.isExistUserAndTargetUser(targetUser) -> {
-                friendRepository.findByUserIdAndTargetId(userId = user, targetId = targetUser)
+                friendRepository.findByUserAndTargetUser(userId = user, targetId = targetUser)
                     ?.let { friendRepository.delete(it) }
             }
             targetUser.isExistUserAndTargetUser(user) -> {
-                friendRepository.findByUserIdAndTargetId(userId = targetUser, targetId = user)
+                friendRepository.findByUserAndTargetUser(userId = targetUser, targetId = user)
                     ?.let { friendRepository.delete(it) }
             }
             else -> throw BadRequestException()
@@ -113,7 +113,7 @@ class FriendServiceImpl(
     }
 
     private fun User.isExistUserAndTargetUser(targetUser: User) =
-        friendRepository.findByUserIdAndTargetId(this, targetUser)
+        friendRepository.findByUserAndTargetUser(this, targetUser)
             ?.let { true }
             ?: false
 }
