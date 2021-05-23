@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.kakao.service
+package sinhee.kang.tutorial.infra.api.kakao.vision.service
 
 import org.springframework.web.multipart.MultipartFile
 

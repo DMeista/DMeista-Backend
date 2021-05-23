@@ -38,7 +38,7 @@ class EmailServiceImpl(
             findById(email)
                 .orElseThrow { UserNotFoundException() }
                 .checkAuthCode(code)
-                .apply { save(setVerify()) }
+                .also { save(it.setVerify()) }
         }
     }
 
