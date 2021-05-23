@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.infra.api.kakao.dto
+package sinhee.kang.tutorial.infra.api.kakao.vision.dto
 
 data class VisionResponse (
         val rid: String,
