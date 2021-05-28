@@ -45,7 +45,10 @@ class AuthServiceImpl(
         }
     }
 
-    override fun authValidate(): User =
-        userRepository.findByNickname(authenticationFacade.getUserName())
+    override fun verifyCurrentUser(): User {
+        val currentUsername = authenticationFacade.getUserName()
+
+        return userRepository.findByNickname(currentUsername)
             ?: throw UnAuthorizedException()
+    }
 }
