@@ -36,16 +36,16 @@ class EmailServiceImpl(
 
     override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email
-            .checkedEmailExist(sendType)
+            .isExistEmail(sendType)
             .belowRequestLimit()
-            .validationEmail()
+            .isValidationEmail()
 
         sendVerifyEmailFactory(email)
     }
 
     override fun setVerifyEmail(verifyCodeRequest: VerifyCodeRequest) {
         val email: String = verifyCodeRequest.email
-            .validationEmail()
+            .isValidationEmail()
         val authCode: String = verifyCodeRequest.authCode
 
         emailVerificationRepository.apply {
@@ -74,7 +74,7 @@ class EmailServiceImpl(
             .email
     }
 
-    override fun String.validationEmail(): String {
+    override fun String.isValidationEmail(): String {
         Pattern
             .compile("([0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3})")
             .matcher(this)
@@ -85,7 +85,7 @@ class EmailServiceImpl(
         return this
     }
 
-    override fun String.checkedEmailExist(sendType: SendType?): String {
+    override fun String.isExistEmail(sendType: SendType?): String {
         val user = userRepository.findByEmail(this)
         when(sendType) {
             SendType.REGISTER -> user

@@ -13,7 +13,7 @@ interface EmailService {
 
     fun String.isVerifyEmail(): String
 
-    fun String.validationEmail(): String
+    fun String.isValidationEmail(): String
 
-    fun String.checkedEmailExist(sendType: SendType?): String
+    fun String.isExistEmail(sendType: SendType?): String
 }
