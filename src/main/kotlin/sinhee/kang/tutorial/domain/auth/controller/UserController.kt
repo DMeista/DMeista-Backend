@@ -16,11 +16,11 @@ class UserController(
     @PostMapping("/email/verify/{sendType}")
     fun sendEmail(@RequestBody emailRequest: EmailRequest,
                   @PathVariable sendType: SendType) =
-        emailService.sendVerificationEmail(emailRequest, sendType)
+        emailService.sendVerifyEmail(emailRequest, sendType)
 
     @PutMapping("/email/verify")
     fun verifyEmail(@RequestBody verifyCodeRequest: VerifyCodeRequest) =
-        emailService.setVerifyEmail(verifyCodeRequest)
+        emailService.verifyAuthCode(verifyCodeRequest)
 
     @GetMapping("/nickname")
     fun verifyNickname(@RequestParam nickname: String) =
