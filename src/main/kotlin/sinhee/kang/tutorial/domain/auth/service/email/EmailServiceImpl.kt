@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
+
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
 import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
@@ -15,7 +16,10 @@ import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
+import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
+
+import java.util.regex.Pattern
 import kotlin.random.Random
 
 @Service
@@ -30,24 +34,26 @@ class EmailServiceImpl(
     private val emailVerificationRepository: EmailVerificationRepository
 ) : EmailService {
 
-    override fun verifyEmail(verifyCodeRequest: VerifyCodeRequest) {
-        val email: String = verifyCodeRequest.email
-        val code: String = verifyCodeRequest.authCode
+    override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
+        val email = emailRequest.email
+            .checkedEmailExist(sendType)
+            .belowRequestLimit()
+            .validationEmail()
 
-        emailVerificationRepository.apply {
-            findById(email)
-                .orElseThrow { UserNotFoundException() }
-                .checkAuthCode(code)
-                .also { save(it.setVerify()) }
-        }
+        sendVerifyEmailFactory(email)
     }
 
-    override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
-        val email = emailRequest.email.apply {
-            checkedEmailExist(sendType)
-            belowRequestLimit()
+    override fun setVerifyEmail(verifyCodeRequest: VerifyCodeRequest) {
+        val email: String = verifyCodeRequest.email
+            .validationEmail()
+        val authCode: String = verifyCodeRequest.authCode
+
+        emailVerificationRepository.apply {
+            val emailVerification = findById(email)
+                .orElseThrow { UserNotFoundException() }
+                .checkAuthCode(authCode)
+            save(emailVerification)
         }
-        sendVerifyEmailFactory(email)
     }
 
     override fun sendCelebrateEmail(user: User) {
@@ -59,6 +65,35 @@ class EmailServiceImpl(
             subject = "DMeista 가입을 축하합니다!",
             text = "${nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
         )
+    }
+
+    override fun String.isVerifyEmail(): String {
+        return emailVerificationRepository.findById(this)
+            .filter(EmailVerification::isVerify)
+            .orElseThrow { BadRequestException() }
+            .email
+    }
+
+    override fun String.validationEmail(): String {
+        Pattern
+            .compile("([0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3})")
+            .matcher(this)
+            .matches()
+            .takeIf { it }
+            ?: throw BadRequestException()
+
+        return this
+    }
+
+    override fun String.checkedEmailExist(sendType: SendType?): String {
+        val user = userRepository.findByEmail(this)
+        when(sendType) {
+            SendType.REGISTER -> user
+                ?.let { throw UserAlreadyExistsException() }
+            SendType.USER -> user
+                ?: throw UserNotFoundException()
+        }
+        return this
     }
 
     private fun sendVerifyEmailFactory(email: String) {
@@ -88,20 +123,11 @@ class EmailServiceImpl(
         }
     }
 
-    private fun String.checkedEmailExist(sendType: SendType?) {
-        val user = userRepository.findByEmail(this)
-        when(sendType) {
-            SendType.REGISTER -> user
-                ?.let { throw UserAlreadyExistsException() }
-            SendType.USER -> user
-                ?: throw UserNotFoundException()
-        }
-    }
-
-    private fun String.belowRequestLimit() {
+    private fun String.belowRequestLimit(): String {
         emailLimiterRepository.findById(this)
             .orElseGet { emailLimiterRepository.save(EmailLimiter(this)) }
             .apply { emailLimiterRepository.save(update()) }
+        return this
     }
 
     private fun generateRandomCode(): String {
