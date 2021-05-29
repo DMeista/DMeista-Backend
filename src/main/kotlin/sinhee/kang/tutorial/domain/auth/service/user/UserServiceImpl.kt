@@ -99,12 +99,15 @@ class UserServiceImpl(
     }
 
     private fun String.isValidPassword(): String {
-        Pattern
+        val verifyRegex = !Pattern
             .compile("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}")
             .matcher(this)
             .matches()
-            .takeIf { !it }
-            ?: throw BadRequestException()
+        val verifyContent = isNotBlank() && isNotEmpty()
+
+        if (!(verifyRegex && verifyContent))
+            throw BadRequestException()
+
         return this
     }
 }

@@ -75,12 +75,14 @@ class EmailServiceImpl(
     }
 
     override fun String.isValidationEmail(): String {
-        Pattern
+        val verifyRegex = !Pattern
             .compile("([0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3})")
             .matcher(this)
             .matches()
-            .takeIf { it }
-            ?: throw BadRequestException()
+        val verifyContent = isNotBlank() && isNotEmpty()
+
+        if (!(verifyRegex && verifyContent))
+            throw BadRequestException()
 
         return this
     }
