@@ -20,21 +20,21 @@ class UserController(
 
     @PutMapping("/email/verify")
     fun verifyEmail(@RequestBody verifyCodeRequest: VerifyCodeRequest) =
-        emailService.verifyEmail(verifyCodeRequest)
+        emailService.setVerifyEmail(verifyCodeRequest)
 
     @GetMapping("/nickname")
-    fun isVerifyNickname(@RequestParam nickname: String) =
+    fun verifyNickname(@RequestParam nickname: String) =
         userService.isVerifyNickname(nickname)
 
     @PostMapping
     fun signUp(@RequestBody signUpRequest: SignUpRequest) =
         userService.signUp(signUpRequest)
 
-    @DeleteMapping
-    fun exitAccount(@RequestBody request: ChangePasswordRequest) =
-        userService.exitAccount(request)
-
     @PutMapping("/password")
     fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest) =
         userService.changePassword(changePasswordRequest)
+
+    @DeleteMapping
+    fun exitAccount(@RequestBody request: ChangePasswordRequest) =
+        userService.exitAccount(request)
 }
