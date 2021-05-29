@@ -9,20 +9,18 @@ import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
 import sinhee.kang.tutorial.domain.auth.service.email.SendType
+import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.auth.*
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
-
-import java.util.regex.Pattern
 
 @Service
 class UserServiceImpl(
-    private val publisher: ApplicationEventPublisher,
     private val passwordEncoder: PasswordEncoder,
 
     private val authService: AuthService,
     private val emailService: EmailService,
+    private val validateService: ValidateService,
 
     private val userRepository: UserRepository,
     private val emailVerificationRepository: EmailVerificationRepository
@@ -30,36 +28,25 @@ class UserServiceImpl(
 
     override fun signUp(signUpRequest: SignUpRequest) {
         val email = signUpRequest.email
-        signUpRequest.password
-            .isValidPassword()
 
-        emailService.apply {
-            email.apply {
-                isValidationEmail()
-                isVerifyEmail()
-                isExistEmail(SendType.REGISTER)
-            }
+        validateService.apply {
+            validateEmail(email)
+            validateExistEmail(email, SendType.REGISTER)
+            validatePassword(signUpRequest.password)
         }
 
-        userRepository.apply {
-            val user = signUpRequest.toEntity(passwordEncoder)
-
-            save(user).also {
-                publisher.publishEvent(emailService.sendCelebrateEmail(it))
-            }
-        }
+        userRepository.save(signUpRequest.toEntity(passwordEncoder))
+            .let { emailService.sendCelebrateEmail(it) }
     }
 
     override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
-        val email: String = changePasswordRequest.email
+        val email = changePasswordRequest.email
         val passwd = changePasswordRequest.password
-            .isValidPassword()
 
-        emailService.apply {
-            email.apply {
-                isValidationEmail()
-                isVerifyEmail()
-            }
+        validateService.apply {
+            validateEmail(email)
+            validateVerifiedEmail(email)
+            validatePassword(passwd)
         }
 
         userRepository.apply {
@@ -77,13 +64,11 @@ class UserServiceImpl(
 
         val email = request.email
         val password = request.password
-            .isValidPassword()
 
-        emailService.apply {
-            email.apply {
-                isValidationEmail()
-                isVerifyEmail()
-            }
+        validateService.apply {
+            validateEmail(email)
+            validateVerifiedEmail(email)
+            validatePassword(password)
         }
 
         if (!passwordEncoder.matches(password, user.password))
@@ -96,18 +81,5 @@ class UserServiceImpl(
     override fun isVerifyNickname(nickname: String) {
         userRepository.findByNickname(nickname)
             ?.let { throw UserAlreadyExistsException() }
-    }
-
-    private fun String.isValidPassword(): String {
-        val verifyRegex = !Pattern
-            .compile("(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}")
-            .matcher(this)
-            .matches()
-        val verifyContent = isNotBlank() && isNotEmpty()
-
-        if (!(verifyRegex && verifyContent))
-            throw BadRequestException()
-
-        return this
     }
 }

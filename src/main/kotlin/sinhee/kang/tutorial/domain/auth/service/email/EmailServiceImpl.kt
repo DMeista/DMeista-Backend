@@ -13,13 +13,10 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
+import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
 import sinhee.kang.tutorial.domain.user.domain.user.User
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 
-import java.util.regex.Pattern
 import kotlin.random.Random
 
 @Service
@@ -28,24 +25,23 @@ class EmailServiceImpl(
     private val username: String,
 
     private val javaMailSender: JavaMailSender,
+    private val validateService: ValidateService,
 
-    private val userRepository: UserRepository,
     private val emailLimiterRepository: EmailLimiterRepository,
     private val emailVerificationRepository: EmailVerificationRepository
 ) : EmailService {
 
-    override fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType) {
+    override fun sendVerifyEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email
-            .isExistEmail(sendType)
             .belowRequestLimit()
-            .isValidationEmail()
+            .also { validateService.validateEmail(it) }
 
         sendVerifyEmailFactory(email)
     }
 
-    override fun setVerifyEmail(verifyCodeRequest: VerifyCodeRequest) {
+    override fun verifyAuthCode(verifyCodeRequest: VerifyCodeRequest) {
         val email: String = verifyCodeRequest.email
-            .isValidationEmail()
+            .also { validateService.validateEmail(it) }
         val authCode: String = verifyCodeRequest.authCode
 
         emailVerificationRepository.apply {
@@ -65,36 +61,6 @@ class EmailServiceImpl(
             subject = "DMeista 가입을 축하합니다!",
             text = "${nickname}님,\nDMeista 서비스 회원가입을 축하합니다."
         )
-    }
-
-    override fun String.isVerifyEmail(): String {
-        return emailVerificationRepository.findById(this)
-            .filter(EmailVerification::isVerify)
-            .orElseThrow { BadRequestException() }
-            .email
-    }
-
-    override fun String.isValidationEmail(): String {
-        val verifyRegex = !Pattern
-            .compile("^[0-9a-zA-Z._-]+@[0-9a-zA-Z.-]+\\.[a-zA-Z]{2,3}$")
-            .matcher(this)
-            .matches()
-
-        if (verifyRegex)
-            throw BadRequestException()
-
-        return this
-    }
-
-    override fun String.isExistEmail(sendType: SendType?): String {
-        val user = userRepository.findByEmail(this)
-        when(sendType) {
-            SendType.REGISTER -> user
-                ?.let { throw UserAlreadyExistsException() }
-            SendType.USER -> user
-                ?: throw UserNotFoundException()
-        }
-        return this
     }
 
     private fun sendVerifyEmailFactory(email: String) {
