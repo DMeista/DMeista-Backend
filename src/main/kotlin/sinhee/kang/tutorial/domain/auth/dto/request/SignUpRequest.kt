@@ -10,10 +10,10 @@ data class SignUpRequest(
 
     val nickname: String
 ) {
-        fun toEntity(passwordEncoder: PasswordEncoder): User =
-            User(
-                email = email,
-                password = passwordEncoder.encode(password),
-                nickname = nickname
-            )
+    fun toEntity(passwordEncoder: PasswordEncoder): User =
+        User(
+            email = email,
+            password = passwordEncoder.encode(password),
+            nickname = nickname
+        )
 }
