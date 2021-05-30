@@ -39,7 +39,7 @@ class EmoJiServiceImpl(
     }
 
     override fun emojiService(postId: Int, status: EmojiStatus): EmojiResponse? {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
 

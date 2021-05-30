@@ -3,7 +3,6 @@ package sinhee.kang.tutorial.domain.post.controller
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.post.service.comment.CommentService
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/comments")
@@ -13,13 +12,13 @@ class CommentController(
 
     @PostMapping("/{postId}")
     fun uploadComment(@PathVariable postId: Int,
-                      @Valid @RequestBody commentRequest: CommentRequest): Int {
+                      @RequestBody commentRequest: CommentRequest): Int {
         return commentService.uploadComment(postId, commentRequest)
     }
 
     @PatchMapping("/{commentId}")
     fun changeComment(@PathVariable commentId: Int,
-                      @Valid @RequestBody commentRequest: CommentRequest): Int {
+                      @RequestBody commentRequest: CommentRequest): Int {
         return commentService.updateComment(commentId, commentRequest)
     }
 
@@ -30,13 +29,13 @@ class CommentController(
 
     @PostMapping("/sub/{commentId}")
     fun uploadSubComment(@PathVariable commentId: Int,
-                         @Valid @RequestBody commentRequest: CommentRequest): Int {
+                         @RequestBody commentRequest: CommentRequest): Int {
         return commentService.uploadSubComment(commentId, commentRequest)
     }
 
     @PatchMapping("/sub/{subCommentId}")
     fun changeSubComment(@PathVariable subCommentId: Int,
-                         @Valid @RequestBody commentRequest: CommentRequest): Int {
+                         @RequestBody commentRequest: CommentRequest): Int {
         return commentService.updateSubComment(subCommentId, commentRequest)
     }
 

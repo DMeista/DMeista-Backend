@@ -26,7 +26,7 @@ class FriendServiceImpl(
             ?.let {
                 userRepository.findByNickname(it)
                 ?: throw UserNotFoundException() }
-            ?: run { authService.authValidate() }
+            ?: run { authService.verifyCurrentUser() }
 
         val userResponses: MutableList<UserResponse> = ArrayList()
 
@@ -45,7 +45,7 @@ class FriendServiceImpl(
     }
 
     override fun getFriendRequestsList(page: Pageable): UserListResponse? {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
 
         val userResponses: MutableList<UserResponse> = mutableListOf()
 
@@ -60,7 +60,7 @@ class FriendServiceImpl(
     }
 
     override fun sendFriendRequest(username: String) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val targetUser = userRepository.findByNickname(username)
             ?: throw UserNotFoundException()
 
@@ -75,7 +75,7 @@ class FriendServiceImpl(
     }
 
     override fun acceptFriendRequest(username: String) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val targetUser = userRepository.findByNickname(username)
             ?: throw UserNotFoundException()
 
@@ -88,7 +88,7 @@ class FriendServiceImpl(
     }
 
     override fun removeFriend(username: String) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val targetUser = userRepository.findByNickname(username)
             ?: throw UserNotFoundException()
 

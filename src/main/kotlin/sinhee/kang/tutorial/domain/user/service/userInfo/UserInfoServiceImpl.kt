@@ -21,7 +21,7 @@ class UserInfoServiceImpl(
         val user: User = nickname
             ?.let { userRepository.findByNickname(it)
                 ?: throw UserNotFoundException() }
-            ?: run { authService.authValidate() }
+            ?: run { authService.verifyCurrentUser() }
 
         val postResponse: MutableList<PostResponse> = generatePostResponse(user)
 

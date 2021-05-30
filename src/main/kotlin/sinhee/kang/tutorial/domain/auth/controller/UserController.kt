@@ -5,7 +5,6 @@ import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
 import sinhee.kang.tutorial.domain.auth.service.email.SendType
 import sinhee.kang.tutorial.domain.auth.service.user.UserService
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/users")
@@ -15,27 +14,27 @@ class UserController(
 ) {
 
     @PostMapping("/email/verify/{sendType}")
-    fun sendEmail(@Valid @RequestBody emailRequest: EmailRequest,
+    fun sendEmail(@RequestBody emailRequest: EmailRequest,
                   @PathVariable sendType: SendType) =
-        emailService.sendVerificationEmail(emailRequest, sendType)
+        emailService.sendVerifyEmail(emailRequest, sendType)
 
     @PutMapping("/email/verify")
-    fun verifyEmail(@Valid @RequestBody verifyCodeRequest: VerifyCodeRequest) =
-        emailService.verifyEmail(verifyCodeRequest)
+    fun verifyEmail(@RequestBody verifyCodeRequest: VerifyCodeRequest) =
+        emailService.verifyAuthCode(verifyCodeRequest)
 
     @GetMapping("/nickname")
-    fun isVerifyNickname(@RequestParam nickname: String) =
+    fun verifyNickname(@RequestParam nickname: String) =
         userService.isVerifyNickname(nickname)
 
     @PostMapping
-    fun signUp(@Valid @RequestBody signUpRequest: SignUpRequest) =
+    fun signUp(@RequestBody signUpRequest: SignUpRequest) =
         userService.signUp(signUpRequest)
 
-    @DeleteMapping
-    fun exitAccount(@Valid @RequestBody request: ChangePasswordRequest) =
-        userService.exitAccount(request)
-
     @PutMapping("/password")
-    fun changePassword(@Valid @RequestBody changePasswordRequest: ChangePasswordRequest) =
+    fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest) =
         userService.changePassword(changePasswordRequest)
+
+    @DeleteMapping
+    fun exitAccount(@RequestBody request: ChangePasswordRequest) =
+        userService.exitAccount(request)
 }

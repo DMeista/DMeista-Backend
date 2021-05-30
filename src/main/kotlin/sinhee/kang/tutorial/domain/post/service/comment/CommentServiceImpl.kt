@@ -23,7 +23,7 @@ class CommentServiceImpl(
 ): CommentService {
 
     override fun uploadComment(postId: Int, commentRequest: CommentRequest): Int {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val post = postRepository.findById(postId)
             .orElseThrow { ApplicationNotFoundException() }
 
@@ -37,7 +37,7 @@ class CommentServiceImpl(
     }
 
     override fun updateComment(commentId: Int, commentRequest: CommentRequest): Int {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val comment = commentRepository.findById(commentId)
             .orElseThrow { CommentNotFoundException() }
 
@@ -51,7 +51,7 @@ class CommentServiceImpl(
     }
 
     override fun removeComment(commentId: Int) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
 
         commentRepository.findById(commentId)
             .orElseThrow { CommentNotFoundException() }
@@ -61,7 +61,7 @@ class CommentServiceImpl(
     }
 
     override fun uploadSubComment(commentId: Int, commentRequest: CommentRequest): Int {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val comment = commentRepository.findById(commentId)
             .orElseThrow{ ApplicationNotFoundException() }
 
@@ -74,7 +74,7 @@ class CommentServiceImpl(
     }
 
     override fun updateSubComment(subCommentId: Int, commentRequest: CommentRequest): Int {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val subComment = subCommentRepository.findById(subCommentId)
                 .orElseThrow { CommentNotFoundException() }
 
@@ -88,7 +88,7 @@ class CommentServiceImpl(
     }
 
     override fun removeSubComment(subCommentId: Int) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
 
         subCommentRepository.findById(subCommentId)
             .orElseThrow { CommentNotFoundException() }
