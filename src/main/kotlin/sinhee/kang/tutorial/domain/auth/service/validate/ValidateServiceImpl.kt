@@ -17,9 +17,9 @@ class ValidateServiceImpl(
 ): ValidateService {
 
     override fun validatePassword(password: String) {
-        val emailRegex = "(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}"
+        val passwordRegex = "(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}"
 
-        if (!validateRegexPattern(emailRegex, password))
+        if (!validateRegexPattern(passwordRegex, password))
             throw BadRequestException()
     }
 

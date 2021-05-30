@@ -71,8 +71,7 @@ class UserServiceImpl(
             validatePassword(password)
         }
 
-        if (!passwordEncoder.matches(password, user.password))
-            throw UnAuthorizedException()
+        user.isMatchedPassword(passwordEncoder, password)
 
         emailVerificationRepository.deleteById(email)
         userRepository.delete(user)
