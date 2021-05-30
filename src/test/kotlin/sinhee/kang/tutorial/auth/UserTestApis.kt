@@ -34,7 +34,7 @@ class UserTestApis: TestApis() {
     @Test
     fun signUpTest() {
         userRepository.deleteAll()
-        requestBody(post("/users"), SignUpRequest(user.email, "1234", user.nickname))
+        requestBody(post("/users"), SignUpRequest(user.email, password, user.nickname))
         userRepository.findByEmail(user.email)
             ?.let { assert(it.nickname == user.nickname) }
             ?: throw Exception()
@@ -42,12 +42,12 @@ class UserTestApis: TestApis() {
 
     @Test
     fun changePasswordTest() {
-        requestBody(put("/users/password"), ChangePasswordRequest(user.email, "4321"))
+        requestBody(put("/users/password"), ChangePasswordRequest(user.email, password))
     }
 
     @Test
     fun exitAccountTest() {
-        val request = ChangePasswordRequest(user.email, "1234")
+        val request = ChangePasswordRequest(user.email, password)
         requestBody(delete("/users"), request, token = getAccessToken(signInRequest))
     }
 
@@ -87,7 +87,7 @@ class UserTestApis: TestApis() {
         emailVerificationRepository.save(EmailVerification(
                 email = user.email,
                 authCode = "AUTH_CODE",
-                status = EmailVerificationStatus.UNVERIFIED
+                status = EmailVerificationStatus.VERIFIED
         ))
         requestBody(put("/users/email/verify"), VerifyCodeRequest(user.email, "AUTH_CODE"))
     }

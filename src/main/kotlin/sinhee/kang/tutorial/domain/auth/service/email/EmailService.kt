@@ -5,9 +5,9 @@ import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.user.domain.user.User
 
 interface EmailService {
-    fun verifyEmail(verifyCodeRequest: VerifyCodeRequest)
+    fun sendVerifyEmail(emailRequest: EmailRequest, sendType: SendType)
 
-    fun sendVerificationEmail(emailRequest: EmailRequest, sendType: SendType)
+    fun verifyAuthCode(verifyCodeRequest: VerifyCodeRequest)
 
     fun sendCelebrateEmail(user: User)
 }

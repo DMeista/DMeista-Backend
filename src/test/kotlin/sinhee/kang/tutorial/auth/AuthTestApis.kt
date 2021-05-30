@@ -29,12 +29,12 @@ class AuthTestApis: TestApis() {
 
     @Test
     fun signInTest() {
-        requestBody(post("/auth"), SignInRequest(user.email, "1234"))
+        requestBody(post("/auth"), signInRequest)
     }
 
     @Test
     fun extendTokenTest() {
-        requestBody(put("/auth"), cookie = getRefreshToken(SignInRequest(user.email, "1234")))
+        requestBody(put("/auth"), cookie = getRefreshToken(signInRequest))
     }
 
     private fun getRefreshToken(signInRequest: SignInRequest): Cookie? {

@@ -5,7 +5,6 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/auth")
@@ -14,7 +13,7 @@ class AuthController(
 ) {
 
     @PostMapping
-    fun signIn(@Valid @RequestBody signInRequest: SignInRequest, response: HttpServletResponse) =
+    fun signIn(@RequestBody signInRequest: SignInRequest, response: HttpServletResponse) =
         authService.signIn(signInRequest, response)
 
     @PutMapping

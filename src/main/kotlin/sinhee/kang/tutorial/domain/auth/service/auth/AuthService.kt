@@ -11,5 +11,5 @@ interface AuthService {
 
     fun extendAuthTokens(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse): TokenResponse
 
-    fun authValidate(): User
+    fun verifyCurrentUser(): User
 }

@@ -41,7 +41,7 @@ class PostServiceImpl(
                 .orElseThrow { ApplicationNotFoundException() }
 
         try {
-            currentUser = authService.authValidate()
+            currentUser = authService.verifyCurrentUser()
             viewRepository.findByUserAndPost(currentUser, post)
                 ?: viewRepository.save(View(user = currentUser, post = post))
         }
@@ -103,7 +103,7 @@ class PostServiceImpl(
     }
 
     override fun uploadPost(title: String, content: String, tags: List<String>?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int? {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val tagsResponse: MutableSet<String> = mutableSetOf()
 
         tags?.let {
@@ -127,7 +127,7 @@ class PostServiceImpl(
     }
 
     override fun changePost(postId: Int, title: String, content: String, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int? {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
         if ( post.user == user || user.isRoles(AccountRole.ADMIN) ) {
@@ -148,7 +148,7 @@ class PostServiceImpl(
     }
 
     override fun deletePost(postId: Int) {
-        val user = authService.authValidate()
+        val user = authService.verifyCurrentUser()
         val post = postRepository.findById(postId)
             .orElseThrow { ApplicationNotFoundException() }
             .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
@@ -174,7 +174,7 @@ class PostServiceImpl(
     }
 
     private fun getPostList(postPage: Page<Post>): PostListResponse {
-        val user = try { authService.authValidate() }
+        val user = try { authService.verifyCurrentUser() }
                 catch (e: Exception) { null }
         val postResponse: MutableList<PostResponse> = ArrayList()
 
