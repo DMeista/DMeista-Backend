@@ -44,20 +44,22 @@ open class DiVariables {
 
     private val passwordEncoder: PasswordEncoder = BCryptPasswordEncoder()
 
+    protected val password = "qweasd123!"
+
     protected val user: User = User(
         email = "rkdtlsgml40@dsm.hs.kr",
         nickname = "user",
-        password = passwordEncoder.encode("1234")
+        password = passwordEncoder.encode(password)
     )
 
     protected val user2: User = User(
         email = "rkdtlsgml50@dsm.hs.kr",
         nickname = "user2",
-        password =  passwordEncoder.encode("1234")
+        password =  passwordEncoder.encode(password)
     )
 
-    protected val signInRequest = SignInRequest(user.email, "1234")
-    protected val signInRequest2 = SignInRequest(user2.email, "1234")
+    protected val signInRequest = SignInRequest(user.email, password)
+    protected val signInRequest2 = SignInRequest(user2.email, password)
 
     protected var currentUserToken: String = ""
     protected var targetUserToken: String = ""
