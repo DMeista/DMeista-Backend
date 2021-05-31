@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
@@ -23,7 +23,7 @@ class UserServiceImpl(
     private val validateService: ValidateService,
 
     private val userRepository: UserRepository,
-    private val emailVerificationRepository: EmailVerificationRepository
+    private val signUpVerificationRepository: SignUpVerificationRepository
 ): UserService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
@@ -37,6 +37,7 @@ class UserServiceImpl(
 
         userRepository.save(signUpRequest.toEntity(passwordEncoder))
             .let { emailService.sendCelebrateEmail(it) }
+        signUpVerificationRepository.deleteById(email)
     }
 
     override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
@@ -56,7 +57,7 @@ class UserServiceImpl(
                 ?: throw UserNotFoundException()
         }
 
-        emailVerificationRepository.deleteById(email)
+        signUpVerificationRepository.deleteById(email)
     }
 
     override fun exitAccount(request: ChangePasswordRequest) {
@@ -73,7 +74,7 @@ class UserServiceImpl(
 
         user.isMatchedPassword(passwordEncoder, password)
 
-        emailVerificationRepository.deleteById(email)
+        signUpVerificationRepository.deleteById(email)
         userRepository.delete(user)
     }
 

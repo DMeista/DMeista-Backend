@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
 
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.post.domain.comment.repository.CommentRepository
 import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
@@ -30,7 +30,7 @@ open class DiVariables {
     @Autowired
     protected lateinit var friendRepository: FriendRepository
     @Autowired
-    protected lateinit var emailVerificationRepository: EmailVerificationRepository
+    protected lateinit var signUpVerificationRepository: SignUpVerificationRepository
     @Autowired
     protected lateinit var emailLimiterRepository: EmailLimiterRepository
     @Autowired

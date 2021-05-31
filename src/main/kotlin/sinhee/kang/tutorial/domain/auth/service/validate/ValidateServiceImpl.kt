@@ -1,8 +1,8 @@
 package sinhee.kang.tutorial.domain.auth.service.validate
 
 import org.springframework.stereotype.Service
-import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
+import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.service.email.SendType
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
@@ -13,7 +13,7 @@ import java.util.regex.Pattern
 @Service
 class ValidateServiceImpl(
     private val userRepository: UserRepository,
-    private val emailVerificationRepository: EmailVerificationRepository
+    private val signUpVerificationRepository: SignUpVerificationRepository
 ): ValidateService {
 
     override fun validatePassword(password: String) {
@@ -42,8 +42,8 @@ class ValidateServiceImpl(
     }
 
     override fun validateVerifiedEmail(email: String) {
-        emailVerificationRepository.findById(email)
-            .filter(EmailVerification::isVerify)
+        signUpVerificationRepository.findById(email)
+            .filter(SignUpVerification::isVerify)
             .orElseThrow { BadRequestException() }
     }
 
