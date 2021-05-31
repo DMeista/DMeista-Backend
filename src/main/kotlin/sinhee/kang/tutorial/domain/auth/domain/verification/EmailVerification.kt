@@ -18,15 +18,16 @@ data class EmailVerification(
         @TimeToLive
         var ttl: Long = 60L
 ) {
-    fun setVerify(): EmailVerification {
+    private fun setVerify(): EmailVerification {
         status = EmailVerificationStatus.VERIFIED
-        ttl *= 3
+        ttl = 60 * 5
         return this
     }
 
     fun checkAuthCode(code: String): EmailVerification {
         if (authCode != code)
             throw InvalidAuthCodeException()
+        else setVerify()
         return this
     }
 
