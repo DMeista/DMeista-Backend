@@ -34,8 +34,8 @@ data class SignUpVerification(
         return this
     }
 
-    fun checkNickname(nickname: String?): SignUpVerification {
-        if (this.nickname != nickname)
+    fun checkEqualNickname(nickname: String?): SignUpVerification {
+        if (this.nickname != nickname || this.nickname == null)
             throw BadRequestException()
         return this
     }
