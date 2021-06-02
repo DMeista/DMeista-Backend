@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
-import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
+import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
@@ -28,7 +28,7 @@ class EmailServiceImpl(
     private val validateService: ValidateService,
 
     private val emailLimiterRepository: EmailLimiterRepository,
-    private val emailVerificationRepository: EmailVerificationRepository
+    private val signUpVerificationRepository: SignUpVerificationRepository
 ) : EmailService {
 
     override fun sendVerifyEmail(emailRequest: EmailRequest, sendType: SendType) {
@@ -44,11 +44,11 @@ class EmailServiceImpl(
             .also { validateService.validateEmail(it) }
         val authCode: String = verifyCodeRequest.authCode
 
-        emailVerificationRepository.apply {
-            val emailVerification = findById(email)
+        signUpVerificationRepository.apply {
+            val signUpVerification = findById(email)
                 .orElseThrow { UserNotFoundException() }
                 .checkAuthCode(authCode)
-            save(emailVerification)
+            save(signUpVerification)
         }
     }
 
@@ -65,7 +65,7 @@ class EmailServiceImpl(
 
     private fun sendVerifyEmailFactory(email: String) {
         val randomCode = generateRandomCode()
-        emailVerificationRepository.save(EmailVerification(email, randomCode))
+        signUpVerificationRepository.save(SignUpVerification(email, randomCode))
 
         sendEmail(
             targetEmail = email,

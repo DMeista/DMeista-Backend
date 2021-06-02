@@ -1,17 +1,17 @@
 package sinhee.kang.tutorial.domain.auth.service.user
 
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
 
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.EmailVerificationRepository
+import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
 import sinhee.kang.tutorial.domain.auth.service.email.SendType
 import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.businessException.exception.auth.*
+import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 
 @Service
@@ -23,20 +23,30 @@ class UserServiceImpl(
     private val validateService: ValidateService,
 
     private val userRepository: UserRepository,
-    private val emailVerificationRepository: EmailVerificationRepository
+    private val signUpVerificationRepository: SignUpVerificationRepository
 ): UserService {
 
     override fun signUp(signUpRequest: SignUpRequest) {
         val email = signUpRequest.email
+        val password = signUpRequest.password
+        val nickname = signUpRequest.nickname
 
         validateService.apply {
             validateEmail(email)
+            validatePassword(password)
+            validateNickname(nickname)
+
             validateExistEmail(email, SendType.REGISTER)
-            validatePassword(signUpRequest.password)
+        }
+        with(email) {
+            validateVerifiedEmail()
+            validateVerifiedNickname(nickname)
         }
 
         userRepository.save(signUpRequest.toEntity(passwordEncoder))
-            .let { emailService.sendCelebrateEmail(it) }
+            .also { emailService.sendCelebrateEmail(it) }
+
+        signUpVerificationRepository.deleteById(email)
     }
 
     override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
@@ -45,9 +55,9 @@ class UserServiceImpl(
 
         validateService.apply {
             validateEmail(email)
-            validateVerifiedEmail(email)
             validatePassword(passwd)
         }
+        email.validateVerifiedEmail()
 
         userRepository.apply {
             findByEmail(email)
@@ -56,7 +66,7 @@ class UserServiceImpl(
                 ?: throw UserNotFoundException()
         }
 
-        emailVerificationRepository.deleteById(email)
+        signUpVerificationRepository.deleteById(email)
     }
 
     override fun exitAccount(request: ChangePasswordRequest) {
@@ -67,18 +77,42 @@ class UserServiceImpl(
 
         validateService.apply {
             validateEmail(email)
-            validateVerifiedEmail(email)
             validatePassword(password)
         }
+        email.validateVerifiedEmail()
 
         user.isMatchedPassword(passwordEncoder, password)
 
-        emailVerificationRepository.deleteById(email)
+        signUpVerificationRepository.deleteById(email)
         userRepository.delete(user)
     }
 
-    override fun isVerifyNickname(nickname: String) {
-        userRepository.findByNickname(nickname)
-            ?.let { throw UserAlreadyExistsException() }
+    override fun isVerifyNickname(verifyNicknameRequest: VerifyNicknameRequest) {
+        val email = verifyNicknameRequest.email
+        val nickname = verifyNicknameRequest.nickname
+
+        validateService.apply {
+            validateEmail(email)
+            validateNickname(nickname)
+        }
+        signUpVerificationRepository.apply {
+            val signUpVerification = findById(email)
+                .orElseThrow{ UserNotFoundException() }
+                .apply { this.nickname = nickname }
+
+            save(signUpVerification)
+        }
+    }
+
+    private fun String.validateVerifiedEmail() {
+        signUpVerificationRepository.findById(this)
+            .filter(SignUpVerification::isVerify)
+            .orElseThrow { BadRequestException() }
+    }
+
+    private fun String.validateVerifiedNickname(nickname: String) {
+        signUpVerificationRepository.findById(this)
+            .orElseThrow { BadRequestException() }
+            .checkEqualNickname(nickname)
     }
 }

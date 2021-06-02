@@ -1,7 +1,7 @@
 package sinhee.kang.tutorial.domain.auth.dto.request
 
-data class SignInRequest(
+data class VerifyNicknameRequest(
     val email: String,
 
-    val password: String
+    val nickname: String
 )

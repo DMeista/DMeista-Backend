@@ -10,7 +10,7 @@ import sinhee.kang.tutorial.global.businessException.exception.auth.UnAuthorized
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
-import sinhee.kang.tutorial.global.security.authentication.AuthenticationFacade
+import sinhee.kang.tutorial.global.security.authentication.AuthenticationService
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
 
@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse
 class AuthServiceImpl(
     private val passwordEncoder: PasswordEncoder,
     private val tokenProvider: JwtTokenProvider,
-    private val authenticationFacade: AuthenticationFacade,
+    private val authenticationService: AuthenticationService,
 
     private val validateService: ValidateService,
 
@@ -57,7 +57,7 @@ class AuthServiceImpl(
     }
 
     override fun verifyCurrentUser(): User {
-        val currentUsername = authenticationFacade.getUserName()
+        val currentUsername = authenticationService.getUserName()
 
         return userRepository.findByNickname(currentUsername)
             ?: throw UnAuthorizedException()

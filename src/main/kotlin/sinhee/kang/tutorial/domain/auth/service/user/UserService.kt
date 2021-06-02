@@ -9,5 +9,5 @@ interface UserService {
 
     fun exitAccount(request: ChangePasswordRequest)
 
-    fun isVerifyNickname(nickname: String)
+    fun isVerifyNickname(verifyNicknameRequest: VerifyNicknameRequest)
 }
