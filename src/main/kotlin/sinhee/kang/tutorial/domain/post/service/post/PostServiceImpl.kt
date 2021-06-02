@@ -17,16 +17,19 @@ import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationN
 import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.infra.api.kakao.vision.service.VisionLabelService
+import sinhee.kang.tutorial.infra.api.kakao.adult.service.DetectService
+import sinhee.kang.tutorial.infra.api.kakao.vision.service.LabelService
 
 @Service
 class PostServiceImpl(
     private val authService: AuthService,
     private val imageService: ImageService,
-    private val visionLabelApi: VisionLabelService,
+
+    private val visionLabelApi: LabelService,
+    private val detectImageApi: DetectService,
 
     private val postRepository: PostRepository,
-    private val viewRepository: ViewRepository,
+    private val viewRepository: ViewRepository
 ): PostService {
 
     override fun getAllHashTagList(pageable: Pageable, tags: String): PostListResponse {
@@ -106,9 +109,12 @@ class PostServiceImpl(
         val user = authService.verifyCurrentUser()
         val tagsResponse: MutableSet<String> = mutableSetOf()
 
-        tags?.let {
-            tagsResponse.addAll(it)
-        }
+        tags?.let { tagsResponse.addAll(it) }
+
+        imageFiles
+            ?.forEach { detectImageApi.filterAdultImage(it) }
+            ?.takeIf { autoTags }
+            ?.also { tagsResponse.addAll(getTagsFromImage(imageFiles)) }
 
         if (!imageFiles.isNullOrEmpty() && autoTags) {
             tagsResponse.addAll(getTagsFromImage(imageFiles))
@@ -162,13 +168,8 @@ class PostServiceImpl(
     private fun getTagsFromImage(imageFiles: Array<MultipartFile>): MutableSet<String> {
         val request: MutableSet<String> = mutableSetOf()
         imageFiles.forEach { image ->
-            try {
-                val tagsList = visionLabelApi.generateTagFromImage(image)
-                tagsList.forEach { e -> request.add(e) }
-            }
-            catch (e: Exception) {
-                e.printStackTrace()
-            }
+            val tagsList = visionLabelApi.generateTagFromImage(image)
+            tagsList.forEach { e -> request.add(e) }
         }
         return request
     }
