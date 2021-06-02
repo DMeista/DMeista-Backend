@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import sinhee.kang.tutorial.TestApis
 import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
-import sinhee.kang.tutorial.domain.auth.domain.verification.EmailVerification
+import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
@@ -26,7 +26,7 @@ class UserTestApis: TestApis() {
 
     @AfterEach
     fun clean() {
-        emailVerificationRepository.deleteAll()
+        signUpVerificationRepository.deleteAll()
         emailLimiterRepository.deleteAll()
         userRepository.deleteAll()
     }
@@ -84,10 +84,10 @@ class UserTestApis: TestApis() {
     }
 
     private fun emailVerify() {
-        emailVerificationRepository.save(EmailVerification(
+        signUpVerificationRepository.save(SignUpVerification(
                 email = user.email,
                 authCode = "AUTH_CODE",
-                status = EmailVerificationStatus.VERIFIED
+                emailStatus = EmailVerificationStatus.VERIFIED
         ))
         requestBody(put("/users/email/verify"), VerifyCodeRequest(user.email, "AUTH_CODE"))
     }
