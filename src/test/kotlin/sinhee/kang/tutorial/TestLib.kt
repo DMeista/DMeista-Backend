@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 
@@ -23,14 +24,33 @@ import javax.servlet.http.Cookie
 @ActiveProfiles("test", "local")
 class TestLib: CombineVariables() {
 
-    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any): ResultActions =
+    protected fun requestBody(
+        method: MockHttpServletRequestBuilder,
+        obj: Any? = null
+    ): ResultActions =
         mvc.perform(method
             .content(objectMapper
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
                 .writeValueAsString(obj))
             .contentType(MediaType.APPLICATION_JSON_VALUE))
 
-    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null, cookie: Cookie?): ResultActions =
+    protected fun requestBody(
+        method: MockHttpServletRequestBuilder,
+        obj: Any? = null,
+        token: String?
+    ): ResultActions =
+        mvc.perform(method
+            .header("Authorization", token)
+            .content(objectMapper
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+                .writeValueAsString(obj))
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
+
+    protected fun requestBody(
+        method: MockHttpServletRequestBuilder,
+        obj: Any? = null,
+        cookie: Cookie?
+    ): ResultActions =
         mvc.perform(method
             .cookie(cookie)
             .content(objectMapper
@@ -38,13 +58,15 @@ class TestLib: CombineVariables() {
                 .writeValueAsString(obj))
             .contentType(MediaType.APPLICATION_JSON_VALUE))
 
-    protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String?): ResultActions =
+    protected fun requestParams(
+        method: MockHttpServletRequestBuilder,
+        params: MultiValueMap<String, String>,
+        token: String?
+    ): ResultActions =
         mvc.perform(method
-                .header("Authorization", token)
-                .content(ObjectMapper()
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                    .writeValueAsString(obj))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .header("Authorization", token)
+            .params(params)
+            .contentType(MediaType.APPLICATION_JSON_VALUE))
 
     protected fun requestBody1(method: MockHttpServletRequestBuilder, obj: Any): String {
         return mvc.perform(
