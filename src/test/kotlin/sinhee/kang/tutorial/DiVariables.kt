@@ -18,6 +18,7 @@ import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepositor
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 
+@Suppress("SpringJavaAutowiredMembersInspection")
 @AutoConfigureMockMvc
 open class DiVariables {
 
