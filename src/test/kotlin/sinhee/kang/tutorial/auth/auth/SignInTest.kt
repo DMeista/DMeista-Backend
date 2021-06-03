@@ -30,17 +30,28 @@ class SignInTest: TestLib() {
     }
 
     @Test
-    fun `이메일 형식 오류`() {
-        requestBody(post("/auth"), SignInRequest("user.email", password))
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+    fun `패스워드 불일치 오류`() {
+        val request = SignInRequest(user.email, "${password}a")
 
-        requestBody(post("/auth"), SignInRequest("user@email", password))
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        requestBody(post("/auth"), request)
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @Test
+    fun `이메일 형식 오류`() {
+        val invalidEmails = arrayListOf("user@email", "user@email")
+
+        for(email: String in invalidEmails) {
+            requestBody(post("/auth"), SignInRequest(email, password))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        }
     }
 
     @Test
     fun `패스워드 형식 오류`() {
-        requestBody(post("/auth"), SignInRequest(user.email, "password"))
+        val request = SignInRequest(user.email, "password")
+
+        requestBody(post("/auth"), request)
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
