@@ -21,7 +21,7 @@ import javax.servlet.http.Cookie
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test", "local")
-class TestLib: DiVariables() {
+class TestLib: CombineVariables() {
 
     protected fun requestBody(method: MockHttpServletRequestBuilder, obj: Any): ResultActions =
         mvc.perform(method

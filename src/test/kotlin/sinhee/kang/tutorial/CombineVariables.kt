@@ -20,7 +20,7 @@ import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 @AutoConfigureMockMvc
-open class DiVariables {
+open class CombineVariables {
 
     @Autowired
     protected lateinit var mvc: MockMvc
