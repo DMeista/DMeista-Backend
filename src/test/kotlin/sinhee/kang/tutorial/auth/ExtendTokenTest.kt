@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.auth.auth
+package sinhee.kang.tutorial.auth
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
