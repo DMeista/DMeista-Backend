@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.auth.user
+package sinhee.kang.tutorial.user
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -7,10 +7,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
-import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
-import sinhee.kang.tutorial.domain.user.domain.user.User
 
 @Suppress("NonAsciiCharacters")
 class SignUpTest: TestLib() {
