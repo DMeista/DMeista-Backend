@@ -33,6 +33,14 @@ class ExitAccountTest: TestLib() {
     }
 
     @Test
+    fun `사용자 인증이 확인되지 않음`() {
+        val request = ChangePasswordRequest(user.email, password)
+
+        requestBody(delete("/users"), request)
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
+
+    @Test
     fun `패스워드 불일치 오류`() {
         val token = getAccessToken(signInRequest)
         val request = ChangePasswordRequest(user.email, "${password}a")
