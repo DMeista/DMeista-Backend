@@ -15,6 +15,7 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificat
 
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 import javax.servlet.http.Cookie
@@ -37,7 +38,7 @@ class TestLib: CombineVariables() {
     protected fun requestBody(
         method: MockHttpServletRequestBuilder,
         obj: Any? = null,
-        token: String?
+        token: String = ""
     ): ResultActions =
         mvc.perform(method
             .header("Authorization", token)
@@ -61,23 +62,12 @@ class TestLib: CombineVariables() {
     protected fun requestParams(
         method: MockHttpServletRequestBuilder,
         params: MultiValueMap<String, String>,
-        token: String?
+        token: String = ""
     ): ResultActions =
         mvc.perform(method
             .header("Authorization", token)
             .params(params)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
-
-    protected fun requestBody1(method: MockHttpServletRequestBuilder, obj: Any): String {
-        return mvc.perform(
-            method
-                .content(ObjectMapper()
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-                    .writeValueAsString(obj))
-                .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(MockMvcResultMatchers.status().isOk)
-            .andReturn().response.contentAsString
-    }
 
     protected fun requestBody1(method: MockHttpServletRequestBuilder, obj: Any? = null, token: String?): String {
         return mvc.perform(
@@ -114,6 +104,23 @@ class TestLib: CombineVariables() {
             )
         )
     }
+
+    protected fun isCheckUserAndTargetUserExist(user: User, targetUser: User) =
+        friendRepository.findByUserAndTargetUser(user, user2)
+            ?.let { true }
+            ?: false
+
+    protected fun isConnection(user1: User, user2: User, friendStatus: FriendStatus): Boolean {
+        val connection1 = user1.isExistUserAndTargetUser(user2, friendStatus)
+        val connection2 = user2.isExistUserAndTargetUser(user1, friendStatus)
+
+        return connection1 || connection2
+    }
+
+    private fun User.isExistUserAndTargetUser(targetUser: User, friendStatus: FriendStatus) =
+        friendRepository.findByUserAndTargetUserAndStatus(this, targetUser, friendStatus)
+            ?.let { true }
+            ?: false
 
     protected fun generatePost(
         method: MockHttpServletRequestBuilder = post("/posts"),
