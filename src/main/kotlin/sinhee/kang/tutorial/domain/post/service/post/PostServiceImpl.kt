@@ -138,11 +138,12 @@ class PostServiceImpl(
                 .orElseThrow { ApplicationNotFoundException() }
         if ( !(post.user == user || user.isRoles(AccountRole.ADMIN)) )
             throw PermissionDeniedException()
-            post.content = content
-            post.tags = tags?.joinToString { "#$it" }
 
-            postRepository.save(post)
-        }
+        title?.let { post.title = it }
+        content?.let { post.content = it }
+        post.tags = tags?.joinToString { "#$it" }
+
+        postRepository.save(post)
 
         val imageFile = post.imageFileList
 
