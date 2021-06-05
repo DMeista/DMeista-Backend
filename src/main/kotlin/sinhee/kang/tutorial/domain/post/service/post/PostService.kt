@@ -13,7 +13,7 @@ interface PostService {
 
     fun uploadPost(title: String, content: String, tags: List<String>?, autoTags: Boolean, imageFiles: Array<MultipartFile>?): Int?
 
-    fun changePost(postId: Int, title: String, content: String, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int?
+    fun changePost(postId: Int, title: String?, content: String?, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int?
 
     fun deletePost(postId: Int)
 }
