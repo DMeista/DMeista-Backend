@@ -33,9 +33,7 @@ class AddEmojiTest: TestLib() {
     @Test
     fun `이모지 추가`() {
         val postId = postRepository.save(Post(
-            user = user,
-            title = "emoji test",
-            content = "emoji test"
+            user = user
         )).postId
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
         .apply {  add("status", "${EmojiStatus.FUN}") }
