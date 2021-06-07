@@ -22,7 +22,7 @@ class CommentController(
         return commentService.updateComment(commentId, commentRequest)
     }
 
-    @DeleteMapping("{commentId}")
+    @DeleteMapping("/{commentId}")
     fun deleteComment(@PathVariable commentId: Int) {
         commentService.removeComment(commentId)
     }
