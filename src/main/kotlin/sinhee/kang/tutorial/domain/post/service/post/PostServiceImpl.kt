@@ -132,17 +132,18 @@ class PostServiceImpl(
         return post.postId
     }
 
-    override fun changePost(postId: Int, title: String, content: String, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int? {
+    override fun changePost(postId: Int, title: String?, content: String?, tags: List<String>?, imageFiles: Array<MultipartFile>?): Int? {
         val user = authService.verifyCurrentUser()
         val post = postRepository.findById(postId)
                 .orElseThrow { ApplicationNotFoundException() }
-        if ( post.user == user || user.isRoles(AccountRole.ADMIN) ) {
-            post.title = title
-            post.content = content
-            post.tags = tags?.joinToString { "#$it" }
+        if ( !(post.user == user || user.isRoles(AccountRole.ADMIN)) )
+            throw PermissionDeniedException()
 
-            postRepository.save(post)
-        }
+        title?.let { post.title = it }
+        content?.let { post.content = it }
+        post.tags = tags?.joinToString { "#$it" }
+
+        postRepository.save(post)
 
         val imageFile = post.imageFileList
 

@@ -33,8 +33,13 @@ class EmailServiceImpl(
 
     override fun sendVerifyEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email
-            .belowRequestLimit()
-            .also { validateService.validateEmail(it) }
+
+        with(validateService) {
+            validateEmail(email)
+            validateExistEmail(email, sendType)
+        }
+
+        email.belowRequestLimit()
 
         sendVerifyEmailFactory(email)
     }
