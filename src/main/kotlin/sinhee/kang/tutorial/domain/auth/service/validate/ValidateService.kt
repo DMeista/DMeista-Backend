@@ -3,11 +3,11 @@ package sinhee.kang.tutorial.domain.auth.service.validate
 import sinhee.kang.tutorial.domain.auth.service.email.SendType
 
 interface ValidateService {
-    fun validatePassword(password: String)
-
     fun validateEmail(email: String)
 
-    fun validateExistEmail(email: String, sendType: SendType?)
+    fun validatePassword(password: String)
 
-    fun validateVerifiedEmail(email: String)
+    fun validateNickname(nickname: String)
+
+    fun validateExistEmail(email: String, sendType: SendType?)
 }

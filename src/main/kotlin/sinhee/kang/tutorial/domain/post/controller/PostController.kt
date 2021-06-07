@@ -38,8 +38,8 @@ class PostController(
 
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
-                 @RequestParam title: String,
-                 @RequestParam content: String,
+                 @RequestParam title: String?,
+                 @RequestParam content: String?,
                  @RequestParam tags: List<String>?,
                  @RequestParam imageFiles: Array<MultipartFile>?): Int? =
         postService.changePost(postId, title, content, tags, imageFiles)

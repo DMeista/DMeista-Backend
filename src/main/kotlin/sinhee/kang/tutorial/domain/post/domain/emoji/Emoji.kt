@@ -9,7 +9,7 @@ import javax.persistence.*
 @Entity(name = "tbl_emoji")
 data class Emoji(
         @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val Id: Int = 0,
+        val id: Int = 0,
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "user")

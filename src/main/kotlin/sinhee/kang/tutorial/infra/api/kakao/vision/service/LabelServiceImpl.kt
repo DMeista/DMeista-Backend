@@ -10,13 +10,13 @@ import retrofit2.converter.jackson.JacksonConverterFactory
 import sinhee.kang.tutorial.infra.api.kakao.KakaoApi
 
 @Component
-class VisionLabelServiceImpl(
+class LabelServiceImpl(
     @Value("\${kakao.rest.api.key}")
     private val authorizationKey: String
-): VisionLabelService {
+): LabelService {
     private val connection = Retrofit
         .Builder()
-            .baseUrl("https://dapi.kakao.com/")
+            .baseUrl("https://dapi.kakao.com/v2/vision/")
             .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper()))
             .build()
         .create(KakaoApi::class.java)
@@ -27,7 +27,8 @@ class VisionLabelServiceImpl(
             .createFormData("image", imageFile.name, requestFile)
 
         return connection
-            .generateTagFromImage(token = "KakaoAK $authorizationKey", image = body)
-            .execute().body()?.result?.label_kr!!
+            .generateTagFromImage(token = "KakaoAK $authorizationKey", imageFile = body)
+            .execute()
+            .body()?.result?.label_kr!!
     }
 }

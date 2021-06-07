@@ -109,7 +109,7 @@ class FriendServiceImpl(
         val connection1 = user1.isExistUserAndTargetUser(user2)
         val connection2 = user2.isExistUserAndTargetUser(user1)
 
-        return connection1 && connection2
+        return connection1 || connection2
     }
 
     private fun User.isExistUserAndTargetUser(targetUser: User) =
