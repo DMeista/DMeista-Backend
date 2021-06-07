@@ -50,7 +50,7 @@ class UploadCommentTest: TestLib() {
     }
 
     @Test
-    fun `유저를 찾을 수 없음`() {
+    fun `사용자 인증이 확인되지 않음`() {
         val post = postRepository.save(Post(user = user))
         val request = CommentRequest("comment")
 

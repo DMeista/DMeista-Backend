@@ -56,7 +56,7 @@ class AddEmojiTest: TestLib() {
     }
 
     @Test
-    fun `사용자 인증이 확인이 되지 않음`() {
+    fun `사용자 인증이 확인되지 않음`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply {  add("status", "${EmojiStatus.SAD}") }
 
