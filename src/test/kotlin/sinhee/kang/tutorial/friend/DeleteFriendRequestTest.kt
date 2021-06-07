@@ -86,4 +86,18 @@ class DeleteFriendRequestTest: TestLib() {
         requestParams(delete("/users/friends"), request, token = currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
+
+    @Test
+    fun `사용자 인증이 확인되지 않음`() {
+        friendRepository.save(Friend(
+            user = user,
+            targetUser = user2,
+            status = FriendStatus.REQUEST
+        ))
+        val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
+            .apply { add("nickname", user2.nickname) }
+
+        requestParams(delete("/users/friends"), request)
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
 }
