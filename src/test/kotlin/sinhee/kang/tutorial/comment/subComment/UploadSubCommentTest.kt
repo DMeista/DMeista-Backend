@@ -56,12 +56,9 @@ class UploadSubCommentTest: TestLib() {
 
     @Test
     fun `사용자 인증이 확인되지 않음`() {
-        val post = postRepository.save(Post(user = user))
-        val comment = commentRepository.save(Comment(user = user, post = post, content = "comment"))
-
         val request = CommentRequest("sub-comment")
 
-        requestBody(post("/comments/sub/${comment.commentId}"), request)
-            .andExpect(MockMvcResultMatchers.status().isOk)
+        requestBody(post("/comments/sub/0"), request)
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }
