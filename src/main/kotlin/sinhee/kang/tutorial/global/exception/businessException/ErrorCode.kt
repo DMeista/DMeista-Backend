@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.businessException
+package sinhee.kang.tutorial.global.exception.businessException
 
 import com.fasterxml.jackson.annotation.JsonFormat
 
