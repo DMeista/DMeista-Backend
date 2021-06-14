@@ -19,13 +19,13 @@ import sinhee.kang.tutorial.global.security.errorHandler.ExceptionHandlerConfigu
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.security.requestLog.RequestLogConfigurer
-import sinhee.kang.tutorial.infra.api.slack.service.SlackMessageService
+import sinhee.kang.tutorial.infra.api.slack.service.SlackReportService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val slackMessageService: SlackMessageService
+    private val slackReportService: SlackReportService
 ) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
     override fun configure(http: HttpSecurity) {
@@ -51,7 +51,7 @@ class SecurityConfig(
                 .antMatchers("/users/email/password/verify").permitAll()
                 .antMatchers("/users/email/verify").permitAll().and()
             .apply(JwtConfigurer(jwtTokenProvider)).and()
-            .apply(ExceptionHandlerConfigurer(slackMessageService)).and()
+            .apply(ExceptionHandlerConfigurer(slackReportService)).and()
             .apply(RequestLogConfigurer())
     }
 
