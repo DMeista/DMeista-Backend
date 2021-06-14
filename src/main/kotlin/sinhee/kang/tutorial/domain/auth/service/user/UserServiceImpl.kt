@@ -8,7 +8,7 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVer
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
-import sinhee.kang.tutorial.domain.auth.service.email.SendType
+import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException

@@ -13,6 +13,7 @@ import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
 import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
+import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
