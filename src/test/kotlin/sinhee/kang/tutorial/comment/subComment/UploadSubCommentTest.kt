@@ -11,7 +11,7 @@ import sinhee.kang.tutorial.TestLib
 import sinhee.kang.tutorial.domain.post.domain.comment.Comment
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
-import sinhee.kang.tutorial.global.businessException.exception.post.CommentNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 
 @Suppress("NonAsciiCharacters")
 class UploadSubCommentTest: TestLib() {
@@ -41,7 +41,7 @@ class UploadSubCommentTest: TestLib() {
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString.toInt()
         val subComment = subCommentRepository.findById(response)
-            .orElseThrow { CommentNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
 
         assert(comment.commentId == subComment.comment.commentId)
     }

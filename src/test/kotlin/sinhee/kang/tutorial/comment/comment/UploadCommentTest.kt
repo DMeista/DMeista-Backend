@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TestLib
 import sinhee.kang.tutorial.domain.post.domain.post.Post
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
-import sinhee.kang.tutorial.global.businessException.exception.post.CommentNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 
 @Suppress("NonAsciiCharacters")
 class UploadCommentTest: TestLib() {
@@ -36,7 +36,7 @@ class UploadCommentTest: TestLib() {
             .andReturn().response.contentAsString.toInt()
 
         val comment = commentRepository.findById(response)
-            .orElseThrow { CommentNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
 
         assert(post.postId == comment.post.postId)
     }
