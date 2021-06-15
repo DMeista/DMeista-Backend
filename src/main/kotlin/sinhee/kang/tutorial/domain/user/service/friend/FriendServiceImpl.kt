@@ -10,8 +10,8 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 import sinhee.kang.tutorial.domain.user.dto.response.UserResponse
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
-import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
 
 @Service
 class FriendServiceImpl(

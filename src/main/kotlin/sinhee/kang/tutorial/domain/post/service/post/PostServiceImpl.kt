@@ -13,8 +13,8 @@ import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.view.View
 import sinhee.kang.tutorial.domain.post.domain.view.repository.ViewRepository
 import sinhee.kang.tutorial.domain.post.dto.response.*
-import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationNotFoundException
-import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 import sinhee.kang.tutorial.infra.api.kakao.adult.service.DetectService
