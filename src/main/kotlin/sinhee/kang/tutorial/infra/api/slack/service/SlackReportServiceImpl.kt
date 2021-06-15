@@ -34,7 +34,7 @@ class SlackReportServiceImpl: SlackReportService {
         connection.sendMessage(body).execute()
     }
 
-    private fun attachDetailLog (request: HttpServletRequest, exception: Exception): SlackMessageRequest {
+    private fun attachDetailLog(request: HttpServletRequest, exception: Exception): SlackMessageRequest {
 
         val fieldList: MutableList<Field> = arrayListOf<Field>()
             .apply {
@@ -71,14 +71,14 @@ class SlackReportServiceImpl: SlackReportService {
         }
     }
 
-    fun HttpServletRequest.getHeader(): String {
+    private fun HttpServletRequest.getHeader(): String {
         val headers = Collections
             .list(headerNames).stream()
             .collect(Collectors.toMap({ h: String? -> h }) { name: String? -> getHeader(name) })
         return headers.entries.toTypedArray().contentToString()
     }
 
-    fun HttpServletRequest.getBody(): String {
+    private fun HttpServletRequest.getBody(): String {
         return try {
             reader.lines().collect(Collectors.joining())
         } catch (e: IOException) {
@@ -86,7 +86,7 @@ class SlackReportServiceImpl: SlackReportService {
         }
     }
 
-    fun Exception.stackTrace(): String {
+    private fun Exception.stackTrace(): String {
         val stringWriter = StringWriter()
         val printWriter = PrintWriter(stringWriter)
 
