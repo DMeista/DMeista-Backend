@@ -7,7 +7,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidTokenException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.ExpiredTokenException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.InvalidTokenException
 import sinhee.kang.tutorial.global.security.authentication.AuthDetailsService
 import sinhee.kang.tutorial.global.security.jwt.enums.TokenType
 import java.util.*
@@ -51,7 +52,7 @@ class JwtTokenProvider(
             .parseClaimsJws(token).body.expiration
             .before(Date())
     } catch (e: Exception) {
-        throw InvalidTokenException()
+        throw ExpiredTokenException()
     }
 
     fun isRefreshToken(token: String): Boolean = try {
