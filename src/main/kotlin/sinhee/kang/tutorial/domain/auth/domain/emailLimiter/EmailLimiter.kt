@@ -3,7 +3,7 @@ package sinhee.kang.tutorial.domain.auth.domain.emailLimiter
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.TimeToLive
-import sinhee.kang.tutorial.global.businessException.exception.auth.TooManyEmailRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.tooManyRequests.TooManyEmailRequestsException
 
 @RedisHash(value = "email_limiter")
 data class EmailLimiter(
@@ -17,7 +17,7 @@ data class EmailLimiter(
 ) {
     fun update(): EmailLimiter {
         if (countReq < 10) countReq++
-        else throw TooManyEmailRequestException()
+        else throw TooManyEmailRequestsException()
         return this
     }
 }

@@ -1,8 +1,6 @@
 package sinhee.kang.tutorial.infra.api.kakao.adult.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -11,8 +9,8 @@ import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import sinhee.kang.tutorial.global.businessException.exception.common.AccessDeniedException
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.AccessDeniedException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
 import sinhee.kang.tutorial.infra.api.kakao.KakaoApi
 import sinhee.kang.tutorial.infra.api.kakao.adult.dto.AdultResponse
 

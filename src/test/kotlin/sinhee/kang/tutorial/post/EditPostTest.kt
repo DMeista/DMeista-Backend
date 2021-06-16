@@ -11,7 +11,7 @@ import org.springframework.util.MultiValueMap
 
 import sinhee.kang.tutorial.TestLib
 import sinhee.kang.tutorial.domain.post.domain.post.Post
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
 
 @Suppress("NonAsciiCharacters")
 class EditPostTest: TestLib() {

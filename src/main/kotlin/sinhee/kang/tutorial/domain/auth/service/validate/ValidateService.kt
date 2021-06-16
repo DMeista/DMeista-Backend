@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.domain.auth.service.validate
 
-import sinhee.kang.tutorial.domain.auth.service.email.SendType
+import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 
 interface ValidateService {
     fun validateEmail(email: String)

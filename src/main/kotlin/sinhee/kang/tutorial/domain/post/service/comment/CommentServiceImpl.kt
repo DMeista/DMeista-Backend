@@ -8,9 +8,8 @@ import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
 import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.domain.subComment.repository.SubCommentRepository
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
-import sinhee.kang.tutorial.global.businessException.exception.post.ApplicationNotFoundException
-import sinhee.kang.tutorial.global.businessException.exception.post.CommentNotFoundException
-import sinhee.kang.tutorial.global.businessException.exception.auth.PermissionDeniedException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
 
 @Service
@@ -39,7 +38,7 @@ class CommentServiceImpl(
     override fun updateComment(commentId: Int, commentRequest: CommentRequest): Int {
         val user = authService.verifyCurrentUser()
         val comment = commentRepository.findById(commentId)
-            .orElseThrow { CommentNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
 
         val newContent = commentRequest.content
 
@@ -54,7 +53,7 @@ class CommentServiceImpl(
         val user = authService.verifyCurrentUser()
 
         commentRepository.findById(commentId)
-            .orElseThrow { CommentNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
             .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
             ?.also { commentRepository.deleteById(it.commentId) }
             ?: throw PermissionDeniedException()
@@ -76,7 +75,7 @@ class CommentServiceImpl(
     override fun updateSubComment(subCommentId: Int, commentRequest: CommentRequest): Int {
         val user = authService.verifyCurrentUser()
         val subComment = subCommentRepository.findById(subCommentId)
-                .orElseThrow { CommentNotFoundException() }
+                .orElseThrow { ApplicationNotFoundException() }
 
         val newContent = commentRequest.content
 
@@ -91,7 +90,7 @@ class CommentServiceImpl(
         val user = authService.verifyCurrentUser()
 
         subCommentRepository.findById(subCommentId)
-            .orElseThrow { CommentNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
             .takeIf { it.user == user || user.isRoles(AccountRole.ADMIN) }
             ?.also { subCommentRepository.deleteById(it.subCommentId) }
             ?: throw PermissionDeniedException()
