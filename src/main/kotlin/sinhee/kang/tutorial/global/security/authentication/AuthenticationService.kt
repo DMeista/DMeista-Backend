@@ -9,13 +9,13 @@ class AuthenticationService {
 
     fun getUserName(): String {
         val auth = getAuthentication()
-        return if (auth.principal is AuthDetails) {
-            (auth.principal as AuthDetails).username
-        }
-        else {
+
+        return if (auth.principal is AuthDetails)
+                (auth.principal as AuthDetails).username
+        else
             getAuthentication().name
-        }
     }
 
-    private fun getAuthentication(): Authentication = SecurityContextHolder.getContext().authentication
+    private fun getAuthentication(): Authentication =
+        SecurityContextHolder.getContext().authentication
 }

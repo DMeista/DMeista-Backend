@@ -8,7 +8,7 @@ import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
-import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
 
 @Service
 class UserInfoServiceImpl(

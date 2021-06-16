@@ -9,7 +9,7 @@ import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.domain.view.View
 import sinhee.kang.tutorial.domain.user.domain.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.user.enums.AccountRole
-import sinhee.kang.tutorial.global.businessException.exception.auth.IncorrectPasswordException
+import sinhee.kang.tutorial.global.exception.exceptions.forbidden.IncorrectPasswordException
 import java.time.LocalDateTime
 import javax.persistence.*
 

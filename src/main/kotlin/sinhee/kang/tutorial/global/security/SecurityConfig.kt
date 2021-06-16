@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.global.security
 
-import javax.servlet.http.HttpServletRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -19,18 +18,19 @@ import sinhee.kang.tutorial.global.security.errorHandler.ExceptionHandlerConfigu
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import sinhee.kang.tutorial.global.security.requestLog.RequestLogConfigurer
-import sinhee.kang.tutorial.infra.api.slack.service.SlackMessageService
+import sinhee.kang.tutorial.infra.api.slack.service.SlackReportService
 
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
-    private val slackMessageService: SlackMessageService
-) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
+    private val slackReportService: SlackReportService
+): WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
     override fun configure(http: HttpSecurity) {
         http
-            .csrf().disable()
+            .csrf()
+                .disable()
             .cors().and()
             .formLogin()
                 .disable()
@@ -40,9 +40,7 @@ class SecurityConfig(
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-                .requestMatchers(
-                    RequestMatcher { request: HttpServletRequest ->
-                        CorsUtils.isPreFlightRequest(request) }).permitAll()
+                .requestMatchers(RequestMatcher { CorsUtils.isPreFlightRequest(it) }).permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/auth").permitAll()
                 .antMatchers("/posts").permitAll()
@@ -51,15 +49,15 @@ class SecurityConfig(
                 .antMatchers("/users/email/password/verify").permitAll()
                 .antMatchers("/users/email/verify").permitAll().and()
             .apply(JwtConfigurer(jwtTokenProvider)).and()
-            .apply(ExceptionHandlerConfigurer(slackMessageService)).and()
+            .apply(ExceptionHandlerConfigurer(slackReportService)).and()
             .apply(RequestLogConfigurer())
     }
 
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
             .allowedOrigins("*")
-            .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE")
-            .allowedHeaders("*");
+            .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
     }
 
     @Bean

@@ -6,13 +6,13 @@ import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
-import sinhee.kang.tutorial.global.businessException.exception.auth.UnAuthorizedException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
 import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
 import sinhee.kang.tutorial.global.security.authentication.AuthenticationService
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
-import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
 
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse

@@ -57,7 +57,7 @@ class SignUpTest: TestLib() {
     fun `이메일 비인증 오류`() {
         signUpVerificationRepository.deleteAll()
 
-        val request = ChangePasswordRequest(user.email, password)
+        val request = SignUpRequest(user.email, password, "")
 
         requestBody(post("/users"), request)
             .andExpect(MockMvcResultMatchers.status().isBadRequest)

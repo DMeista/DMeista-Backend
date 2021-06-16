@@ -2,11 +2,11 @@ package sinhee.kang.tutorial.domain.auth.service.validate
 
 import org.springframework.stereotype.Service
 
-import sinhee.kang.tutorial.domain.auth.service.email.SendType
+import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
-import sinhee.kang.tutorial.global.businessException.exception.auth.UserAlreadyExistsException
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
-import sinhee.kang.tutorial.global.businessException.exception.common.UserNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.conflict.UserAlreadyExistsException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
 
 import java.util.regex.Pattern
 

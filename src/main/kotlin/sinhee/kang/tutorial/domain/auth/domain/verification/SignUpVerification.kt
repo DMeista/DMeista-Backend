@@ -4,8 +4,8 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.TimeToLive
 import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
-import sinhee.kang.tutorial.global.businessException.exception.auth.InvalidAuthCodeException
-import sinhee.kang.tutorial.global.businessException.exception.common.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidAuthCodeException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
 
 @RedisHash(timeToLive = 60 * 3)
 data class SignUpVerification(
