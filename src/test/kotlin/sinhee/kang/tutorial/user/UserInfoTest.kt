@@ -56,7 +56,7 @@ class UserInfoTest: TestLib() {
         val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", "user2.nickname") }
 
-        val userInfo = requestParams(get("/users"), params, token)
+        requestParams(get("/users"), params, token)
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 }
