@@ -1,34 +1,33 @@
 package sinhee.kang.tutorial.domain.auth.service.validate
 
 import org.springframework.stereotype.Service
+import sinhee.kang.tutorial.domain.auth.entity.verification.AuthVerification
+import sinhee.kang.tutorial.domain.auth.repository.verification.AuthVerificationRepository
 
 import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.exception.exceptions.conflict.UserAlreadyExistsException
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
+import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidAuthEmailException
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
-
-import java.util.regex.Pattern
 
 @Service
 class ValidateServiceImpl(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authVerificationRepository: AuthVerificationRepository
 ): ValidateService {
-    override fun validateEmail(email: String) {
-        val emailRegex = "^[0-9a-zA-Z._-]+@[0-9a-zA-Z.-]+\\.[a-zA-Z]{2,3}$"
 
-        if (!validateRegexPattern(emailRegex, email))
+    override fun validateEmail(email: String) {
+        validateRegexType(email, ValidateType.EMAIL)
             throw BadRequestException()
     }
 
     override fun validatePassword(password: String) {
-        val passwordRegex = "(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}"
-
-        if (!validateRegexPattern(passwordRegex, password))
+        validateRegexType(password, ValidateType.PASSWORD)
             throw BadRequestException()
     }
 
-    override fun validateNickname(nickname: String) {
+    override fun checkExistNickname(nickname: String) {
         userRepository.findByNickname(nickname)
             ?.let { throw UserAlreadyExistsException() }
 
@@ -36,7 +35,7 @@ class ValidateServiceImpl(
             throw BadRequestException()
     }
 
-    override fun validateExistEmail(email: String, sendType: SendType?) {
+    override fun checkExistEmail(email: String, sendType: SendType?) {
         val user = userRepository.findByEmail(email)
 
         when(sendType) {
@@ -47,9 +46,24 @@ class ValidateServiceImpl(
         }
     }
 
-    private fun validateRegexPattern(regex: String, input: String) =
-        Pattern
-            .compile(regex)
-            .matcher(input)
-            .matches()
+    override fun verifiedEmail(email: String) {
+        authVerificationRepository.findById(email)
+            .filter(AuthVerification::isVerify)
+            .orElseThrow { InvalidAuthEmailException() }
+    }
+
+    override fun verifiedNickname(email: String, nickname: String) {
+        authVerificationRepository.findById(email)
+            .orElseThrow { BadRequestException() }
+            .checkEqualNickname(nickname)
+    }
+
+    private fun validateRegexType(string: String, vararg types: ValidateType) {
+        types.forEach { regexType ->
+            regexType.isValid(string)
+        }
+    }
+
+    private fun ValidateType.isValid(input: String): Boolean =
+        regex.matches(input)
 }

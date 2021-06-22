@@ -27,10 +27,6 @@ class UserController(
     fun verifyNickname(@RequestBody verifyNicknameRequest: VerifyNicknameRequest) =
         userService.isVerifyNickname(verifyNicknameRequest)
 
-    @PostMapping
-    fun signUp(@RequestBody signUpRequest: SignUpRequest) =
-        userService.signUp(signUpRequest)
-
     @PutMapping("/password")
     fun changePassword(@RequestBody changePasswordRequest: ChangePasswordRequest) =
         userService.changePassword(changePasswordRequest)

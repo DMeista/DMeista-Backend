@@ -19,7 +19,7 @@ class ChangePasswordTest: TestLib() {
 
     @AfterEach
     fun clean() {
-        signUpVerificationRepository.deleteAll()
+        authVerificationRepository.deleteAll()
         userRepository.deleteAll()
     }
 
@@ -51,7 +51,7 @@ class ChangePasswordTest: TestLib() {
 
     @Test
     fun `이메일 비인증 오류`() {
-        signUpVerificationRepository.deleteAll()
+        authVerificationRepository.deleteAll()
 
         val request = ChangePasswordRequest(user.email, password)
 

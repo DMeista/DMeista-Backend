@@ -7,7 +7,11 @@ interface ValidateService {
 
     fun validatePassword(password: String)
 
-    fun validateNickname(nickname: String)
+    fun checkExistNickname(nickname: String)
 
-    fun validateExistEmail(email: String, sendType: SendType?)
+    fun checkExistEmail(email: String, sendType: SendType?)
+
+    fun verifiedEmail(email: String)
+
+    fun verifiedNickname(email: String, nickname: String)
 }

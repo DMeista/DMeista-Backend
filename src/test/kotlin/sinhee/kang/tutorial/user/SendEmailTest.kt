@@ -7,7 +7,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
+import sinhee.kang.tutorial.domain.auth.entity.emailLimiter.EmailRequestLimiter
 import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 
 @Suppress("NonAsciiCharacters")
@@ -21,8 +21,8 @@ class SendEmailTest: TestLib() {
     @AfterEach
     fun clean() {
         userRepository.deleteAll()
-        emailLimiterRepository.deleteAll()
-        signUpVerificationRepository.deleteAll()
+        emailRequestLimiterRepository.deleteAll()
+        authVerificationRepository.deleteAll()
     }
 
     @Test
@@ -69,10 +69,10 @@ class SendEmailTest: TestLib() {
 
     @Test
     fun `유저서비스 - 이메일 최대 요청 에러`() {
-        emailLimiterRepository.findById(user.email)
-            .orElseGet{ emailLimiterRepository.save(EmailLimiter(user.email)) }
+        emailRequestLimiterRepository.findById(user.email)
+            .orElseGet{ emailRequestLimiterRepository.save(EmailRequestLimiter(user.email)) }
             .let { limit ->
-                (0..9).map { emailLimiterRepository.save(limit.update()) }
+                (0..9).map { emailRequestLimiterRepository.save(limit.update()) }
             }
 
         requestBody(post("/users/email/verify/USER"), EmailRequest(user.email))
@@ -81,10 +81,10 @@ class SendEmailTest: TestLib() {
 
     @Test
     fun `회원가입 - 이메일 최대 요청 에러`() {
-        emailLimiterRepository.findById(user2.email)
-            .orElseGet{ emailLimiterRepository.save(EmailLimiter(user2.email)) }
+        emailRequestLimiterRepository.findById(user2.email)
+            .orElseGet{ emailRequestLimiterRepository.save(EmailRequestLimiter(user2.email)) }
             .let { limit ->
-                (0..9).map { emailLimiterRepository.save(limit.update()) }
+                (0..9).map { emailRequestLimiterRepository.save(limit.update()) }
             }
 
         requestBody(post("/users/email/verify/REGISTER"), EmailRequest(user2.email))

@@ -9,8 +9,8 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.util.MultiValueMap
 
-import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
-import sinhee.kang.tutorial.domain.auth.domain.verification.enums.EmailVerificationStatus
+import sinhee.kang.tutorial.domain.auth.entity.verification.AuthVerification
+import sinhee.kang.tutorial.domain.auth.entity.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
@@ -18,7 +18,6 @@ import sinhee.kang.tutorial.domain.user.domain.user.User
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
 
 import javax.servlet.http.Cookie
-import kotlin.reflect.KClass
 
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,8 +72,8 @@ class TestLib: CombineVariables() {
     }
 
     protected fun emailVerify(user: User) {
-        signUpVerificationRepository.save(
-            SignUpVerification(
+        authVerificationRepository.save(
+            AuthVerification(
                 email = user.email,
                 authCode = "AUTH-CODE",
                 emailStatus = EmailVerificationStatus.VERIFIED,

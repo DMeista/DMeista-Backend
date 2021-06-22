@@ -7,10 +7,10 @@ import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.stereotype.Service
 
-import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.EmailLimiter
-import sinhee.kang.tutorial.domain.auth.domain.emailLimiter.repository.EmailLimiterRepository
-import sinhee.kang.tutorial.domain.auth.domain.verification.SignUpVerification
-import sinhee.kang.tutorial.domain.auth.domain.verification.repository.SignUpVerificationRepository
+import sinhee.kang.tutorial.domain.auth.entity.emailLimiter.EmailRequestLimiter
+import sinhee.kang.tutorial.domain.auth.repository.emailLimiter.EmailRequestLimiterRepository
+import sinhee.kang.tutorial.domain.auth.entity.verification.AuthVerification
+import sinhee.kang.tutorial.domain.auth.repository.verification.AuthVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.EmailRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.VerifyCodeRequest
 import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
@@ -28,16 +28,16 @@ class EmailServiceImpl(
     private val javaMailSender: JavaMailSender,
     private val validateService: ValidateService,
 
-    private val emailLimiterRepository: EmailLimiterRepository,
-    private val signUpVerificationRepository: SignUpVerificationRepository
-) : EmailService {
+    private val emailRequestLimiterRepository: EmailRequestLimiterRepository,
+    private val authVerificationRepository: AuthVerificationRepository
+): EmailService {
 
     override fun sendVerifyEmail(emailRequest: EmailRequest, sendType: SendType) {
         val email = emailRequest.email
 
         with(validateService) {
             validateEmail(email)
-            validateExistEmail(email, sendType)
+            checkExistEmail(email, sendType)
         }
 
         email.belowRequestLimit()
@@ -50,7 +50,7 @@ class EmailServiceImpl(
             .also { validateService.validateEmail(it) }
         val authCode: String = verifyCodeRequest.authCode
 
-        signUpVerificationRepository.apply {
+        authVerificationRepository.apply {
             val signUpVerification = findById(email)
                 .orElseThrow { ExpiredAuthCodeException() }
                 .checkAuthCode(authCode)
@@ -71,7 +71,7 @@ class EmailServiceImpl(
 
     private fun sendVerifyEmailFactory(email: String) {
         val randomCode = generateRandomCode()
-        signUpVerificationRepository.save(SignUpVerification(email, randomCode))
+        authVerificationRepository.save(AuthVerification(email, randomCode))
 
         sendEmail(
             targetEmail = email,
@@ -97,9 +97,9 @@ class EmailServiceImpl(
     }
 
     private fun String.belowRequestLimit(): String {
-        emailLimiterRepository.findById(this)
-            .orElseGet { emailLimiterRepository.save(EmailLimiter(this)) }
-            .apply { emailLimiterRepository.save(update()) }
+        emailRequestLimiterRepository.findById(this)
+            .orElseGet { emailRequestLimiterRepository.save(EmailRequestLimiter(this)) }
+            .apply { emailRequestLimiterRepository.save(update()) }
         return this
     }
 

@@ -7,7 +7,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.auth.dto.request.ChangePasswordRequest
 import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
 
 @Suppress("NonAsciiCharacters")
@@ -20,7 +19,7 @@ class SignUpTest: TestLib() {
 
     @AfterEach
     fun clean() {
-        signUpVerificationRepository.deleteAll()
+        authVerificationRepository.deleteAll()
         userRepository.deleteAll()
     }
 
@@ -55,7 +54,7 @@ class SignUpTest: TestLib() {
 
     @Test
     fun `이메일 비인증 오류`() {
-        signUpVerificationRepository.deleteAll()
+        authVerificationRepository.deleteAll()
 
         val request = SignUpRequest(user.email, password, "")
 
