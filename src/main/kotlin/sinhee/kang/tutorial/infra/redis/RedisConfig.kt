@@ -13,7 +13,7 @@ import java.time.Duration
 
 @Configuration
 @EnableRedisRepositories(enableKeyspaceEvents = RedisKeyValueAdapter.EnableKeyspaceEvents.ON_STARTUP)
-class RedisRepositoryConfig(
+class RedisConfig(
     @Value("\${spring.redis.host}")
     private var host: String,
 
@@ -26,14 +26,15 @@ class RedisRepositoryConfig(
     @Bean
     fun redisConnectionFactory(): LettuceConnectionFactory {
         val redisConfig = RedisStandaloneConfiguration(host, port)
+
+        val clientConfig = LettuceClientConfiguration.builder()
+            .commandTimeout(Duration.ofSeconds(1))
+            .shutdownTimeout(Duration.ZERO)
+            .build()
+
         if (password.isNotBlank())
             redisConfig.setPassword(password)
 
-        val clientConfig: LettuceClientConfiguration =
-            LettuceClientConfiguration.builder()
-                .commandTimeout(Duration.ofSeconds(1))
-                .shutdownTimeout(Duration.ZERO)
-                .build()
         return LettuceConnectionFactory(redisConfig, clientConfig)
     }
 
