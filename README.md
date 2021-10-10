@@ -9,7 +9,7 @@
 
 ### API Docs
 
-[DMeista API Docs(Swagger)](http://3.36.218.14:8080/swagger-ui.html#/)
+[DMeista API Docs(Swagger)](http://localhost:8080/swagger-ui/index.html)
 
 ### Tech Stack
 *자세한 내용은 [build.gradle](./build.gradle.kts)을 확인해 주세요*
