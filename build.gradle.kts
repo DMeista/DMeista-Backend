@@ -43,8 +43,7 @@ dependencies {
     implementation("it.ozimov:embedded-redis:0.7.3")
     runtimeOnly("mysql:mysql-connector-java:8.0.25")
 
-    implementation("io.springfox:springfox-swagger2:2.9.2")
-    implementation("io.springfox:springfox-swagger-ui:2.9.2")
+    implementation("io.springfox:springfox-boot-starter:3.0.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
