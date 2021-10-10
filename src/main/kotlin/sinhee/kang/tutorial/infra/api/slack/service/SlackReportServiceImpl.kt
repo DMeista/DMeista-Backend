@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import sinhee.kang.tutorial.infra.api.slack.SlackApi
-import sinhee.kang.tutorial.infra.api.slack.dto.request.Attachment
-import sinhee.kang.tutorial.infra.api.slack.dto.request.Field
-import sinhee.kang.tutorial.infra.api.slack.dto.request.SlackMessageRequest
+import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest
+import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest.Field
+import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest.Attachment
 import java.io.IOException
 import java.io.PrintWriter
 import java.io.StringWriter
