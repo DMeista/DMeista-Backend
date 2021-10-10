@@ -9,7 +9,7 @@ import sinhee.kang.tutorial.infra.api.kakao.vision.dto.VisionResponse
 interface KakaoApi {
     @Multipart
     @POST("/multitag/generate")
-    fun generateTagFromImage(
+    fun generateMultiTagFromImage(
         @Header("Authorization") token: String,
         @Part imageFile: MultipartBody.Part
     ): Call<VisionResponse>
