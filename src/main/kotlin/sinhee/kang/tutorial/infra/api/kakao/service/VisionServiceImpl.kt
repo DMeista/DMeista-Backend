@@ -1,9 +1,7 @@
-package sinhee.kang.tutorial.infra.api.kakao.adult.service
+package sinhee.kang.tutorial.infra.api.kakao.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
+import okhttp3.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -12,26 +10,38 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.AccessDeniedException
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
-import sinhee.kang.tutorial.infra.api.kakao.KakaoApi
-import sinhee.kang.tutorial.infra.api.kakao.adult.dto.AdultResponse
+import sinhee.kang.tutorial.infra.api.kakao.VisionApi
+import sinhee.kang.tutorial.infra.api.kakao.dto.AdultDetectionResponse
+import sinhee.kang.tutorial.infra.api.kakao.dto.MultiTagResponse
 
 @Component
-class DetectServiceImpl(
+class VisionServiceImpl(
     @Value("\${kakao.rest.api.key}")
     private val authorizationKey: String
-): DetectService {
+): VisionService {
+
     private val connection = Retrofit.Builder()
         .baseUrl("https://dapi.kakao.com/v2/vision/")
         .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper()))
         .build()
-        .create(KakaoApi::class.java)
+        .create(VisionApi::class.java)
 
-    override fun filterAdultImage(imageFile: MultipartFile) {
+    override fun multiTaggingImage(imageFile: MultipartFile): List<String> {
         val formData: MultipartBody.Part = imageFile
             .createRequestBody()
             .createFormData(imageFile.name)
 
-        val adultResponse = sendRequest(formData).body()
+        return sendMultiTaggingRequest(formData).body()
+            ?.result?.label_kr
+            ?: listOf()
+    }
+
+    override fun detectAdultImage(imageFile: MultipartFile) {
+        val formData: MultipartBody.Part = imageFile
+            .createRequestBody()
+            .createFormData(imageFile.name)
+
+        val adultResponse = sendAdultDetectionRequest(formData).body()
             ?: throw BadRequestException()
 
         if (adultResponse.normal < adultResponse.adult)
@@ -41,13 +51,19 @@ class DetectServiceImpl(
     private fun MultipartFile.createRequestBody(): RequestBody =
         RequestBody.create(
             MediaType.parse("image/*"),
-            this.bytes
+            bytes
         )
 
     private fun RequestBody.createFormData(fileName: String): MultipartBody.Part =
         MultipartBody.Part.createFormData("image", fileName, this)
 
-    private fun sendRequest(imageFile: MultipartBody.Part): Response<AdultResponse> =
+    private fun sendMultiTaggingRequest(imageFile: MultipartBody.Part): Response<MultiTagResponse> =
+        connection.multiTaggingImage(
+            token = "KakaoAK $authorizationKey",
+            imageFile = imageFile
+        ).execute()
+
+    private fun sendAdultDetectionRequest(imageFile: MultipartBody.Part): Response<AdultDetectionResponse> =
         connection.detectAdultImage(
             token = "KakaoAK $authorizationKey",
             imageFile = imageFile

@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Component
 class SlackReportServiceImpl: SlackReportService {
+
     private val connection = Retrofit.Builder()
         .baseUrl("https://hooks.slack.com/services/")
         .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper()))
