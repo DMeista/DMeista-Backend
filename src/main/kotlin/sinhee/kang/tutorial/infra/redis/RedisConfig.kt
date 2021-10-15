@@ -9,6 +9,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisKeyValueAdapter
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories
+import org.springframework.data.redis.serializer.StringRedisSerializer
 import java.time.Duration
 
 @Configuration
@@ -39,9 +40,9 @@ class RedisConfig(
     }
 
     @Bean
-    fun redisTemplate(): RedisTemplate<*, *> {
-        val redisTemplate = RedisTemplate<ByteArray, ByteArray>()
-        redisTemplate.setConnectionFactory(redisConnectionFactory())
-        return redisTemplate
-    }
+    fun redisTemplate(): RedisTemplate<*, *> =
+        RedisTemplate<ByteArray, ByteArray>().apply {
+            setConnectionFactory(redisConnectionFactory())
+            setDefaultSerializer(StringRedisSerializer())
+        }
 }
