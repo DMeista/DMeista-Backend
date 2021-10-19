@@ -1,19 +1,29 @@
 package sinhee.kang.tutorial.domain.auth.dto.request
 
-import org.springframework.security.crypto.password.PasswordEncoder
-import sinhee.kang.tutorial.domain.user.domain.user.User
+import sinhee.kang.tutorial.domain.user.entity.user.User
+import sinhee.kang.tutorial.global.util.validator.Validator
+import javax.validation.constraints.NotBlank
 
 data class SignUpRequest(
+    @field:NotBlank
     val email: String,
 
+    @field:NotBlank
     val password: String,
 
+    @field:NotBlank
     val nickname: String
 ) {
-    fun toEntity(passwordEncoder: PasswordEncoder): User =
+    init {
+        with(Validator) {
+            email(email)
+            password(password)
+        }
+    }
+
+    fun toEntity(): User =
         User(
             email = email,
-            password = passwordEncoder.encode(password),
             nickname = nickname
         )
 }
