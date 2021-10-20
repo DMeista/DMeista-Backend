@@ -51,6 +51,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2-native-mt")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.2-native-mt")
 
+    implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.13.0")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
