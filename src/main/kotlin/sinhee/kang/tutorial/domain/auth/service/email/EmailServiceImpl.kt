@@ -15,7 +15,7 @@ import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
 import sinhee.kang.tutorial.domain.user.repository.user.UserRepository
 import sinhee.kang.tutorial.global.exception.exceptions.conflict.UserAlreadyExistsException
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
-import sinhee.kang.tutorial.global.exception.exceptions.tooManyRequests.TooManyEmailRequestsException
+import sinhee.kang.tutorial.global.exception.exceptions.tooManyRequests.TooManyRequestsException
 import java.net.InetAddress
 import java.util.*
 import kotlin.random.Random
@@ -36,7 +36,6 @@ class EmailServiceImpl(
 
     override fun sendAuthCode(emailRequest: EmailRequest) {
         val email = emailRequest.email
-            .also { belowRequestLimit(it) }
         val uuid = UUID.randomUUID()
         val authCode = generateRandomCode()
 
@@ -45,6 +44,8 @@ class EmailServiceImpl(
             SendType.USER -> if (!isUserExist) throw UserNotFoundException()
             SendType.REGISTER -> if (isUserExist) throw UserAlreadyExistsException()
         }
+
+        belowRequestLimit(email)
 
         emailVerificationRepository.save(EmailVerification(uuid, email, authCode))
 
@@ -109,7 +110,7 @@ class EmailServiceImpl(
                 .orElseGet { save(EmailRequestLimiter(email)) }
                 .apply {
                     if (isNotOver()) save(update())
-                    else throw TooManyEmailRequestsException()
+                    else throw TooManyRequestsException()
                 }
         }
     }
