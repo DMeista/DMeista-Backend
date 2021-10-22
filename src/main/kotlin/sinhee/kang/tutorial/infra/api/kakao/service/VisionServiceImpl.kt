@@ -1,7 +1,9 @@
 package sinhee.kang.tutorial.infra.api.kakao.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import okhttp3.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.multipart.MultipartFile
@@ -41,11 +43,12 @@ class VisionServiceImpl(
             .createRequestBody()
             .createFormData(imageFile.name)
 
-        val adultResponse = sendAdultDetectionRequest(formData).body()
+        sendAdultDetectionRequest(formData).body()
+            ?.run {
+                if (result.normal < result.adult)
+                    throw AccessDeniedException()
+            }
             ?: throw BadRequestException()
-
-        if (adultResponse.normal < adultResponse.adult)
-            throw AccessDeniedException()
     }
 
     private fun MultipartFile.createRequestBody(): RequestBody =
