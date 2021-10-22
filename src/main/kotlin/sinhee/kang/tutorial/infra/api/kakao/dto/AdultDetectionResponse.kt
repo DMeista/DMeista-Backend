@@ -1,9 +1,15 @@
 package sinhee.kang.tutorial.infra.api.kakao.dto
 
 data class AdultDetectionResponse (
-    val normal: Float,
+    val rid: String,
 
-    val soft: Float,
+    val result: Result
+) {
+    data class Result(
+        val normal: Float,
 
-    val adult: Float
-)
+        val soft: Float,
+
+        val adult: Float
+    )
+}
