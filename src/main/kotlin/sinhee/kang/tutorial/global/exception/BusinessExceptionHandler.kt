@@ -38,7 +38,7 @@ class BusinessExceptionHandler {
             httpStatus = HttpStatus.METHOD_NOT_ALLOWED
         )
 
-    fun generateResponseEntity(status: Int, message: String, httpStatus: HttpStatus) =
+    private fun generateResponseEntity(status: Int, message: String, httpStatus: HttpStatus) =
         ResponseEntity(
             ExceptionResponse(status, message),
             httpStatus
