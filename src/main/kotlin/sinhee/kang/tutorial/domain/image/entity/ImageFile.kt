@@ -5,7 +5,8 @@ import javax.persistence.*
 
 @Entity(name = "tbl_image")
 class ImageFile (
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int = 0,
 
     @ManyToOne(fetch = FetchType.LAZY)

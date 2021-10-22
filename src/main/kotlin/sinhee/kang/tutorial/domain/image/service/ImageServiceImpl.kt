@@ -35,7 +35,7 @@ class ImageServiceImpl(
         return IOUtils.toByteArray(FileInputStream(file))
     }
 
-    override fun saveImageFiles(post: Post, imageFiles: Array<MultipartFile>) {
+    override fun saveImageFiles(post: Post, imageFiles: List<MultipartFile>) {
         for (image in imageFiles) {
             val fileName: String = generateUniqueUUID()
             image.transferTo(File(uploadPath, fileName))
@@ -46,8 +46,8 @@ class ImageServiceImpl(
         }
     }
 
-    override fun removeImageFiles(post: Post, imageFiles: List<ImageFile>) {
-        for (image in imageFiles) {
+    override fun removeImageFiles(post: Post) {
+        for (image in post.imageFileList) {
             Files.delete(File(uploadPath, image.fileName).toPath())
         }
         imageFileRepository.deleteByPost(post)

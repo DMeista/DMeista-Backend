@@ -7,7 +7,7 @@ import sinhee.kang.tutorial.domain.post.entity.post.Post
 interface ImageService {
     fun getImageFile(imageName: String): ByteArray
 
-    fun saveImageFiles(post: Post, imageFiles: Array<MultipartFile>)
+    fun saveImageFiles(post: Post, imageFiles: List<MultipartFile>)
 
-    fun removeImageFiles(post: Post, imageFiles: List<ImageFile>)
+    fun removeImageFiles(post: Post)
 }
