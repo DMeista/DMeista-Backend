@@ -8,14 +8,14 @@ import sinhee.kang.tutorial.infra.api.kakao.dto.MultiTagResponse
 
 interface VisionApi {
     @Multipart
-    @POST("/multitag/generate")
+    @POST("multitag/generate")
     fun multiTaggingImage(
         @Header("Authorization") token: String,
         @Part imageFile: MultipartBody.Part
     ): Call<MultiTagResponse>
 
     @Multipart
-    @POST("/adult/detect")
+    @POST("adult/detect")
     fun detectAdultImage(
         @Header("Authorization") token: String,
         @Part imageFile: MultipartBody.Part
