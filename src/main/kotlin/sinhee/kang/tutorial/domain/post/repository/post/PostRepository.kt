@@ -1,7 +1,7 @@
-package sinhee.kang.tutorial.domain.post.domain.post.repository
+package sinhee.kang.tutorial.domain.post.repository.post
 
 import org.springframework.data.domain.Page
-import sinhee.kang.tutorial.domain.post.domain.post.Post
+import sinhee.kang.tutorial.domain.post.entity.post.Post
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository

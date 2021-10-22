@@ -1,8 +1,8 @@
-package sinhee.kang.tutorial.domain.post.domain.subComment.repository
+package sinhee.kang.tutorial.domain.post.repository.subComment
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
-import sinhee.kang.tutorial.domain.post.domain.subComment.SubComment
+import sinhee.kang.tutorial.domain.post.entity.subComment.SubComment
 
 @Repository
 interface SubCommentRepository : CrudRepository<SubComment, Int>
