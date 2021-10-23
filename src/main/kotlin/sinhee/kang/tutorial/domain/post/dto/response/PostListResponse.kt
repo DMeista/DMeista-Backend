@@ -2,6 +2,7 @@ package sinhee.kang.tutorial.domain.post.dto.response
 
 import org.springframework.data.domain.Page
 import sinhee.kang.tutorial.domain.post.entity.post.Post
+import sinhee.kang.tutorial.domain.user.entity.user.User
 
 data class PostListResponse (
     val totalItems: Int = 0,
@@ -10,9 +11,18 @@ data class PostListResponse (
 
     val applications: MutableList<PostPreviewResponse> = arrayListOf()
 ) {
-    constructor(posts: Page<Post>, applications: MutableList<PostPreviewResponse>): this (
+    constructor(user: User?, posts: Page<Post>): this (
         totalItems = posts.totalElements.toInt(),
         totalPages = posts.totalPages,
-        applications = applications
+        applications = getPostsList(user, posts)
     )
+
+    companion object {
+        private fun getPostsList(user: User?, posts: Page<Post>): MutableList<PostPreviewResponse> =
+            mutableListOf<PostPreviewResponse>().apply {
+                posts.forEach { post: Post ->
+                    add(PostPreviewResponse(user, post))
+                }
+            }
+    }
 }
