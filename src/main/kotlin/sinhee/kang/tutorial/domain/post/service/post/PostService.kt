@@ -12,9 +12,9 @@ interface PostService {
 
     fun getPostContent(postId: Int): PostContentResponse
 
-    fun uploadPost(postRequest: PostRequest): Int
+    fun generatePost(postRequest: PostRequest): Int
 
     fun changePost(changePostRequest: ChangePostRequest): Int
 
-    fun deletePost(postId: Int)
+    fun removePost(postId: Int)
 }

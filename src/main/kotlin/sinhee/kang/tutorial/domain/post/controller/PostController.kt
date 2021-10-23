@@ -34,20 +34,20 @@ class PostController(
                    @RequestParam(required = false) tags: List<String>?,
                    @RequestParam(required = false) autoTag: Boolean?,
                    @RequestParam(required = false) imageFiles: List<MultipartFile>?): Int =
-        postService.uploadPost(PostRequest(title, content, tags, autoTag?: false, imageFiles))
+        postService.generatePost(PostRequest(title, content, tags, autoTag?: false, imageFiles))
 
     @PatchMapping("/{postId}")
-    fun editPost(@PathVariable postId: Int,
-                 @RequestParam title: String?,
-                 @RequestParam content: String?,
-                 @RequestParam tags: List<String>?,
-                 @RequestParam autoTag: Boolean?,
-                 @RequestParam imageFiles: List<MultipartFile>?): Int? =
+    fun updatePost(@PathVariable postId: Int,
+                   @RequestParam title: String?,
+                   @RequestParam content: String?,
+                   @RequestParam tags: List<String>?,
+                   @RequestParam autoTag: Boolean?,
+                   @RequestParam imageFiles: List<MultipartFile>?): Int? =
         postService.changePost(ChangePostRequest(postId, title, content, tags, autoTag, imageFiles))
 
     @DeleteMapping("/{postId}")
     fun deletePost(@PathVariable postId: Int) =
-        postService.deletePost(postId)
+        postService.removePost(postId)
 
     @GetMapping("/{postId}/emoji")
     fun getEmojiUser(@PathVariable postId: Int): PostEmojiListResponse =
