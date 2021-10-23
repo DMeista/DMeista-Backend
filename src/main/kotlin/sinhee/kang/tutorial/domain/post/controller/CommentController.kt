@@ -13,13 +13,13 @@ class CommentController(
     @PostMapping("/{postId}")
     fun uploadComment(@PathVariable postId: Int,
                       @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.uploadComment(postId, commentRequest)
+        return commentService.generateComment(postId, commentRequest)
     }
 
     @PatchMapping("/{commentId}")
-    fun changeComment(@PathVariable commentId: Int,
+    fun updateComment(@PathVariable commentId: Int,
                       @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.updateComment(commentId, commentRequest)
+        return commentService.changeComment(commentId, commentRequest)
     }
 
     @DeleteMapping("/{commentId}")
@@ -34,9 +34,9 @@ class CommentController(
     }
 
     @PatchMapping("/sub/{subCommentId}")
-    fun changeSubComment(@PathVariable subCommentId: Int,
+    fun updateSubComment(@PathVariable subCommentId: Int,
                          @RequestBody commentRequest: CommentRequest): Int {
-        return commentService.updateSubComment(subCommentId, commentRequest)
+        return commentService.changeSubComment(subCommentId, commentRequest)
     }
 
     @DeleteMapping("/sub/{subCommentId}")
