@@ -3,8 +3,9 @@ package sinhee.kang.tutorial.domain.post.controller
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
-
-import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.dto.request.ChangePostRequest
+import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
+import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
@@ -20,8 +21,7 @@ class PostController(
 ) {
 
     @GetMapping
-    fun getAllHashTagPostList(page: Pageable,
-                              @RequestParam(defaultValue = "") tags: String): PostListResponse =
+    fun getAllHashTagPostList(page: Pageable, @RequestParam(defaultValue = "") tags: String): PostListResponse =
         postService.getAllHashTagList(page, tags)
 
     @GetMapping("/{postId}")
@@ -31,18 +31,19 @@ class PostController(
     @PostMapping
     fun uploadPost(@RequestParam title: String,
                    @RequestParam content: String,
-                   @RequestParam tags: List<String>?,
-                   @RequestParam autoTag: Boolean?,
-                   @RequestParam imageFiles: Array<MultipartFile>?): Int? =
-        postService.uploadPost(title, content, tags, autoTag?: false, imageFiles)
+                   @RequestParam(required = false) tags: List<String>?,
+                   @RequestParam(required = false) autoTag: Boolean?,
+                   @RequestParam(required = false) imageFiles: List<MultipartFile>?): Int =
+        postService.uploadPost(PostRequest(title, content, tags, autoTag?: false, imageFiles))
 
     @PatchMapping("/{postId}")
     fun editPost(@PathVariable postId: Int,
                  @RequestParam title: String?,
                  @RequestParam content: String?,
                  @RequestParam tags: List<String>?,
-                 @RequestParam imageFiles: Array<MultipartFile>?): Int? =
-        postService.changePost(postId, title, content, tags, imageFiles)
+                 @RequestParam autoTag: Boolean?,
+                 @RequestParam imageFiles: List<MultipartFile>?): Int? =
+        postService.changePost(ChangePostRequest(postId, title, content, tags, autoTag, imageFiles))
 
     @DeleteMapping("/{postId}")
     fun deletePost(@PathVariable postId: Int) =
