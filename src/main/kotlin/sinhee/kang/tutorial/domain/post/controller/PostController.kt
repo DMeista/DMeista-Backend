@@ -50,11 +50,11 @@ class PostController(
         postService.removePost(postId)
 
     @GetMapping("/{postId}/emoji")
-    fun getEmojiUser(@PathVariable postId: Int): PostEmojiListResponse =
+    fun getPostEmojiUserList(@PathVariable postId: Int): PostEmojiListResponse =
         emojiService.getPostEmojiUserList(postId)
 
     @PostMapping("/{postId}/emoji")
-    fun emojiPost(@PathVariable postId: Int,
-                  @RequestParam status: EmojiStatus): EmojiResponse? =
-        emojiService.emojiService(postId, status)
+    fun setEmoji(@PathVariable postId: Int,
+                 @RequestParam status: EmojiStatus): EmojiResponse? =
+        emojiService.setEmoji(postId, status)
 }
