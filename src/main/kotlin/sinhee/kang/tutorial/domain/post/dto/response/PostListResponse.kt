@@ -8,7 +8,7 @@ data class PostListResponse (
 
     val totalPages: Int = 0,
 
-    val applications: MutableList<PostPreviewResponse> = mutableListOf()
+    val applications: MutableList<PostPreviewResponse> = arrayListOf()
 ) {
     constructor(posts: Page<Post>, applications: MutableList<PostPreviewResponse>): this (
         totalItems = posts.totalElements.toInt(),
