@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.domain.post.service.post
 
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -37,7 +36,7 @@ class PostServiceImpl(
         val posts = postRepository.findByTagsContainsOrderByCreatedAtDesc(pageable, tags)
             ?: throw ApplicationNotFoundException()
 
-        return PostListResponse(posts, getPostsList(currentUser, posts))
+        return PostListResponse(currentUser, posts)
     }
 
     override fun getPostContent(postId: Int): PostContentResponse {
@@ -108,13 +107,6 @@ class PostServiceImpl(
                 imageService.removeImageFiles(this)
             }
     }
-
-    private fun getPostsList(user: User?, postPage: Page<Post>): MutableList<PostPreviewResponse> =
-        mutableListOf<PostPreviewResponse>().apply {
-            postPage.forEach { post: Post ->
-                add(PostPreviewResponse(user, post))
-            }
-        }
 
     private fun getTagsFromImage(imageFiles: List<MultipartFile>): MutableSet<String> {
         val request: MutableSet<String> = mutableSetOf()
