@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.domain.post.dto.response
 
-import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 
 data class EmojiResponse(
     val username: String? = null,

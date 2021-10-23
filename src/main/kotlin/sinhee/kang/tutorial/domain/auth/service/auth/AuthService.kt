@@ -1,9 +1,8 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
-import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
+import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.domain.user.domain.user.User
+import sinhee.kang.tutorial.domain.user.entity.user.User
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -12,7 +11,15 @@ interface AuthService {
 
     fun signUp(signUpRequest: SignUpRequest)
 
-    fun extendAuthTokens(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse): TokenResponse
+    fun verifyNickname(nickname: String)
 
-    fun verifyCurrentUser(): User
+    fun verifyEmail(verifyEmailRequest: VerifyEmailRequest)
+
+    fun changePassword(changePasswordRequest: ChangePasswordRequest)
+
+    fun exitAccount(exitServiceRequest: SignInRequest)
+
+    fun extendToken(httpServletRequest: HttpServletRequest, httpServletResponse: HttpServletResponse): TokenResponse
+
+    fun getCurrentUser(): User
 }

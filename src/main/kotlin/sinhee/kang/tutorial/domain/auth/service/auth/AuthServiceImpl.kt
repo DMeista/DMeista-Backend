@@ -1,25 +1,23 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-
-import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
+import org.springframework.security.crypto.password.PasswordEncoder
+import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.domain.auth.entity.verification.AuthVerification
-import sinhee.kang.tutorial.domain.auth.repository.verification.AuthVerificationRepository
+import sinhee.kang.tutorial.domain.auth.repository.verification.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
-import sinhee.kang.tutorial.domain.auth.service.email.enums.SendType
-import sinhee.kang.tutorial.domain.auth.service.validate.ValidateService
+import sinhee.kang.tutorial.domain.user.entity.user.User
+import sinhee.kang.tutorial.domain.user.repository.user.UserRepository
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
-import sinhee.kang.tutorial.domain.user.domain.user.User
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
-import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidAuthEmailException
+import sinhee.kang.tutorial.global.exception.exceptions.conflict.UserAlreadyExistsException
+import sinhee.kang.tutorial.global.exception.exceptions.forbidden.IncorrectPasswordException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.NotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
 import sinhee.kang.tutorial.global.security.authentication.AuthenticationService
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
-import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
-
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -30,23 +28,17 @@ class AuthServiceImpl(
     private val authenticationService: AuthenticationService,
 
     private val emailService: EmailService,
-    private val validateService: ValidateService,
-    private val authVerificationRepository: AuthVerificationRepository,
+    private val emailVerificationRepository: EmailVerificationRepository,
 
     private val userRepository: UserRepository,
 ): AuthService {
 
     override fun signIn(signInRequest: SignInRequest, httpServletResponse: HttpServletResponse): TokenResponse {
         val email = signInRequest.email
-        val password = signInRequest.password
-
-        validateService.apply {
-            validateEmail(email)
-            validatePassword(password)
-        }
+        val rawPassword = signInRequest.password
 
         val user = userRepository.findByEmail(email)
-            ?.apply { isMatchedPassword(passwordEncoder, password) }
+            ?.isMatchedPassword(rawPassword)
             ?: throw UserNotFoundException()
 
         return tokenProvider.setToken(httpServletResponse, user.nickname)
@@ -57,40 +49,109 @@ class AuthServiceImpl(
         val password = signUpRequest.password
         val nickname = signUpRequest.nickname
 
-        validateService.apply {
-            validateEmail(email)
-            validatePassword(password)
-
-            checkExistNickname(nickname)
-            checkExistEmail(email, SendType.REGISTER)
-
-            verifiedEmail(email)
-            verifiedNickname(email, nickname)
+        with(userRepository) {
+            if (existsByEmail(email) || existsByNickname(nickname))
+                throw UserAlreadyExistsException()
         }
 
-        userRepository.save(signUpRequest.toEntity(passwordEncoder))
-            .also { emailService.sendCelebrateEmail(it) }
+        with(emailVerificationRepository) {
+            findByEmail(email)
+                ?.takeIf { it.isConfirmation() }
+                ?.apply { delete(this) }
+                ?: throw UnAuthorizedException()
+        }
 
-        authVerificationRepository.deleteById(email)
+        userRepository
+            .save(signUpRequest
+                .toEntity()
+                .updatePassword(passwordEncoder.encode(password)))
+            .run { emailService.sendCelebrateEmail(email, nickname) }
     }
 
+    override fun verifyNickname(nickname: String) {
+        if (userRepository.existsByNickname(nickname))
+            throw UserAlreadyExistsException()
+    }
 
-    override fun extendAuthTokens(
+    override fun verifyEmail(verifyEmailRequest: VerifyEmailRequest) {
+        val uuid = UUID.fromString(verifyEmailRequest.id)
+        val authCode = verifyEmailRequest.authCode
+
+        val confirmationEmail = emailVerificationRepository.findById(uuid)
+            .orElseThrow { NotFoundException() }
+            .updateAccessTime()
+
+        confirmationEmail
+            .takeIf { it.isCorrectAuthCode(authCode) }
+            ?.setExpired()
+            ?.updateLiveCycle()
+            ?: throw PermissionDeniedException()
+
+        emailVerificationRepository.save(confirmationEmail)
+    }
+
+    override fun changePassword(changePasswordRequest: ChangePasswordRequest) {
+        val email = changePasswordRequest.email
+        val oldPassword = changePasswordRequest.password
+        val newPassword = changePasswordRequest.newPassword
+
+        with(emailVerificationRepository) {
+            findByEmail(email)
+                ?.takeIf { it.isConfirmation() }
+                ?.apply { delete(this) }
+                ?: throw UnAuthorizedException()
+        }
+
+        with(userRepository) {
+            findByEmail(email)
+                ?.isMatchedPassword(oldPassword)
+                ?.updatePassword(passwordEncoder.encode(newPassword))
+                ?.apply { save(this) }
+                ?: throw UnAuthorizedException()
+        }
+    }
+
+    override fun exitAccount(exitServiceRequest: SignInRequest) {
+        val user = getCurrentUser()
+        val email = exitServiceRequest.email
+        val password = exitServiceRequest.password
+
+        with(emailVerificationRepository) {
+            findByEmail(email)
+                ?.takeIf { it.isConfirmation() }
+                ?.apply { delete(this) }
+                ?: throw UnAuthorizedException()
+        }
+
+        with(userRepository) {
+            findByEmail(email)
+                ?.takeIf { it == user }
+                ?.isMatchedPassword(password)
+                ?.apply { delete(this) }
+                ?: throw UnAuthorizedException()
+        }
+    }
+
+    override fun extendToken(
         httpServletRequest: HttpServletRequest,
         httpServletResponse: HttpServletResponse
-    ): TokenResponse {
-        tokenProvider.apply {
-            return getRefreshToken(httpServletRequest)
-                ?.takeIf { isRefreshToken(it) && isValidateToken(it) }
-                ?.let { setToken(httpServletResponse, getUsername(it)) }
-                ?: throw BadRequestException()
+    ): TokenResponse =
+        with(tokenProvider) {
+            getRefreshToken(httpServletRequest)
+            ?.takeIf { isValidateToken(it) && isRefreshToken(it) }
+            ?.let { setToken(httpServletResponse, getUsername(it)) }
+            ?: throw BadRequestException()
         }
-    }
 
-    override fun verifyCurrentUser(): User {
+    override fun getCurrentUser(): User {
         val currentUsername = authenticationService.getUserName()
 
         return userRepository.findByNickname(currentUsername)
             ?: throw UnAuthorizedException()
     }
+
+    private fun User.isMatchedPassword(password: String): User =
+        if (!passwordEncoder.matches(password, this.password))
+            throw IncorrectPasswordException()
+        else this
 }
