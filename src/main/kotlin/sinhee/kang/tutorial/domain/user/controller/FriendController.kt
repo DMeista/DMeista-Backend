@@ -12,13 +12,12 @@ class FriendController(
 ) {
 
     @GetMapping("/friends")
-    fun getFriendsList(pageable: Pageable,
-                       @RequestParam(required = false) nickname: String?): UserListResponse? =
+    fun getFriendsList(@RequestParam(required = false) nickname: String?): UserListResponse =
         friendService.getFriendsList(nickname)
 
     @GetMapping("/friends/request")
-    fun receiveFriendRequestList(pageable: Pageable): UserListResponse? =
-        friendService.getFriendRequestsList(pageable)
+    fun getFriendRequestsList(): UserListResponse =
+        friendService.getFriendRequestsList()
 
     @PostMapping("/friends")
     fun sendFriendRequest(@RequestParam nickname: String) =
