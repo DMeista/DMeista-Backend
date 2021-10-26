@@ -6,6 +6,7 @@ import sinhee.kang.tutorial.domain.post.entity.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.post.entity.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.entity.view.View
+import sinhee.kang.tutorial.domain.user.dto.response.UserResponse
 import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.entity.user.enums.AccountRole
 import java.time.LocalDateTime
@@ -52,9 +53,6 @@ class User(
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = [CascadeType.REMOVE])
     var friendList: MutableList<Friend> = ArrayList()
 ) {
-    fun addFriend(friend: Friend): User =
-        apply { friendList.add(friend) }
-
     fun updatePassword(newPassword: String): User =
         apply { password = newPassword }
 
