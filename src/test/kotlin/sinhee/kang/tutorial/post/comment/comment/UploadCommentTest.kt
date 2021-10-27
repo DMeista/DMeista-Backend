@@ -1,17 +1,19 @@
-package sinhee.kang.tutorial.comment.comment
+package sinhee.kang.tutorial.post.comment.comment
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.post.domain.post.Post
+import sinhee.kang.tutorial.TestFactory
+import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 
 @Suppress("NonAsciiCharacters")
-class UploadCommentTest: TestLib() {
+class UploadCommentTest: TestFactory() {
+
+    private val testPath = "/comments"
 
     @BeforeEach
     fun setup() {
@@ -27,11 +29,11 @@ class UploadCommentTest: TestLib() {
     }
 
     @Test
-    fun `댓글 작성`() {
+    fun `댓글 작성 - Ok`() {
         val post = postRepository.save(Post(user = user))
         val request = CommentRequest("comment")
 
-        val response = requestBody(post("/comments/${post.postId}"), request, currentUserToken)
+        val response = requestBody(post("$testPath/${post.postId}"), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString.toInt()
 
@@ -42,19 +44,19 @@ class UploadCommentTest: TestLib() {
     }
 
     @Test
-    fun `포스트를 찾을 수 없음`() {
+    fun `포스트를 찾을 수 없음 - NotFound`() {
         val request = CommentRequest("comment")
 
-        requestBody(post("/comments/0"), request, currentUserToken)
+        requestBody(post("$testPath/0"), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     @Test
-    fun `사용자 인증이 확인되지 않음`() {
+    fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         val post = postRepository.save(Post(user = user))
         val request = CommentRequest("comment")
 
-        requestBody(post("/comments/${post.postId}"), request)
+        requestBody(post("$testPath/${post.postId}"), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }

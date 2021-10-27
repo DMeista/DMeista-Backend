@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.friend
+package sinhee.kang.tutorial.user.friend
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -7,12 +7,14 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delet
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.user.domain.friend.Friend
+import sinhee.kang.tutorial.TestFactory
+import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 
 @Suppress("NonAsciiCharacters")
-class DeleteFriendRequestTest: TestLib() {
+class DeleteFriendRequestTest: TestFactory() {
+
+    private val testPath = "/users/friends"
 
     @BeforeEach
     fun setup() {
@@ -31,7 +33,7 @@ class DeleteFriendRequestTest: TestLib() {
     }
 
     @Test
-    fun `타겟 유저 친구 요청 삭제`() {
+    fun `타겟 유저 친구 요청 삭제 - Ok`() {
         friendRepository.save(Friend(
             user = user,
             targetUser = user2,
@@ -40,14 +42,14 @@ class DeleteFriendRequestTest: TestLib() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user.nickname) }
 
-        requestParams(delete("/users/friends"), request, token = targetUserToken)
+        requestParams(delete(testPath), request, token = targetUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         assert(!isCheckUserAndTargetUserExist(user, user2))
     }
 
     @Test
-    fun `보낸 친구 요청 삭제`() {
+    fun `보낸 친구 요청 삭제 - Ok`() {
         friendRepository.save(Friend(
             user = user,
             targetUser = user2,
@@ -56,14 +58,14 @@ class DeleteFriendRequestTest: TestLib() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
-        requestParams(delete("/users/friends"), request, token = currentUserToken)
+        requestParams(delete(testPath), request, token = currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         assert(!isCheckUserAndTargetUserExist(user, user2))
     }
 
     @Test
-    fun `수락된 친구요청 삭제`() {
+    fun `수락된 친구요청 삭제 - Ok`() {
         friendRepository.save(Friend(
             user = user,
             targetUser = user2,
@@ -72,23 +74,23 @@ class DeleteFriendRequestTest: TestLib() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
-        requestParams(delete("/users/friends"), request, token = currentUserToken)
+        requestParams(delete(testPath), request, token = currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
 
         assert(!isCheckUserAndTargetUserExist(user, user2))
     }
 
     @Test
-    fun `친구요청이 없을 경우`() {
+    fun `친구요청이 없을 경우 - BadRequest`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
-        requestParams(delete("/users/friends"), request, token = currentUserToken)
+        requestParams(delete(testPath), request, token = currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
     @Test
-    fun `사용자 인증이 확인되지 않음`() {
+    fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         friendRepository.save(Friend(
             user = user,
             targetUser = user2,
@@ -97,7 +99,7 @@ class DeleteFriendRequestTest: TestLib() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
-        requestParams(delete("/users/friends"), request)
+        requestParams(delete(testPath), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }

@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.user
+package sinhee.kang.tutorial.user.userInfo
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -7,16 +7,20 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import sinhee.kang.tutorial.TestLib
+import sinhee.kang.tutorial.TestFactory
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
 
 @Suppress("NonAsciiCharacters")
-class UserInfoTest: TestLib() {
+class UserInfoTest: TestFactory() {
+
+    private val testPath = "/users"
 
     @BeforeEach
     fun setup() {
-        userRepository.save(user)
-        userRepository.save(user2)
+        userRepository.apply {
+            save(user)
+            save(user2)
+        }
     }
 
     @AfterEach
@@ -25,10 +29,10 @@ class UserInfoTest: TestLib() {
     }
 
     @Test
-    fun `해당 유저 정보 로드`() {
+    fun `해당 유저 정보 로드 - Ok`() {
         val token = getAccessToken(signInRequest)
 
-        val userInfo = requestBody(get("/users"), token = token)
+        val userInfo = requestBody(get(testPath), token = token)
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString
         val userInfoResponse = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
@@ -37,12 +41,12 @@ class UserInfoTest: TestLib() {
     }
 
     @Test
-    fun `타 유저 정보 로드`() {
+    fun `타 유저 정보 로드 - Ok`() {
         val token = getAccessToken(signInRequest)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
-        val userInfo = requestParams(get("/users"), params, token)
+        val userInfo = requestParams(get(testPath), params, token)
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString
         val userInfoResponse = mappingResponse(userInfo, UserInfoResponse::class.java) as UserInfoResponse
@@ -51,12 +55,12 @@ class UserInfoTest: TestLib() {
     }
 
     @Test
-    fun `유저가 존재하지 않음`() {
+    fun `유저가 존재하지 않음 - NotFound`() {
         val token = getAccessToken(signInRequest)
         val params: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", "user2.nickname") }
 
-        requestParams(get("/users"), params, token)
+        requestParams(get(testPath), params, token)
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 }

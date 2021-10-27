@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.emoji
+package sinhee.kang.tutorial.post.emoji
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -8,14 +8,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
+import sinhee.kang.tutorial.TestFactory
 
-import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
-import sinhee.kang.tutorial.domain.post.domain.post.Post
+import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 
 @Suppress("NonAsciiCharacters")
-class AddEmojiTest: TestLib() {
+class AddEmojiTest: TestFactory() {
+
+    private val testPath = "/posts"
 
     @BeforeEach
     fun setup() {
@@ -31,14 +33,12 @@ class AddEmojiTest: TestLib() {
     }
 
     @Test
-    fun `이모지 추가`() {
-        val postId = postRepository.save(Post(
-            user = user
-        )).postId
+    fun `이모지 추가 - Ok`() {
+        val postId = postRepository.save(Post(user = user)).postId
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
         .apply {  add("status", "${EmojiStatus.FUN}") }
 
-        val response = requestParams(post("/posts/$postId/emoji"), request, currentUserToken)
+        val response = requestParams(post("$testPath/$postId/emoji"), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString
         val emojiResponse = mappingResponse(response, EmojiResponse::class.java) as EmojiResponse
@@ -47,20 +47,20 @@ class AddEmojiTest: TestLib() {
     }
 
     @Test
-    fun `포스트를 찾을 수 없는 경우`() {
+    fun `포스트를 찾을 수 없는 경우 - NotFound`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply {  add("status", "${EmojiStatus.SAD}") }
 
-        requestParams(post("/posts/0/emoji"), request, currentUserToken)
+        requestParams(post("$testPath/0/emoji"), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
     @Test
-    fun `사용자 인증이 확인되지 않음`() {
+    fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply {  add("status", "${EmojiStatus.SAD}") }
 
-        requestParams(post("/posts/0/emoji"), request)
+        requestParams(post("$testPath/0/emoji"), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }
