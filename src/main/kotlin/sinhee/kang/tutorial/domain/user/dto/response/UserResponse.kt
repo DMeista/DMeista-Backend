@@ -13,7 +13,7 @@ data class UserResponse (
 
     val postCount: Int = 0,
 
-    private val connectedAt: LocalDateTime
+    private val connectedAt: LocalDateTime = LocalDateTime.now()
 ) {
     constructor(friend: Friend, user: User): this(
         id = user.id,
