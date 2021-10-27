@@ -6,21 +6,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
-import sinhee.kang.tutorial.domain.auth.repository.emailLimiter.EmailRequestLimiterRepository
-
-import sinhee.kang.tutorial.domain.auth.repository.verification.AuthVerificationRepository
+import sinhee.kang.tutorial.domain.auth.repository.verification.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
-import sinhee.kang.tutorial.domain.post.domain.comment.repository.CommentRepository
-import sinhee.kang.tutorial.domain.post.domain.emoji.repository.EmojiRepository
-import sinhee.kang.tutorial.domain.post.domain.post.repository.PostRepository
-import sinhee.kang.tutorial.domain.post.domain.subComment.repository.SubCommentRepository
-import sinhee.kang.tutorial.domain.user.domain.friend.repository.FriendRepository
-import sinhee.kang.tutorial.domain.user.domain.user.User
-import sinhee.kang.tutorial.domain.user.domain.user.repository.UserRepository
+import sinhee.kang.tutorial.domain.auth.repository.requestLimiter.EmailRequestLimiterRepository
+import sinhee.kang.tutorial.domain.post.repository.comment.CommentRepository
+import sinhee.kang.tutorial.domain.post.repository.emoji.EmojiRepository
+import sinhee.kang.tutorial.domain.post.repository.post.PostRepository
+import sinhee.kang.tutorial.domain.post.repository.subComment.SubCommentRepository
+import sinhee.kang.tutorial.domain.user.repository.friend.FriendRepository
+import sinhee.kang.tutorial.domain.user.entity.user.User
+import sinhee.kang.tutorial.domain.user.repository.user.UserRepository
 
 @Suppress("SpringJavaAutowiredMembersInspection")
 @AutoConfigureMockMvc
-open class CombineVariables {
+open class TestVariables {
 
     @Autowired
     protected lateinit var mvc: MockMvc
@@ -31,7 +30,7 @@ open class CombineVariables {
     @Autowired
     protected lateinit var friendRepository: FriendRepository
     @Autowired
-    protected lateinit var authVerificationRepository: AuthVerificationRepository
+    protected lateinit var emailVerificationRepository: EmailVerificationRepository
     @Autowired
     protected lateinit var emailRequestLimiterRepository: EmailRequestLimiterRepository
     @Autowired
