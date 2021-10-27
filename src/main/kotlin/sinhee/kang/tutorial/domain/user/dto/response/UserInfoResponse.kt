@@ -1,7 +1,9 @@
 package sinhee.kang.tutorial.domain.user.dto.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import sinhee.kang.tutorial.domain.post.dto.response.PostResponse
+import sinhee.kang.tutorial.domain.post.dto.response.PostPreviewResponse
+import sinhee.kang.tutorial.domain.post.entity.post.Post
+import sinhee.kang.tutorial.domain.user.entity.user.User
 import java.time.LocalDateTime
 
 data class UserInfoResponse(
@@ -12,5 +14,21 @@ data class UserInfoResponse(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     val createdAt: LocalDateTime? = null,
 
-    val postList: MutableList<PostResponse> = mutableListOf()
-)
+    val postList: MutableList<PostPreviewResponse> = mutableListOf()
+) {
+    constructor(user: User): this (
+        username = user.nickname,
+        email = user.email,
+        createdAt = user.createdAt,
+        postList = getPostsList(user)
+    )
+
+    companion object {
+        private fun getPostsList(user: User): MutableList<PostPreviewResponse> =
+            mutableListOf<PostPreviewResponse>().apply {
+                user.postList.forEach { post: Post ->
+                    add(PostPreviewResponse(user, post))
+                }
+            }
+    }
+}

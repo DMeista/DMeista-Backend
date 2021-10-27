@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.domain.user.controller
 
-import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 import sinhee.kang.tutorial.domain.user.service.friend.FriendService
@@ -12,13 +11,12 @@ class FriendController(
 ) {
 
     @GetMapping("/friends")
-    fun getFriendsList(pageable: Pageable,
-                       @RequestParam(required = false) nickname: String?): UserListResponse? =
+    fun getFriendsList(@RequestParam(required = false) nickname: String?): UserListResponse =
         friendService.getFriendsList(nickname)
 
     @GetMapping("/friends/request")
-    fun receiveFriendRequestList(pageable: Pageable): UserListResponse? =
-        friendService.getFriendRequestsList(pageable)
+    fun getFriendRequestsList(): UserListResponse =
+        friendService.getFriendRequestsList()
 
     @PostMapping("/friends")
     fun sendFriendRequest(@RequestParam nickname: String) =

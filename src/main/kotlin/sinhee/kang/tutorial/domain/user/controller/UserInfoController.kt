@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.domain.user.controller
 
-import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
 import sinhee.kang.tutorial.domain.user.service.userInfo.UserInfoService
@@ -12,7 +11,6 @@ class UserInfoController(
 ) {
 
     @GetMapping
-    fun userInfo(page: Pageable,
-                 @RequestParam(required = false) nickname: String?): UserInfoResponse? =
-        userInfoService.getUserInfo(page, nickname)
+    fun getUserProfile(@RequestParam(required = false) nickname: String?): UserInfoResponse? =
+        userInfoService.getUserInfo(nickname)
 }
