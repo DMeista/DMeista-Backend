@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.post
+package sinhee.kang.tutorial.post.post
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -7,10 +7,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import sinhee.kang.tutorial.TestLib
+import sinhee.kang.tutorial.TestFactory
 
 @Suppress("NonAsciiCharacters")
-class UploadPostTest: TestLib() {
+class UploadPostTest: TestFactory() {
+
+    private val testPath = "/posts"
 
     @BeforeEach
     fun setup() {
@@ -25,7 +27,7 @@ class UploadPostTest: TestLib() {
     }
 
     @Test
-    fun `포스트 업로드`() {
+    fun `포스트 업로드 - Ok`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply {
                 add("title", "test title")
@@ -33,7 +35,7 @@ class UploadPostTest: TestLib() {
                 add("tags", "tag")
             }
 
-        val response = requestParams(post("/posts"), request, currentUserToken)
+        val response = requestParams(post(testPath), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn().response.contentAsString.toInt()
 
@@ -43,18 +45,7 @@ class UploadPostTest: TestLib() {
     }
 
     @Test
-    fun `잘못된 파라미터 요청`() {
-        val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
-            .apply {
-                add("title", "test title")
-            }
-
-        requestParams(post("/posts"), request, currentUserToken)
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
-    }
-
-    @Test
-    fun `사용자 인증이 확인되지 않음`() {
+    fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply {
                 add("title", "test title")
@@ -62,7 +53,18 @@ class UploadPostTest: TestLib() {
                 add("tags", "tag")
             }
 
-        requestParams(post("/posts"), request)
+        requestParams(post(testPath), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+    }
+
+    @Test
+    fun `잘못된 파라미터 요청 - BadRequest`() {
+        val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
+            .apply {
+                add("title", "test title")
+            }
+
+        requestParams(post(testPath), request, currentUserToken)
+            .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 }

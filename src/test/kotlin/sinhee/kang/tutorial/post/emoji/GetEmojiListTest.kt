@@ -1,18 +1,18 @@
-package sinhee.kang.tutorial.emoji
+package sinhee.kang.tutorial.post.emoji
 
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import sinhee.kang.tutorial.TestLib
-import sinhee.kang.tutorial.domain.post.domain.emoji.Emoji
-import sinhee.kang.tutorial.domain.post.domain.emoji.enums.EmojiStatus
-import sinhee.kang.tutorial.domain.post.domain.post.Post
+import sinhee.kang.tutorial.TestFactory
+import sinhee.kang.tutorial.domain.post.entity.emoji.Emoji
+import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
+import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 
 @Suppress("NonAsciiCharacters")
-class GetEmojiListTest: TestLib() {
+class GetEmojiListTest: TestFactory() {
 
     @BeforeEach
     fun setup() {
@@ -28,10 +28,8 @@ class GetEmojiListTest: TestLib() {
     }
 
     @Test
-    fun `포스트 이모지 리스트`() {
-        val post = postRepository.save(Post(
-            user = user
-        ))
+    fun `포스트 이모지 리스트 가져오기 - Ok`() {
+        val post = postRepository.save(Post(user = user))
         emojiRepository.save(Emoji(
             post = post,
             user = user,
@@ -44,11 +42,11 @@ class GetEmojiListTest: TestLib() {
 
         val emojiListResponse = mappingResponse(response, PostEmojiListResponse::class.java) as PostEmojiListResponse
 
-        assert(emojiListResponse.applicationResponses[0].emojiStatus == EmojiStatus.FUN)
+        assert(emojiListResponse.applications[0].emojiStatus == EmojiStatus.FUN)
     }
 
     @Test
-    fun `포스트를 찾을 수 없는 경우`() {
+    fun `포스트를 찾을 수 없는 경우 - NotFound`() {
         requestBody(get("/posts/0/emoji"))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
