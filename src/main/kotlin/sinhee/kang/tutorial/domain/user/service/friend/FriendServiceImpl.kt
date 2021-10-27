@@ -52,7 +52,7 @@ class FriendServiceImpl(
         val targetUser = userRepository.findByNickname(username)
             ?: throw UserNotFoundException()
 
-        if (isConnect(currentUser, targetUser))
+        if (isConnect(currentUser, targetUser) || currentUser == targetUser)
             throw BadRequestException()
 
         friendRepository.save(Friend(currentUser, targetUser))
