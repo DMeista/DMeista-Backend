@@ -8,12 +8,13 @@ import org.springframework.stereotype.Component
 class AuthenticationService {
 
     fun getUserName(): String {
-        val auth = getAuthentication()
+        val authentication: Authentication = getAuthentication()
 
-        return if (auth.principal is AuthDetails)
-                (auth.principal as AuthDetails).username
-        else
-            getAuthentication().name
+        return authentication.run {
+            if (principal is AuthDetails)
+                (principal as AuthDetails).username
+            else name
+        }
     }
 
     private fun getAuthentication(): Authentication =

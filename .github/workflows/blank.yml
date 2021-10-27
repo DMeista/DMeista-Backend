@@ -13,9 +13,6 @@ jobs:
       MAIL_PORT: ${{secrets.MAIL_PORT}}
       MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
       MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
-      KAKAO_REST_API_KEY: ${{secrets.KAKAO_REST_API_KEY}}
-      REDIS_HOST: ${{secrets.REDIS_HOST}}
-      REDIS_PORT: ${{secrets.REDIS_PORT}}
 
     steps:
       - uses: actions/checkout@v2
@@ -29,7 +26,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: run test
-        run: ./gradlew test
+        run: ./gradlew test --stacktrace
 
       - name: run build
         run: ./gradlew clean build -x test
