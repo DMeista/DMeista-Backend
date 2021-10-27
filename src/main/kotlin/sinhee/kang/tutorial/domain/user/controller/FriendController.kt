@@ -1,6 +1,5 @@
 package sinhee.kang.tutorial.domain.user.controller
 
-import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
 import sinhee.kang.tutorial.domain.user.service.friend.FriendService

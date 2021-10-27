@@ -10,8 +10,6 @@ import sinhee.kang.tutorial.domain.user.entity.user.User
 interface FriendRepository: CrudRepository<Friend, Int> {
     fun findByUserAndStatus(targetId: User, status: FriendStatus): List<Friend>
 
-    fun findByUserAndTargetUser(userId: User, targetId: User): Friend?
-
     fun findByTargetUserAndStatus(targetId: User, status: FriendStatus): List<Friend>
 
     fun findByUserAndTargetUserAndStatus(userId: User, targetId: User, status: FriendStatus = FriendStatus.REQUEST): Friend?
@@ -19,4 +17,6 @@ interface FriendRepository: CrudRepository<Friend, Int> {
     fun findByUserOrTargetUserAndTargetUserOrUser(user: User, targetUser: User, targetUser2: User, user2: User): Friend?
 
     fun existsByUserAndTargetUser(user: User, targetUser: User): Boolean
+
+    fun existsByUserAndTargetUserAndStatus(user: User, targetUser: User, status: FriendStatus): Boolean
 }
