@@ -5,10 +5,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import sinhee.kang.tutorial.TestLib
+import sinhee.kang.tutorial.TestFactory
 
 @Suppress("NonAsciiCharacters")
-class ExtendTokenTest: TestLib() {
+class ExtendTokenTest: TestFactory() {
+
+    private val testPath = "/auth"
 
     @BeforeEach
     fun setup() {
@@ -21,19 +23,19 @@ class ExtendTokenTest: TestLib() {
     }
 
     @Test
-    fun `토큰 연장`() {
+    fun `토큰 연장 - Ok`() {
         val refreshCookie = getRefreshToken(signInRequest)
 
-        requestBody(put("/auth"), cookie = refreshCookie)
+        requestBody(put(testPath), cookie = refreshCookie)
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
-    fun `유효하지 않은 토큰`() {
+    fun `유효하지 않은 토큰 - Unauthorized`() {
         val refreshCookie = getRefreshToken(signInRequest)
             ?.apply { value = "$value " }
 
-        requestBody(put("/auth"), cookie = refreshCookie)
+        requestBody(put(testPath), cookie = refreshCookie)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 }
