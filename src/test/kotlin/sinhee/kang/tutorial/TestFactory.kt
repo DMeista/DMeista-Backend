@@ -8,21 +8,19 @@ import org.springframework.test.web.servlet.ResultActions
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.util.MultiValueMap
-
-import sinhee.kang.tutorial.domain.auth.entity.verification.AuthVerification
-import sinhee.kang.tutorial.domain.auth.entity.verification.enums.EmailVerificationStatus
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
+import sinhee.kang.tutorial.domain.auth.entity.verification.EmailVerification
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
-import sinhee.kang.tutorial.domain.user.domain.user.User
+import sinhee.kang.tutorial.domain.user.entity.user.User
 import sinhee.kang.tutorial.infra.redis.EmbeddedRedisConfig
-
+import java.util.*
 import javax.servlet.http.Cookie
 
 @SpringBootTest(classes = [TutorialApplication::class, EmbeddedRedisConfig::class],
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test", "local")
-class TestLib: CombineVariables() {
+class TestFactory: TestVariables() {
 
     protected fun requestBody(
         method: MockHttpServletRequestBuilder,
@@ -58,8 +56,18 @@ class TestLib: CombineVariables() {
             .params(params)
             .contentType(MediaType.APPLICATION_JSON_VALUE))
 
+    protected fun emailVerify(user: User) {
+        emailVerificationRepository.save(
+            EmailVerification(
+                id = UUID.randomUUID(),
+                email = user.email,
+                "AUTH-CODE",
+                expired = true
+            ))
+    }
+
     protected fun getAccessToken(signInRequest: SignInRequest): String {
-        val content = requestBody(post("/auth"), signInRequest)
+        val content = requestBody(post("/auth/login"), signInRequest)
             .andReturn().response.contentAsString
         val tokenResponse = mappingResponse(content, TokenResponse::class.java) as TokenResponse
 
@@ -67,37 +75,16 @@ class TestLib: CombineVariables() {
     }
 
     protected fun getRefreshToken(signInRequest: SignInRequest): Cookie? {
-        return requestBody(post("/auth"), signInRequest)
+        return requestBody(post("/auth/login"), signInRequest)
             .andReturn().response.cookies.first { it.name == "_Refresh" }
     }
 
-    protected fun emailVerify(user: User) {
-        authVerificationRepository.save(
-            AuthVerification(
-                email = user.email,
-                authCode = "AUTH-CODE",
-                emailStatus = EmailVerificationStatus.VERIFIED,
-                nickname = user.nickname
-            )
-        )
-    }
-
     protected fun isCheckUserAndTargetUserExist(user: User, targetUser: User) =
-        friendRepository.findByUserAndTargetUser(user, user2)
-            ?.let { true }
-            ?: false
+        friendRepository.existsByUserAndTargetUser(user, targetUser)
 
-    protected fun isConnection(user1: User, user2: User, friendStatus: FriendStatus): Boolean {
-        val connection1 = user1.isExistUserAndTargetUser(user2, friendStatus)
-        val connection2 = user2.isExistUserAndTargetUser(user1, friendStatus)
-
-        return connection1 || connection2
-    }
-
-    private fun User.isExistUserAndTargetUser(targetUser: User, friendStatus: FriendStatus) =
-        friendRepository.findByUserAndTargetUserAndStatus(this, targetUser, friendStatus)
-            ?.let { true }
-            ?: false
+    protected fun isConnect(user1: User, user2: User, status: FriendStatus): Boolean =
+        friendRepository.existsByUserAndTargetUserAndStatus(user1, user2, status) ||
+        friendRepository.existsByUserAndTargetUserAndStatus(user2, user1, status)
 
     protected fun mappingResponse(obj: String, cls: Class<*>): Any =
         objectMapper
