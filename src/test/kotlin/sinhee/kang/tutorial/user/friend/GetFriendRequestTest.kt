@@ -6,12 +6,11 @@ import org.junit.jupiter.api.Test
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TestProperties
-
-import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.dto.response.UserListResponse
+import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 
 @Suppress("NonAsciiCharacters")
-class GetFriendRequestTest: TestProperties() {
+class GetFriendRequestTest : TestProperties() {
 
     private val testPath = "/users/friends/request"
 

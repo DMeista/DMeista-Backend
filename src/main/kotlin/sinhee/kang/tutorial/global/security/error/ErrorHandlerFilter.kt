@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 
 class ErrorHandlerFilter(
     private val slackReportService: SlackReportService
-): OncePerRequestFilter() {
+) : OncePerRequestFilter() {
 
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, filterChain: FilterChain) {
         try {
@@ -29,7 +29,9 @@ class ErrorHandlerFilter(
     private fun HttpServletResponse.setBusinessException(e: BusinessException) {
         contentType = MediaType.APPLICATION_JSON_VALUE
         status = e.status.value()
-        writer.write(ObjectMapper().writer()
-            .writeValueAsString(ExceptionResponse(e.status.value(), e.message)))
+        writer.write(
+            ObjectMapper().writer()
+                .writeValueAsString(ExceptionResponse(e.status.value(), e.message))
+        )
     }
 }

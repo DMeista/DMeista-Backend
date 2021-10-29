@@ -19,7 +19,7 @@ class FriendServiceImpl(
 
     private val userRepository: UserRepository,
     private val friendRepository: FriendRepository
-): FriendService {
+) : FriendService {
 
     override fun getFriendsList(nickname: String?): UserListResponse {
         val user = getUserByNickname(nickname)
@@ -96,5 +96,5 @@ class FriendServiceImpl(
 
     private fun isConnect(user1: User, user2: User): Boolean =
         friendRepository.existsByUserAndTargetUser(user1, user2) ||
-        friendRepository.existsByUserAndTargetUser(user2, user1)
+            friendRepository.existsByUserAndTargetUser(user2, user1)
 }

@@ -11,14 +11,18 @@ class CommentController(
 ) {
 
     @PostMapping("/{postId}")
-    fun uploadComment(@PathVariable postId: Int,
-                      @RequestBody commentRequest: CommentRequest): Int {
+    fun uploadComment(
+        @PathVariable postId: Int,
+        @RequestBody commentRequest: CommentRequest
+    ): Int {
         return commentService.generateComment(postId, commentRequest)
     }
 
     @PatchMapping("/{commentId}")
-    fun updateComment(@PathVariable commentId: Int,
-                      @RequestBody commentRequest: CommentRequest): Int {
+    fun updateComment(
+        @PathVariable commentId: Int,
+        @RequestBody commentRequest: CommentRequest
+    ): Int {
         return commentService.changeComment(commentId, commentRequest)
     }
 
@@ -28,14 +32,18 @@ class CommentController(
     }
 
     @PostMapping("/sub/{commentId}")
-    fun uploadSubComment(@PathVariable commentId: Int,
-                         @RequestBody commentRequest: CommentRequest): Int {
+    fun uploadSubComment(
+        @PathVariable commentId: Int,
+        @RequestBody commentRequest: CommentRequest
+    ): Int {
         return commentService.uploadSubComment(commentId, commentRequest)
     }
 
     @PatchMapping("/sub/{subCommentId}")
-    fun updateSubComment(@PathVariable subCommentId: Int,
-                         @RequestBody commentRequest: CommentRequest): Int {
+    fun updateSubComment(
+        @PathVariable subCommentId: Int,
+        @RequestBody commentRequest: CommentRequest
+    ): Int {
         return commentService.changeSubComment(subCommentId, commentRequest)
     }
 

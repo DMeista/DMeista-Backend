@@ -2,12 +2,12 @@ package sinhee.kang.tutorial.domain.post.dto.response
 
 import sinhee.kang.tutorial.domain.post.entity.post.Post
 
-data class PostEmojiListResponse (
+data class PostEmojiListResponse(
     val totalEmoji: Int = 0,
 
     val applications: MutableList<EmojiResponse> = arrayListOf()
 ) {
-    constructor(post: Post): this(
+    constructor(post: Post) : this(
         totalEmoji = post.emojiList.count(),
         applications = getEmojiLists(post)
     )

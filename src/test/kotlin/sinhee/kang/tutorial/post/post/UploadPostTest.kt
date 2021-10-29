@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.TestProperties
 
 @Suppress("NonAsciiCharacters")
-class UploadPostTest: TestProperties() {
+class UploadPostTest : TestProperties() {
 
     private val testPath = "/posts"
 
@@ -40,7 +40,7 @@ class UploadPostTest: TestProperties() {
             .andReturn().response.contentAsString.toInt()
 
         postRepository.findById(response)
-            .orElseThrow{ NoSuchElementException() }
+            .orElseThrow { NoSuchElementException() }
             .let { assert(it.postId == response) }
     }
 

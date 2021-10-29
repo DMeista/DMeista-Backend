@@ -6,15 +6,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
-import sinhee.kang.tutorial.domain.auth.repository.verification.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.domain.auth.repository.requestLimiter.EmailRequestLimiterRepository
+import sinhee.kang.tutorial.domain.auth.repository.verification.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.post.repository.comment.CommentRepository
 import sinhee.kang.tutorial.domain.post.repository.emoji.EmojiRepository
 import sinhee.kang.tutorial.domain.post.repository.post.PostRepository
 import sinhee.kang.tutorial.domain.post.repository.subComment.SubCommentRepository
-import sinhee.kang.tutorial.domain.user.repository.friend.FriendRepository
 import sinhee.kang.tutorial.domain.user.entity.user.User
+import sinhee.kang.tutorial.domain.user.repository.friend.FriendRepository
 import sinhee.kang.tutorial.domain.user.repository.user.UserRepository
 
 @Suppress("SpringJavaAutowiredMembersInspection")
@@ -55,7 +55,7 @@ open class TestVariables {
     protected val user2: User = User(
         email = "rkdtlsgml50@dsm.hs.kr",
         nickname = "user2",
-        password =  passwordEncoder.encode(password)
+        password = passwordEncoder.encode(password)
     )
 
     protected val signInRequest = SignInRequest(user.email, password)

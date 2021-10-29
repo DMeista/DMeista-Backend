@@ -28,7 +28,7 @@ data class PostPreviewResponse(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     val createdAt: LocalDateTime? = null
 ) {
-    constructor(user: User?, post: Post): this(
+    constructor(user: User?, post: Post) : this(
         id = post.postId,
         title = post.title,
         content = post.content,

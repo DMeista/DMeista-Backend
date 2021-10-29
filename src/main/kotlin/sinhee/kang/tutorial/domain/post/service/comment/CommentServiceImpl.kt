@@ -2,16 +2,16 @@ package sinhee.kang.tutorial.domain.post.service.comment
 
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
+import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.post.entity.comment.Comment
+import sinhee.kang.tutorial.domain.post.entity.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.repository.comment.CommentRepository
 import sinhee.kang.tutorial.domain.post.repository.post.PostRepository
-import sinhee.kang.tutorial.domain.post.entity.subComment.SubComment
 import sinhee.kang.tutorial.domain.post.repository.subComment.SubCommentRepository
-import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.user.entity.user.User
+import sinhee.kang.tutorial.domain.user.entity.user.enums.AccountRole
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
-import sinhee.kang.tutorial.domain.user.entity.user.enums.AccountRole
 
 @Service
 class CommentServiceImpl(
@@ -20,7 +20,7 @@ class CommentServiceImpl(
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
     private val subCommentRepository: SubCommentRepository
-): CommentService {
+) : CommentService {
 
     override fun generateComment(postId: Int, commentRequest: CommentRequest): Int {
         val currentUser = authService.getCurrentUser()
@@ -57,7 +57,7 @@ class CommentServiceImpl(
     override fun uploadSubComment(commentId: Int, commentRequest: CommentRequest): Int {
         val currentUser = authService.getCurrentUser()
         val comment = commentRepository.findById(commentId)
-            .orElseThrow{ ApplicationNotFoundException() }
+            .orElseThrow { ApplicationNotFoundException() }
 
         val subComment = subCommentRepository.save(
             SubComment(currentUser, comment, commentRequest)

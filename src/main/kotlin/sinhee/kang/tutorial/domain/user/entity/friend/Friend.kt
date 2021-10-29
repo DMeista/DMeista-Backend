@@ -1,8 +1,8 @@
 package sinhee.kang.tutorial.domain.user.entity.friend
 
-import sinhee.kang.tutorial.domain.user.entity.user.User
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
 import sinhee.kang.tutorial.domain.user.dto.response.UserResponse
+import sinhee.kang.tutorial.domain.user.entity.user.User
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -28,7 +28,7 @@ class Friend(
     val connectedAt: LocalDateTime = LocalDateTime.now()
 
 ) {
-    constructor(user: User, targetUser: User): this(
+    constructor(user: User, targetUser: User) : this(
         user = user,
         targetUser = targetUser,
         connectedAt = LocalDateTime.now()

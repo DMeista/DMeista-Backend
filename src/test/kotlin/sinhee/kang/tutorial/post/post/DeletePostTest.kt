@@ -11,7 +11,7 @@ import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.post.entity.subComment.SubComment
 
 @Suppress("NonAsciiCharacters")
-class DeletePostTest: TestProperties() {
+class DeletePostTest : TestProperties() {
 
     private val testPath = "/posts"
 

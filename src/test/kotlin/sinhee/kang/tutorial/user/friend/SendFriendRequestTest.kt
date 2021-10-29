@@ -8,12 +8,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.TestProperties
-
-import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
+import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 
 @Suppress("NonAsciiCharacters")
-class SendFriendRequestTest: TestProperties() {
+class SendFriendRequestTest : TestProperties() {
 
     private val testPath = "/users/friends"
 
@@ -73,23 +72,27 @@ class SendFriendRequestTest: TestProperties() {
 
     @Test
     fun `이미 친구 요청이 간 경우 - BadRequest`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
         requestParams(post(testPath), request, currentUserToken)
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
-   }
+    }
 
     @Test
     fun `타겟 유저가 친구 요청을 보냈을 경우 - BadRequest`() {
-        friendRepository.save(Friend(
-            user = user2,
-            targetUser = user
-        ))
+        friendRepository.save(
+            Friend(
+                user = user2,
+                targetUser = user
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 

@@ -7,7 +7,7 @@ import sinhee.kang.tutorial.global.security.jwt.JwtTokenFilter
 import sinhee.kang.tutorial.infra.api.slack.service.SlackReportService
 
 class ErrorHandlerConfigurer(
-        private val slackReportService: SlackReportService
+    private val slackReportService: SlackReportService
 ) : SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(httpSecurity: HttpSecurity) {

@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TestProperties
 
 @Suppress("NonAsciiCharacters")
-class ExtendTokenTest: TestProperties() {
+class ExtendTokenTest : TestProperties() {
 
     private val testPath = "/auth"
 

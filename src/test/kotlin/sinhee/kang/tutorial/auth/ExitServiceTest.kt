@@ -11,7 +11,7 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidArgumentException
 
 @Suppress("NonAsciiCharacters")
-class ExitServiceTest: TestProperties() {
+class ExitServiceTest : TestProperties() {
 
     private val testPath = "/auth"
 
@@ -39,7 +39,7 @@ class ExitServiceTest: TestProperties() {
     @Test
     fun `패스워드 불일치 오류 - Forbidden`() {
         val token = getAccessToken(signInRequest)
-        val request = SignInRequest(user.email, password+"123")
+        val request = SignInRequest(user.email, password + "123")
 
         requestBody(delete(testPath), request, token)
             .andExpect(MockMvcResultMatchers.status().isForbidden)

@@ -8,12 +8,6 @@ jobs:
   CI:
     runs-on: ubuntu-latest
 
-    env:
-      MAIL_HOST: ${{secrets.MAIL_HOST}}
-      MAIL_PORT: ${{secrets.MAIL_PORT}}
-      MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
-      MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
-
     steps:
       - uses: actions/checkout@v2
 
@@ -26,7 +20,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: run test
-        run: ./gradlew test --stacktrace
+        run: ./gradlew test
 
       - name: run build
         run: ./gradlew clean build -x test

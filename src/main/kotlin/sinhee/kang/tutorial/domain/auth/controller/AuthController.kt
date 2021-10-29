@@ -36,13 +36,15 @@ class AuthController(
         authService.verifyNickname(nickname)
 
     @GetMapping("/verify")
-    fun verifyEmail(@RequestParam id: String,
-                    @RequestParam(name = "auth_code") authCode: String
+    fun verifyEmail(
+        @RequestParam id: String,
+        @RequestParam(name = "auth_code") authCode: String
     ) = authService.verifyEmail(VerifyEmailRequest(id, authCode))
 
     @PostMapping("/verify/email/{sendType}")
-    fun sendEmail(@RequestParam email: String,
-                  @PathVariable sendType: SendType
+    fun sendEmail(
+        @RequestParam email: String,
+        @PathVariable sendType: SendType
     ) = emailService.sendAuthCode(EmailRequest(email, sendType))
 
     @PutMapping

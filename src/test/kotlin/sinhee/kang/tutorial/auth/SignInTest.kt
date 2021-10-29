@@ -11,12 +11,13 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignInRequest
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidArgumentException
 
 @Suppress("NonAsciiCharacters")
-class SignInTest: TestProperties() {
+class SignInTest : TestProperties() {
 
     private val testPath = "/auth/login"
 
     @BeforeEach
     fun setup() {
+        userRepository.deleteAll()
         userRepository.save(user)
     }
 
@@ -27,7 +28,9 @@ class SignInTest: TestProperties() {
 
     @Test
     fun `유저 로그인 - Ok`() {
-        requestBody(post(testPath), SignInRequest(user.email, password))
+        val request = SignInRequest(user.email, password)
+
+        requestBody(post(testPath), request)
             .andExpect(MockMvcResultMatchers.status().isOk)
     }
 

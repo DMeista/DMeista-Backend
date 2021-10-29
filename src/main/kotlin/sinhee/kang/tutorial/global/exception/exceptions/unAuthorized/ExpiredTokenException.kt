@@ -1,3 +1,3 @@
 package sinhee.kang.tutorial.global.exception.exceptions.unAuthorized
 
-class ExpiredTokenException: UnAuthorizedException("Expired Token")
+class ExpiredTokenException : UnAuthorizedException("Expired Token")

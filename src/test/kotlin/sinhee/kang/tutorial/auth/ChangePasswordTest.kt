@@ -8,7 +8,7 @@ import sinhee.kang.tutorial.domain.auth.dto.request.ChangePasswordRequest
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidArgumentException
 
 @Suppress("NonAsciiCharacters")
-class ChangePasswordTest: TestProperties() {
+class ChangePasswordTest : TestProperties() {
 
     private val testPath = "/auth/password"
 

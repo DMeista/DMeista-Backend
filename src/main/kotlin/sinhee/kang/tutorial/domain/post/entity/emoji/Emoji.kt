@@ -27,7 +27,7 @@ class Emoji(
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
-    constructor(user: User, post: Post, status: EmojiStatus?): this(
+    constructor(user: User, post: Post, status: EmojiStatus?) : this(
         user = user,
         post = post,
         status = status,

@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.infra.api.kakao.dto
 
-data class MultiTagResponse (
+data class MultiTagResponse(
     val rid: String,
 
     val result: Result

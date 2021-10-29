@@ -9,13 +9,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.TestProperties
+import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.entity.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.entity.post.Post
-import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 
 @Suppress("NonAsciiCharacters")
-class ChangeEmojiTest: TestProperties() {
+class ChangeEmojiTest : TestProperties() {
 
     private val testPath = "/posts"
 
@@ -35,11 +35,13 @@ class ChangeEmojiTest: TestProperties() {
     @Test
     fun `이모지 변경 - Ok`() {
         val post = postRepository.save(Post(user = user))
-        emojiRepository.save(Emoji(
-            post = post,
-            user = user,
-            status = EmojiStatus.NICE
-        ))
+        emojiRepository.save(
+            Emoji(
+                post = post,
+                user = user,
+                status = EmojiStatus.NICE
+            )
+        )
 
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("status", "${EmojiStatus.FUN}") }
@@ -62,7 +64,7 @@ class ChangeEmojiTest: TestProperties() {
     @Test
     fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
-            .apply {  add("status", "${EmojiStatus.SAD}") }
+            .apply { add("status", "${EmojiStatus.SAD}") }
 
         requestParams(post("$testPath/0/emoji"), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)

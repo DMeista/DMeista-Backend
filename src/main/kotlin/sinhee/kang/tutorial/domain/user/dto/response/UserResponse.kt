@@ -4,7 +4,7 @@ import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.entity.user.User
 import java.time.LocalDateTime
 
-data class UserResponse (
+data class UserResponse(
     val id: Int? = 0,
 
     val nickname: String = "",
@@ -15,7 +15,7 @@ data class UserResponse (
 
     private val connectedAt: LocalDateTime = LocalDateTime.now()
 ) {
-    constructor(friend: Friend, user: User): this(
+    constructor(friend: Friend, user: User) : this(
         id = user.id,
         nickname = user.nickname,
         email = user.email,

@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.stereotype.Component
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
-import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.ExpiredTokenException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.InvalidTokenException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
 import sinhee.kang.tutorial.global.security.authentication.AuthDetailsService

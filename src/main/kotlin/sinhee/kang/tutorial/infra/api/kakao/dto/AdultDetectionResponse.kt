@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.infra.api.kakao.dto
 
-data class AdultDetectionResponse (
+data class AdultDetectionResponse(
     val rid: String,
 
     val result: Result

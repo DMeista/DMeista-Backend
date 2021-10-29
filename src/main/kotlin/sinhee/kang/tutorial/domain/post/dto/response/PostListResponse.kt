@@ -4,14 +4,14 @@ import org.springframework.data.domain.Page
 import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.user.entity.user.User
 
-data class PostListResponse (
+data class PostListResponse(
     val totalItems: Int = 0,
 
     val totalPages: Int = 0,
 
     val applications: MutableList<PostPreviewResponse> = arrayListOf()
 ) {
-    constructor(user: User?, posts: Page<Post>): this (
+    constructor(user: User?, posts: Page<Post>) : this (
         totalItems = posts.totalElements.toInt(),
         totalPages = posts.totalPages,
         applications = getPostsList(user, posts)

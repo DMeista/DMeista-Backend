@@ -1,6 +1,7 @@
 package sinhee.kang.tutorial.domain.auth.service.email
 
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
@@ -32,7 +33,7 @@ class EmailServiceImpl(
     private val userRepository: UserRepository,
     private val emailVerificationRepository: EmailVerificationRepository,
     private val emailRequestLimiterRepository: EmailRequestLimiterRepository
-): EmailService {
+) : EmailService {
 
     override fun sendAuthCode(emailRequest: EmailRequest) {
         val email = emailRequest.email
@@ -73,7 +74,7 @@ class EmailServiceImpl(
     }
 
     private fun emailSender(targetEmail: String, subject: String, text: String) {
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             javaMailSender.send(
                 SimpleMailMessage().apply {
                     setFrom(username)
@@ -86,7 +87,7 @@ class EmailServiceImpl(
     }
 
     private fun generateRandomCode(): String {
-        val charPool : List<Char> = ('A'..'Z') + ('0'..'9')
+        val charPool: List<Char> = ('A'..'Z') + ('0'..'9')
         return (0..5)
             .map { Random.nextInt(charPool.size) }
             .map(charPool::get)

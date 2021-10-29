@@ -10,7 +10,7 @@ import sinhee.kang.tutorial.TestProperties
 import sinhee.kang.tutorial.domain.auth.entity.requestLimiter.EmailRequestLimiter
 
 @Suppress("NonAsciiCharacters")
-class SendEmailTest: TestProperties() {
+class SendEmailTest : TestProperties() {
 
     private val testPath = "/auth/verify/email"
 
@@ -50,7 +50,7 @@ class SendEmailTest: TestProperties() {
             .apply { add("email", user2.email) }
 
         emailRequestLimiterRepository.findById(user2.email)
-            .orElseGet{ emailRequestLimiterRepository.save(EmailRequestLimiter(user2.email)) }
+            .orElseGet { emailRequestLimiterRepository.save(EmailRequestLimiter(user2.email)) }
             .let { limiter ->
                 repeat(5) { emailRequestLimiterRepository.save(limiter.update()) }
             }
@@ -93,7 +93,7 @@ class SendEmailTest: TestProperties() {
             .apply { add("email", user.email) }
 
         emailRequestLimiterRepository.findById(user.email)
-            .orElseGet{ emailRequestLimiterRepository.save(EmailRequestLimiter(user.email)) }
+            .orElseGet { emailRequestLimiterRepository.save(EmailRequestLimiter(user.email)) }
             .let { limiter ->
                 repeat(5) { emailRequestLimiterRepository.save(limiter.update()) }
             }

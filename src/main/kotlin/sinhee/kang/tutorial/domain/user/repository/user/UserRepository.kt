@@ -1,4 +1,5 @@
- package sinhee.kang.tutorial.domain.user.repository.user
+ 
+package sinhee.kang.tutorial.domain.user.repository.user
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository

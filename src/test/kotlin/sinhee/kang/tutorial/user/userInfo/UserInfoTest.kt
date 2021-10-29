@@ -11,7 +11,7 @@ import sinhee.kang.tutorial.TestProperties
 import sinhee.kang.tutorial.domain.user.dto.response.UserInfoResponse
 
 @Suppress("NonAsciiCharacters")
-class UserInfoTest: TestProperties() {
+class UserInfoTest : TestProperties() {
 
     private val testPath = "/users"
 

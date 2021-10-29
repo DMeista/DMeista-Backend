@@ -17,7 +17,7 @@ data class PostSubCommentsResponse(
 
     val isMine: Boolean
 ) {
-    constructor(user: User?, subComment: SubComment): this(
+    constructor(user: User?, subComment: SubComment) : this(
         subCommentId = subComment.subCommentId,
         content = subComment.content,
         createdAt = subComment.createdAt,

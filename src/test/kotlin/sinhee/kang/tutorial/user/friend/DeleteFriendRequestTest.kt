@@ -8,11 +8,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.TestProperties
-import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
+import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 
 @Suppress("NonAsciiCharacters")
-class DeleteFriendRequestTest: TestProperties() {
+class DeleteFriendRequestTest : TestProperties() {
 
     private val testPath = "/users/friends"
 
@@ -34,11 +34,13 @@ class DeleteFriendRequestTest: TestProperties() {
 
     @Test
     fun `타겟 유저 친구 요청 삭제 - Ok`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2,
-            status = FriendStatus.REQUEST
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2,
+                status = FriendStatus.REQUEST
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user.nickname) }
 
@@ -50,11 +52,13 @@ class DeleteFriendRequestTest: TestProperties() {
 
     @Test
     fun `보낸 친구 요청 삭제 - Ok`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2,
-            status = FriendStatus.REQUEST
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2,
+                status = FriendStatus.REQUEST
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
@@ -66,11 +70,13 @@ class DeleteFriendRequestTest: TestProperties() {
 
     @Test
     fun `수락된 친구요청 삭제 - Ok`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2,
-            status = FriendStatus.ACCEPT
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2,
+                status = FriendStatus.ACCEPT
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
@@ -91,11 +97,13 @@ class DeleteFriendRequestTest: TestProperties() {
 
     @Test
     fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2,
-            status = FriendStatus.REQUEST
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2,
+                status = FriendStatus.REQUEST
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 

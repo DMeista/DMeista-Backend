@@ -6,15 +6,15 @@ import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
 import sinhee.kang.tutorial.domain.image.service.ImageService
 import sinhee.kang.tutorial.domain.post.dto.request.ChangePostRequest
+import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
+import sinhee.kang.tutorial.domain.post.dto.response.*
 import sinhee.kang.tutorial.domain.post.entity.post.Post
+import sinhee.kang.tutorial.domain.post.entity.view.View
 import sinhee.kang.tutorial.domain.post.repository.post.PostRepository
 import sinhee.kang.tutorial.domain.post.repository.view.ViewRepository
-import sinhee.kang.tutorial.domain.post.dto.response.*
-import sinhee.kang.tutorial.domain.post.entity.view.View
-import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
-import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 import sinhee.kang.tutorial.domain.user.entity.user.User
 import sinhee.kang.tutorial.domain.user.entity.user.enums.AccountRole
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
 import sinhee.kang.tutorial.infra.api.kakao.service.VisionService
@@ -27,7 +27,7 @@ class PostServiceImpl(
 
     private val postRepository: PostRepository,
     private val viewRepository: ViewRepository
-): PostService {
+) : PostService {
 
     override fun getAllHashTagList(pageable: Pageable, tags: String): PostListResponse {
         val currentUser: User? = try {
@@ -120,10 +120,12 @@ class PostServiceImpl(
 
     private fun savePostViewer(user: User, post: Post) {
         viewRepository.findByUserAndPost(user, post)
-            ?: viewRepository.save(View(
-                user = user,
-                post = post
-            ))
+            ?: viewRepository.save(
+                View(
+                    user = user,
+                    post = post
+                )
+            )
     }
 
     private fun Post.checkUserPermission(user: User): Post =

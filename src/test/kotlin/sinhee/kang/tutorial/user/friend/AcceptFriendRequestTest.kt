@@ -8,12 +8,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import sinhee.kang.tutorial.TestProperties
-
-import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 import sinhee.kang.tutorial.domain.user.domain.friend.enums.FriendStatus
+import sinhee.kang.tutorial.domain.user.entity.friend.Friend
 
 @Suppress("NonAsciiCharacters")
-class AcceptFriendRequestTest: TestProperties() {
+class AcceptFriendRequestTest : TestProperties() {
 
     private val testPath = "/users/friends"
 
@@ -35,10 +34,12 @@ class AcceptFriendRequestTest: TestProperties() {
 
     @Test
     fun `친구 요청 수락 - Ok`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user.nickname) }
 
@@ -59,10 +60,12 @@ class AcceptFriendRequestTest: TestProperties() {
 
     @Test
     fun `친구 요청 중복 수락 - NotFound`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user.nickname) }
 
@@ -75,10 +78,12 @@ class AcceptFriendRequestTest: TestProperties() {
 
     @Test
     fun `타겟유저가 아닌 유저가 수락 요청을 할 경우 - NotFound`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", user2.nickname) }
 
@@ -88,10 +93,12 @@ class AcceptFriendRequestTest: TestProperties() {
 
     @Test
     fun `타겟 유저가 존재하지 않음 - NotFound`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", "nickname") }
 
@@ -101,10 +108,12 @@ class AcceptFriendRequestTest: TestProperties() {
 
     @Test
     fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
-        friendRepository.save(Friend(
-            user = user,
-            targetUser = user2
-        ))
+        friendRepository.save(
+            Friend(
+                user = user,
+                targetUser = user2
+            )
+        )
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("nickname", "nickname") }
 

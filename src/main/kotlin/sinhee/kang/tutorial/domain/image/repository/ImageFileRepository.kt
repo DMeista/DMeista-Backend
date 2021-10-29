@@ -6,6 +6,6 @@ import sinhee.kang.tutorial.domain.image.entity.ImageFile
 import sinhee.kang.tutorial.domain.post.entity.post.Post
 
 @Repository
-interface ImageFileRepository: CrudRepository<ImageFile, Int> {
+interface ImageFileRepository : CrudRepository<ImageFile, Int> {
     fun deleteByPost(post: Post)
 }

@@ -1,20 +1,20 @@
 package sinhee.kang.tutorial.domain.auth.service.auth
 
-import org.springframework.stereotype.Service
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.dto.request.*
 import sinhee.kang.tutorial.domain.auth.dto.response.TokenResponse
 import sinhee.kang.tutorial.domain.auth.repository.verification.EmailVerificationRepository
 import sinhee.kang.tutorial.domain.auth.service.email.EmailService
 import sinhee.kang.tutorial.domain.user.entity.user.User
 import sinhee.kang.tutorial.domain.user.repository.user.UserRepository
-import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
 import sinhee.kang.tutorial.global.exception.exceptions.conflict.UserAlreadyExistsException
 import sinhee.kang.tutorial.global.exception.exceptions.forbidden.IncorrectPasswordException
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.NotFoundException
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.UserNotFoundException
 import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.PermissionDeniedException
+import sinhee.kang.tutorial.global.exception.exceptions.unAuthorized.UnAuthorizedException
 import sinhee.kang.tutorial.global.security.authentication.AuthenticationService
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
 import java.util.*
@@ -31,7 +31,7 @@ class AuthServiceImpl(
     private val emailVerificationRepository: EmailVerificationRepository,
 
     private val userRepository: UserRepository,
-): AuthService {
+) : AuthService {
 
     override fun signIn(signInRequest: SignInRequest, httpServletResponse: HttpServletResponse): TokenResponse {
         val email = signInRequest.email
@@ -62,9 +62,11 @@ class AuthServiceImpl(
         }
 
         userRepository
-            .save(signUpRequest
-                .toEntity()
-                .updatePassword(passwordEncoder.encode(password)))
+            .save(
+                signUpRequest
+                    .toEntity()
+                    .updatePassword(passwordEncoder.encode(password))
+            )
             .run { emailService.sendCelebrateEmail(email, nickname) }
     }
 
@@ -138,9 +140,9 @@ class AuthServiceImpl(
     ): TokenResponse =
         with(tokenProvider) {
             getRefreshToken(httpServletRequest)
-            ?.takeIf { isValidateToken(it) && isRefreshToken(it) }
-            ?.let { setToken(httpServletResponse, getUsername(it)) }
-            ?: throw BadRequestException()
+                ?.takeIf { isValidateToken(it) && isRefreshToken(it) }
+                ?.let { setToken(httpServletResponse, getUsername(it)) }
+                ?: throw BadRequestException()
         }
 
     override fun getCurrentUser(): User {

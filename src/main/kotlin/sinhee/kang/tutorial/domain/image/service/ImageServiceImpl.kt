@@ -7,9 +7,8 @@ import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.image.entity.ImageFile
 import sinhee.kang.tutorial.domain.image.repository.ImageFileRepository
-import sinhee.kang.tutorial.global.exception.exceptions.notFound.ImageNotFoundException
 import sinhee.kang.tutorial.domain.post.entity.post.Post
-
+import sinhee.kang.tutorial.global.exception.exceptions.notFound.ImageNotFoundException
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -23,7 +22,7 @@ class ImageServiceImpl(
     private val uploadPath: String,
 
     private val imageFileRepository: ImageFileRepository
-): ImageService {
+) : ImageService {
 
     @Cacheable(value = ["cache"])
     override fun getImageFile(imageName: String): ByteArray {
@@ -66,6 +65,5 @@ class ImageServiceImpl(
         File(uploadPath, this).exists()
 
     private fun File.isValidImage(): Boolean =
-        try { ImageIO.read(this) != null }
-        catch (e: IOException) { false }
+        try { ImageIO.read(this) != null } catch (e: IOException) { false }
 }

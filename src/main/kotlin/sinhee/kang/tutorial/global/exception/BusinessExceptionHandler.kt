@@ -7,7 +7,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.server.MethodNotAllowedException
-import sinhee.kang.tutorial.global.exception.BusinessException
 import sinhee.kang.tutorial.global.exception.dto.ExceptionResponse
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidArgumentException
 
@@ -44,4 +43,3 @@ class BusinessExceptionHandler {
             httpStatus
         )
 }
-

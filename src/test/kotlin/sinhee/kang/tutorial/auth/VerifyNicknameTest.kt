@@ -7,7 +7,7 @@ import org.springframework.util.LinkedMultiValueMap
 import sinhee.kang.tutorial.TestProperties
 
 @Suppress("NonAsciiCharacters")
-class VerifyNicknameTest: TestProperties() {
+class VerifyNicknameTest : TestProperties() {
 
     private val testPath = "/auth/verify/nickname"
 

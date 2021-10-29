@@ -5,7 +5,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.web.DefaultSecurityFilterChain
 import sinhee.kang.tutorial.global.security.error.ErrorHandlerFilter
 
-class RequestLogConfigurer: SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
+class RequestLogConfigurer : SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity>() {
 
     override fun configure(httpSecurity: HttpSecurity) {
         val requestLogFilter = RequestLogFilter()

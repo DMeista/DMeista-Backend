@@ -7,7 +7,7 @@ import java.util.*
 
 class AuthDetails(
     private val user: User
-): UserDetails {
+) : UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority> = ArrayList()
 

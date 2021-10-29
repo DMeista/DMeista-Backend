@@ -3,7 +3,6 @@ package sinhee.kang.tutorial.domain.post.entity.subComment
 import org.springframework.data.annotation.CreatedDate
 import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.post.entity.comment.Comment
-import sinhee.kang.tutorial.domain.post.entity.post.Post
 import sinhee.kang.tutorial.domain.user.entity.user.User
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -29,7 +28,7 @@ class SubComment(
     @Column(nullable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
 ) {
-    constructor(user: User, comment: Comment, commentRequest: CommentRequest): this(
+    constructor(user: User, comment: Comment, commentRequest: CommentRequest) : this(
         user = user,
         comment = comment,
         content = commentRequest.content

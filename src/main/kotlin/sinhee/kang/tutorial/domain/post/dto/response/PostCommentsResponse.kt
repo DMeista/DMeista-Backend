@@ -19,7 +19,7 @@ data class PostCommentsResponse(
 
     val subComments: MutableList<PostSubCommentsResponse>
 ) {
-    constructor(user: User?, comment: Comment): this(
+    constructor(user: User?, comment: Comment) : this(
         commentId = comment.commentId,
         content = comment.content,
         createdAt = comment.createdAt,

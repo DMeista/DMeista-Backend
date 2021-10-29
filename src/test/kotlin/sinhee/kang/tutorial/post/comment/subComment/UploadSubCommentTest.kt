@@ -3,18 +3,16 @@ package sinhee.kang.tutorial.post.comment.subComment
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import sinhee.kang.tutorial.TestProperties
-
+import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.domain.post.entity.comment.Comment
 import sinhee.kang.tutorial.domain.post.entity.post.Post
-import sinhee.kang.tutorial.domain.post.dto.request.CommentRequest
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 
 @Suppress("NonAsciiCharacters")
-class UploadSubCommentTest: TestProperties() {
+class UploadSubCommentTest : TestProperties() {
 
     private val testPath = "/comments/sub"
 

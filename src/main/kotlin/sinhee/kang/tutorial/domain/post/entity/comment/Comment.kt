@@ -32,7 +32,7 @@ class Comment(
     @OneToMany(mappedBy = "comment", cascade = [CascadeType.ALL])
     val subCommentList: MutableList<SubComment> = ArrayList()
 ) {
-    constructor(user: User, post: Post, commentRequest: CommentRequest): this(
+    constructor(user: User, post: Post, commentRequest: CommentRequest) : this(
         user = user,
         post = post,
         content = commentRequest.content

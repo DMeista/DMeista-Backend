@@ -10,14 +10,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 import sinhee.kang.tutorial.infra.api.slack.SlackApi
 import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest
-import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest.Field
 import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest.Attachment
+import sinhee.kang.tutorial.infra.api.slack.dto.SlackMessageRequest.Field
 import java.io.IOException
 import java.util.stream.Collectors
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class SlackReportServiceImpl: SlackReportService {
+class SlackReportServiceImpl : SlackReportService {
 
     private val connection = Retrofit.Builder()
         .baseUrl("https://hooks.slack.com/services/")

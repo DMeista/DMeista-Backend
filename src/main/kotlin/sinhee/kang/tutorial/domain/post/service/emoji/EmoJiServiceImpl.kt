@@ -2,12 +2,12 @@ package sinhee.kang.tutorial.domain.post.service.emoji
 
 import org.springframework.stereotype.Service
 import sinhee.kang.tutorial.domain.auth.service.auth.AuthService
+import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
+import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 import sinhee.kang.tutorial.domain.post.entity.emoji.Emoji
 import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.repository.emoji.EmojiRepository
 import sinhee.kang.tutorial.domain.post.repository.post.PostRepository
-import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
-import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 import sinhee.kang.tutorial.global.exception.exceptions.notFound.ApplicationNotFoundException
 
 @Service
@@ -16,7 +16,7 @@ class EmoJiServiceImpl(
 
     private val postRepository: PostRepository,
     private val emojiRepository: EmojiRepository
-): EmojiService {
+) : EmojiService {
 
     override fun getPostEmojiUserList(postId: Int): PostEmojiListResponse {
         val post = postRepository.findById(postId)

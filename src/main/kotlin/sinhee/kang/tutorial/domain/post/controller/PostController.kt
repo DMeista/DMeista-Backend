@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import sinhee.kang.tutorial.domain.post.dto.request.ChangePostRequest
 import sinhee.kang.tutorial.domain.post.dto.request.PostRequest
-import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.dto.response.EmojiResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostContentResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostEmojiListResponse
 import sinhee.kang.tutorial.domain.post.dto.response.PostListResponse
+import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.service.emoji.EmojiService
 import sinhee.kang.tutorial.domain.post.service.post.PostService
 
@@ -29,20 +29,24 @@ class PostController(
         postService.getPostContent(postId)
 
     @PostMapping
-    fun uploadPost(@RequestParam title: String,
-                   @RequestParam content: String,
-                   @RequestParam(required = false) tags: List<String>?,
-                   @RequestParam(required = false) autoTag: Boolean?,
-                   @RequestParam(required = false) imageFiles: List<MultipartFile>?): Int =
-        postService.generatePost(PostRequest(title, content, tags, autoTag?: false, imageFiles))
+    fun uploadPost(
+        @RequestParam title: String,
+        @RequestParam content: String,
+        @RequestParam(required = false) tags: List<String>?,
+        @RequestParam(required = false) autoTag: Boolean?,
+        @RequestParam(required = false) imageFiles: List<MultipartFile>?
+    ): Int =
+        postService.generatePost(PostRequest(title, content, tags, autoTag ?: false, imageFiles))
 
     @PatchMapping("/{postId}")
-    fun updatePost(@PathVariable postId: Int,
-                   @RequestParam title: String?,
-                   @RequestParam content: String?,
-                   @RequestParam tags: List<String>?,
-                   @RequestParam autoTag: Boolean?,
-                   @RequestParam imageFiles: List<MultipartFile>?): Int? =
+    fun updatePost(
+        @PathVariable postId: Int,
+        @RequestParam title: String?,
+        @RequestParam content: String?,
+        @RequestParam tags: List<String>?,
+        @RequestParam autoTag: Boolean?,
+        @RequestParam imageFiles: List<MultipartFile>?
+    ): Int? =
         postService.changePost(ChangePostRequest(postId, title, content, tags, autoTag, imageFiles))
 
     @DeleteMapping("/{postId}")
@@ -54,7 +58,9 @@ class PostController(
         emojiService.getPostEmojiUserList(postId)
 
     @PostMapping("/{postId}/emoji")
-    fun setEmoji(@PathVariable postId: Int,
-                 @RequestParam status: EmojiStatus): EmojiResponse? =
+    fun setEmoji(
+        @PathVariable postId: Int,
+        @RequestParam status: EmojiStatus
+    ): EmojiResponse? =
         emojiService.setEmoji(postId, status)
 }

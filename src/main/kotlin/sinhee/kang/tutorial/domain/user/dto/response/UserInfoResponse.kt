@@ -16,7 +16,7 @@ data class UserInfoResponse(
 
     val postList: MutableList<PostPreviewResponse> = mutableListOf()
 ) {
-    constructor(user: User): this (
+    constructor(user: User) : this (
         username = user.nickname,
         email = user.email,
         createdAt = user.createdAt,

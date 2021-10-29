@@ -11,7 +11,7 @@ import sinhee.kang.tutorial.domain.auth.dto.request.SignUpRequest
 import sinhee.kang.tutorial.global.exception.exceptions.badRequest.InvalidArgumentException
 
 @Suppress("NonAsciiCharacters")
-class SignUpTest: TestProperties() {
+class SignUpTest : TestProperties() {
 
     private val testPath = "/auth/register"
 

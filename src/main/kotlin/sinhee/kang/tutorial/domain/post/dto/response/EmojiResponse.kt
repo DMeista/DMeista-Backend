@@ -10,7 +10,7 @@ data class EmojiResponse(
 
     val emojiStatus: EmojiStatus? = null
 ) {
-    constructor(emoji: Emoji): this(
+    constructor(emoji: Emoji) : this(
         postId = emoji.post.postId,
         username = emoji.user.nickname,
         emojiStatus = emoji.status

@@ -9,11 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.web.util.matcher.RequestMatcher
-import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-
 import sinhee.kang.tutorial.global.security.error.ErrorHandlerConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtConfigurer
 import sinhee.kang.tutorial.global.security.jwt.JwtTokenProvider
@@ -25,28 +22,30 @@ import sinhee.kang.tutorial.infra.api.slack.service.SlackReportService
 class SecurityConfig(
     private val jwtTokenProvider: JwtTokenProvider,
     private val slackReportService: SlackReportService
-): WebSecurityConfigurerAdapter(), WebMvcConfigurer {
+) : WebSecurityConfigurerAdapter(), WebMvcConfigurer {
 
-    override fun configure(http: HttpSecurity) {
-        http.csrf()
-                .disable()
+    override fun configure(security: HttpSecurity) {
+        security
+            .csrf().disable()
             .cors().and()
-            .formLogin()
-                .disable()
+            .formLogin().disable()
             .headers()
-            .frameOptions()
-                .disable().and()
+            .frameOptions().disable().and()
             .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+        security
             .authorizeRequests()
-                .requestMatchers(RequestMatcher { CorsUtils.isPreFlightRequest(it) }).permitAll()
-                .antMatchers("/swagger-ui/index.html").permitAll()
-                .antMatchers("/auth/**").permitAll()
-                .antMatchers("/posts").permitAll()
-                .antMatchers("/users").permitAll()
-                .antMatchers("/users/password").permitAll()
-                .antMatchers("/users/email/password/verify").permitAll()
-                .antMatchers("/users/email/verify").permitAll().and()
+            .antMatchers("/swagger-ui/**").permitAll()
+            .antMatchers("/swagger-resources/**").permitAll()
+            .antMatchers("/v2/api-docs").permitAll()
+            .antMatchers("/auth/**").permitAll()
+            .antMatchers("/users/**").permitAll()
+            .antMatchers("/posts/**").permitAll()
+            .antMatchers("/image/**").permitAll()
+            .anyRequest().authenticated()
+
+        security
             .apply(JwtConfigurer(jwtTokenProvider)).and()
             .apply(ErrorHandlerConfigurer(slackReportService)).and()
             .apply(RequestLogConfigurer())

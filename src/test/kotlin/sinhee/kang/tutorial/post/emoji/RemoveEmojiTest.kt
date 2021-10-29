@@ -13,7 +13,7 @@ import sinhee.kang.tutorial.domain.post.entity.emoji.enums.EmojiStatus
 import sinhee.kang.tutorial.domain.post.entity.post.Post
 
 @Suppress("NonAsciiCharacters")
-class RemoveEmojiTest: TestProperties() {
+class RemoveEmojiTest : TestProperties() {
 
     private val testPath = "/posts"
 
@@ -33,11 +33,13 @@ class RemoveEmojiTest: TestProperties() {
     @Test
     fun `이모지 삭제 - Ok`() {
         val post = postRepository.save(Post(user = user))
-        emojiRepository.save(Emoji(
-            post = post,
-            user = user,
-            status = EmojiStatus.NICE
-        ))
+        emojiRepository.save(
+            Emoji(
+                post = post,
+                user = user,
+                status = EmojiStatus.NICE
+            )
+        )
 
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
             .apply { add("status", "${EmojiStatus.NICE}") }
@@ -55,14 +57,16 @@ class RemoveEmojiTest: TestProperties() {
     @Test
     fun `사용자 인증이 확인되지 않음 - Unauthorized`() {
         val post = postRepository.save(Post(user = user))
-        emojiRepository.save(Emoji(
-            post = post,
-            user = user,
-            status = EmojiStatus.SAD
-        ))
+        emojiRepository.save(
+            Emoji(
+                post = post,
+                user = user,
+                status = EmojiStatus.SAD
+            )
+        )
 
         val request: MultiValueMap<String, String> = LinkedMultiValueMap<String, String>()
-            .apply {  add("status", "${EmojiStatus.SAD}") }
+            .apply { add("status", "${EmojiStatus.SAD}") }
 
         requestParams(MockMvcRequestBuilders.post("$testPath/0/emoji"), request)
             .andExpect(MockMvcResultMatchers.status().isUnauthorized)

@@ -20,9 +20,9 @@ import sinhee.kang.tutorial.infra.api.kakao.dto.MultiTagResponse
 class VisionServiceImpl(
     @Value("\${kakao.rest.api.key}")
     private val authorizationKey: String
-): VisionService {
+) : VisionService {
 
-    private val connection = Retrofit.Builder()
+    private val connection: VisionApi = Retrofit.Builder()
         .baseUrl("https://dapi.kakao.com/v2/vision/")
         .addConverterFactory(JacksonConverterFactory.create(jacksonObjectMapper()))
         .build()

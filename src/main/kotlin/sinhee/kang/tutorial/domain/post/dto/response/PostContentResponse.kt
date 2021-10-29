@@ -38,7 +38,7 @@ data class PostContentResponse(
 
     val comments: List<PostCommentsResponse> = arrayListOf()
 ) {
-    constructor(user: User?, post: Post, nextPost: Post?, prevPost: Post?): this(
+    constructor(user: User?, post: Post, nextPost: Post?, prevPost: Post?) : this(
         title = post.title,
         content = post.content,
         author = post.user.nickname,
@@ -70,5 +70,4 @@ data class PostContentResponse(
                 }
             }
     }
-
 }
