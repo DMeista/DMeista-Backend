@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.config
+package sinhee.kang.tutorial.infra.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -14,7 +14,7 @@ class SwaggerConfig {
         Docket(DocumentationType.SWAGGER_2)
             .useDefaultResponseMessages(false)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("sinhee.kang.tutorial"))
+            .apis(RequestHandlerSelectors.basePackage("sinhee.kang.tutorial.controller"))
             .paths(PathSelectors.any())
             .build()
             .apiInfo(apiInfo())
