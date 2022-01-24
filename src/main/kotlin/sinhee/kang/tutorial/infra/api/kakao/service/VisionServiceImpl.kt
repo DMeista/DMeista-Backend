@@ -10,8 +10,8 @@ import org.springframework.web.multipart.MultipartFile
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
-import sinhee.kang.tutorial.global.exception.exceptions.badRequest.AccessDeniedException
-import sinhee.kang.tutorial.global.exception.exceptions.badRequest.BadRequestException
+import sinhee.kang.tutorial.infra.util.exception.exceptions.exceptions.badRequest.AccessDeniedException
+import sinhee.kang.tutorial.infra.util.exception.exceptions.exceptions.badRequest.BadRequestException
 import sinhee.kang.tutorial.infra.api.kakao.VisionApi
 import sinhee.kang.tutorial.infra.api.kakao.dto.AdultDetectionResponse
 import sinhee.kang.tutorial.infra.api.kakao.dto.MultiTagResponse
