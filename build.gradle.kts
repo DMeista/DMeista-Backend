@@ -34,7 +34,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:2.5.5")
     implementation("org.springframework.boot:spring-boot-starter-cache:2.5.5")
 
-    implementation("org.springframework.boot:spring-boot-starter-security:2.5.5")
+    implementation("org.springframework.security:spring-security-crypto:5.5.1")
     implementation("org.springframework.boot:spring-boot-starter-mail:2.5.5")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
 
