@@ -1,6 +1,6 @@
 package sinhee.kang.tutorial.domain.image.entity
 
-import sinhee.kang.tutorial.domain.post.entity.post.Post
+import sinhee.kang.tutorial.domain.post.entity.Post
 import javax.persistence.*
 
 @Entity(name = "tbl_image")
