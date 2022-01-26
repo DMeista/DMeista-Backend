@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.6.2"
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
-    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
     kotlin("jvm") version "1.6.0"
     kotlin("plugin.spring") version "1.6.0"
     kotlin("plugin.jpa") version "1.6.0"
@@ -19,6 +18,7 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web:2.6.2")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:2.6.2")
     implementation("org.springframework.boot:spring-boot-starter-mail:2.6.2")
 
     implementation("org.springframework.security:spring-security-crypto:5.5.1")
@@ -30,8 +30,6 @@ dependencies {
         exclude(group = "org.slf4j", module = "slf4j-simple")
     }
     runtimeOnly("mysql:mysql-connector-java:8.0.25")
-
-    implementation("io.springfox:springfox-boot-starter:3.0.0")
 
     implementation("com.squareup.retrofit2:retrofit:2.7.2")
     implementation("com.squareup.retrofit2:converter-jackson:2.7.2")
