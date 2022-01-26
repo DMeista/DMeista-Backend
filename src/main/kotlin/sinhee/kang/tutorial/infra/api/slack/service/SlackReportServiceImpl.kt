@@ -17,7 +17,9 @@ import java.util.stream.Collectors
 import javax.servlet.http.HttpServletRequest
 
 @Component
-class SlackReportServiceImpl : SlackReportService {
+class SlackReportServiceImpl(
+    private val request: HttpServletRequest
+) : SlackReportService {
 
     private val connection = Retrofit.Builder()
         .baseUrl("https://hooks.slack.com/services/")
@@ -25,14 +27,14 @@ class SlackReportServiceImpl : SlackReportService {
         .build()
         .create(SlackApi::class.java)
 
-    override fun sendMessage(request: HttpServletRequest, exception: Exception) {
-        val message: SlackMessageRequest = attachRequestLog(request, exception)
+    override fun sendMessage(exception: Exception) {
+        val message: SlackMessageRequest = attachRequestLog(exception)
         val requestBody: RequestBody = serializedRequest(message)
 
         connection.sendMessage(requestBody).execute()
     }
 
-    private fun attachRequestLog(request: HttpServletRequest, exception: Exception): SlackMessageRequest {
+    private fun attachRequestLog(exception: Exception): SlackMessageRequest {
         val fieldContent: List<Field> = arrayListOf(
             Field("Request Method", "[${request.method}]"),
             Field("Request URI", request.requestURI),

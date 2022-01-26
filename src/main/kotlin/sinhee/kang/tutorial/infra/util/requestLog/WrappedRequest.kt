@@ -1,4 +1,4 @@
-package sinhee.kang.tutorial.global.security.requestLog
+package sinhee.kang.tutorial.infra.util.requestLog
 
 import org.apache.commons.io.IOUtils
 import java.io.*
