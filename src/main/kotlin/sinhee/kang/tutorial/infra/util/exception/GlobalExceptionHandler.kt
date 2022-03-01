@@ -7,20 +7,18 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.server.MethodNotAllowedException
-import org.springframework.web.server.ServerErrorException
 import sinhee.kang.tutorial.infra.api.slack.service.SlackReportService
-import sinhee.kang.tutorial.infra.util.exception.exceptions.BusinessException
+import sinhee.kang.tutorial.infra.util.exception.exceptions.ApiException
 import sinhee.kang.tutorial.infra.util.exception.exceptions.dto.ExceptionResponse
 import sinhee.kang.tutorial.infra.util.exception.exceptions.exceptions.badRequest.InvalidArgumentException
-import javax.servlet.http.HttpServletRequest
 
 @ControllerAdvice
 class GlobalExceptionHandler(
     private val slackReportService: SlackReportService
 ) {
 
-    @ExceptionHandler(BusinessException::class)
-    private fun handledBusinessException(e: BusinessException): ResponseEntity<ExceptionResponse> =
+    @ExceptionHandler(ApiException::class)
+    private fun handledBusinessException(e: ApiException): ResponseEntity<ExceptionResponse> =
         generateResponseEntity(
             httpStatus = e.status,
             message = e.message
